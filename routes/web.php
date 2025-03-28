@@ -1,0 +1,315 @@
+<?php
+
+use App\Http\Controllers\Site\MainController as SiteMain;
+use App\Http\Controllers\System\MainController as SystemMain;
+use App\Http\Controllers\Panel\MainController as PanelMain;
+use App\Http\Controllers\Panel\AccessController;
+use App\Http\Controllers\Panel\CustomerController;
+use App\Http\Controllers\Panel\OrderController;
+use App\Http\Controllers\Panel\PlanController;
+use App\Http\Controllers\Panel\UserController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
+
+# Insert Global Variables
+View::composer("*", function ($view) {
+    $routeCurrent   =   Route::getCurrentRoute();
+    $titleBreadCrumb =   isset($routeCurrent->wheres["titleBreadCrumb"]) ? $routeCurrent->wheres["titleBreadCrumb"] : 'Sem título BreadCrumb';
+    $title =   isset($routeCurrent->wheres["title"]) ? $routeCurrent->wheres["title"] : 'Sem título';
+    $routeActive    =   Route::currentRouteName();
+    $route          =   explode('.', $routeActive);
+    $routeAmbient   =   $route[0] ?? null;
+    $routeCrud      =   $route[1] ?? null;
+    $routeMethod    =   $route[2] ?? null;
+
+    $view
+        ->with('routeCurrent', $routeCurrent)
+        ->with('routeActive', $routeActive)
+        ->with('route', $route)
+        ->with('routeAmbient', $routeAmbient)
+        ->with('routeCrud', $routeCrud)
+        ->with('routeMethod', $routeMethod)
+        ->with('titleBreadCrumb', $titleBreadCrumb)
+        ->with('title', $title);
+});
+
+Auth::routes(['register' => false]);
+
+Route::get('/register/{planId?}', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
+
+Route::get('/teste', function () {
+    return storage_path();
+});
+
+Route::name('site.')->group(function () {
+    Route::name('main.')->group(function () {
+        Route::get('/', [SiteMain::class, 'index'])->name('index');
+    });
+});
+
+Route::name('system.')->group(function () {
+    Route::name('main.')->group(function () {
+        Route::get('/system', [SystemMain::class, 'index'])->name('index');
+    });
+});
+
+Route::middleware('auth')->name('panel.')->group(function () {
+    Route::name('main.')->group(function () {
+        Route::get('/painel-de-controle', [PanelMain::class, 'index'])
+            ->name('index')
+            ->setWheres([
+                'titleBreadCrumb'   => 'Dashboard',
+                'title'   => 'Dashboard | Agro Mercado',
+            ])->middleware('can:admin');
+    });
+
+    Route::name('main.')->group(function () {
+        Route::get('/painel-de-controle-user', [PanelMain::class, 'indexUser'])
+            ->name('index-user')
+            ->setWheres([
+                'titleBreadCrumb'   => 'Dashboard',
+                'title'   => 'Dashboard | Agro Mercado',
+            ])->middleware('can:user');
+    });
+
+    Route::name('accesses.')->group(function () {
+        Route::get('/accesses', [AccessController::class, 'index'])
+            ->name('index')
+            ->setWheres([
+                'titleBreadCrumb'   => 'Lista de Pedidos',
+                'title'   => 'Lista de Pedidos | Agro Mercado',
+            ]);
+
+        Route::get('/accesses/loadDatatable', [AccessController::class, 'loadDatatable'])->name('loadDatatable');
+
+        Route::post('/accesses/store', [AccessController::class, 'store'])
+            ->name('store')
+            ->setWheres([
+                'titleBreadCrumb'   => 'Cadastrar acesso'
+            ]);
+
+        // Post por causa do envio da imagem via ajax
+        Route::put('/accesses/update/{id}', [AccessController::class, 'update'])
+            ->name('update')
+            ->setWheres([
+                'titleBreadCrumb'   => 'Editar acesso'
+            ]);
+
+        Route::delete('/accesses/destroy/{id}', [AccessController::class, 'destroy'])
+            ->name('destroy')
+            ->setWheres([
+                'titleBreadCrumb'   => 'Deletar acessos'
+            ]);
+
+        Route::delete('/accesses/destroyAll', [AccessController::class, 'destroyAll'])
+            ->name('destroyAll');
+
+        Route::post('/accesses/removeImage', [AccessController::class, 'removeImage'])
+            ->name('removeImage');
+
+        Route::get('/accesses/duplicate/{id}', [AccessController::class, 'duplicate'])
+            ->name('duplicate');
+
+        // Modais
+        Route::get('/accesses/create', [AccessController::class, 'create'])
+            ->name('create')
+            ->setWheres([
+                'titleBreadCrumb'   => 'Cadastrar acesso'
+            ]);
+
+        Route::get('/accesses/delete/{id}', [AccessController::class, 'delete'])
+            ->name('delete')
+            ->setWheres([
+                'titleBreadCrumb'   => 'Deletar acesso'
+            ]);
+
+        Route::get('/accesses/edit/{id}', [AccessController::class, 'edit'])
+            ->name('edit')
+            ->setWheres([
+                'titleBreadCrumb'   => 'Dados do acesso'
+            ]);
+
+        Route::post('/accesses/deleteAll', [AccessController::class, 'deleteAll'])
+            ->name('deleteAll');
+    });
+
+    Route::name('users.')->group(function () {
+        Route::get('/users', [UserController::class, 'index'])
+            ->name('index')
+            ->setWheres([
+                'titleBreadCrumb'   => 'Lista de Usuários',
+                'title'   => 'Lista de Usuários | Agro Mercado',
+            ])->middleware('can:admin');
+
+        Route::get('/users/loadDatatable', [UserController::class, 'loadDatatable'])->name('loadDatatable')->middleware('can:admin');;
+
+        Route::post('/users/store', [UserController::class, 'store'])
+            ->name('store')->middleware('can:admin');;
+
+        // Post por causa do envio da imagem via ajax
+        Route::post('/users/update/{id}', [UserController::class, 'update'])
+            ->name('update');
+
+        Route::delete('/users/destroy/{id}', [UserController::class, 'destroy'])
+            ->name('destroy')->middleware('can:admin');;
+
+        Route::delete('/users/destroyAll', [UserController::class, 'destroyAll'])
+            ->name('destroyAll')->middleware('can:admin');;
+
+        Route::post('/users/removeImage', [UserController::class, 'removeImage'])
+            ->name('removeImage')->middleware('can:admin');;
+
+        // Modais
+        Route::get('/users/create', [UserController::class, 'create'])
+            ->name('create')->middleware('can:admin');;
+
+        Route::get('/users/delete/{id}', [UserController::class, 'delete'])
+            ->name('delete')->middleware('can:admin');;
+
+        Route::get('/users/edit/{id}', [UserController::class, 'edit'])
+            ->name('edit');
+
+        Route::post('/users/deleteAll', [UserController::class, 'deleteAll'])
+            ->name('deleteAll')->middleware('can:admin');
+    });
+
+    Route::name('customers.')->group(function () {
+        Route::get('/customers', [CustomerController::class, 'index'])
+            ->name('index')
+            ->setWheres([
+                'titleBreadCrumb'   => 'Lista de Clientes',
+                'title'   => 'Lista de Pedidos | Agro Mercado',
+            ]);
+
+        Route::get('/customers/loadDatatable', [CustomerController::class, 'loadDatatable'])->name('loadDatatable');
+
+        Route::post('/customers/store', [CustomerController::class, 'store'])
+            ->name('store');
+
+        // Post por causa do envio da imagem via ajax
+        Route::post('/customers/update/{id}', [CustomerController::class, 'update'])
+            ->name('update');
+
+        Route::delete('/customers/destroy/{id}', [CustomerController::class, 'destroy'])
+            ->name('destroy');
+
+        Route::delete('/customers/destroyAll', [CustomerController::class, 'destroyAll'])
+            ->name('destroyAll');
+
+        Route::post('/customers/removeImage', [CustomerController::class, 'removeImage'])
+            ->name('removeImage');
+
+        Route::get('/customers/duplicate/{id}', [CustomerController::class, 'duplicate'])
+            ->name('duplicate');
+
+        // Modais
+        Route::get('/customers/create', [CustomerController::class, 'create'])
+            ->name('create');
+
+        Route::get('/customers/delete/{id}', [CustomerController::class, 'delete'])
+            ->name('delete');
+
+        Route::get('/customers/edit/{id}', [CustomerController::class, 'edit'])
+            ->name('edit');
+
+        Route::post('/customers/deleteAll', [CustomerController::class, 'deleteAll'])
+            ->name('deleteAll');
+    });
+
+    Route::name('plans.')->group(function () {
+        Route::get('/plans', [PlanController::class, 'index'])
+            ->name('index')
+            ->setWheres([
+                'titleBreadCrumb'   => 'Lista de Planos',
+                'title'   => 'Lista de Planos | Agro Mercado',
+            ]);
+
+        Route::get('/plans/loadDatatable', [PlanController::class, 'loadDatatable'])->name('loadDatatable');
+
+        Route::post('/plans/store', [PlanController::class, 'store'])
+            ->name('store');
+
+        // Post por causa do envio da imagem via ajax
+        Route::put('/plans/update/{id}', [PlanController::class, 'update'])
+            ->name('update');
+
+        Route::delete('/plans/destroy/{id}', [PlanController::class, 'destroy'])
+            ->name('destroy');
+
+        Route::delete('/plans/destroyAll', [PlanController::class, 'destroyAll'])
+            ->name('destroyAll');
+
+        Route::post('/plans/removeImage', [PlanController::class, 'removeImage'])
+            ->name('removeImage');
+
+        Route::get('/plans/duplicate/{id}', [PlanController::class, 'duplicate'])
+            ->name('duplicate');
+
+        // Modais
+        Route::get('/plans/create', [PlanController::class, 'create'])
+            ->name('create');
+
+        Route::get('/plans/delete/{id}', [PlanController::class, 'delete'])
+            ->name('delete');
+
+        Route::get('/plans/edit/{id}', [PlanController::class, 'edit'])
+            ->name('edit');
+
+        Route::post('/plans/deleteAll', [PlanController::class, 'deleteAll'])
+            ->name('deleteAll');
+    });
+
+    Route::name('orders.')->group(function () {
+        Route::get('/orders', [OrderController::class, 'index'])
+            ->name('index')
+            ->setWheres([
+                'titleBreadCrumb'   => 'Lista de Pedidos',
+                'title'   => 'Lista de Pedidos | Agro Mercado',
+            ]);
+
+        Route::get('/orders/loadDatatable', [OrderController::class, 'loadDatatable'])->name('loadDatatable');
+
+        Route::post('/orders/store', [OrderController::class, 'store'])
+            ->name('store');
+
+        // Post por causa do envio da imagem via ajax
+        Route::put('/orders/update/{id}', [OrderController::class, 'update'])
+            ->name('update');
+
+        Route::delete('/orders/destroy/{id}', [OrderController::class, 'destroy'])
+            ->name('destroy');
+
+        Route::delete('/orders/destroyAll', [OrderController::class, 'destroyAll'])
+            ->name('destroyAll');
+
+        Route::post('/orders/removeImage', [OrderController::class, 'removeImage'])
+            ->name('removeImage');
+
+        Route::get('/orders/duplicate/{id}', [OrderController::class, 'duplicate'])
+            ->name('duplicate');
+
+        Route::delete('/orders/canceling/{id}', [OrderController::class, 'canceling'])
+            ->name('canceling');
+
+        // Modais
+        Route::get('/orders/create', [OrderController::class, 'create'])
+            ->name('create');
+
+        Route::get('/orders/delete/{id}', [OrderController::class, 'delete'])
+            ->name('delete');
+
+        Route::get('/orders/edit/{id}', [OrderController::class, 'edit'])
+            ->name('edit');
+
+        Route::get('/orders/show/{id}', [OrderController::class, 'show'])
+            ->name('show');
+
+        Route::post('/orders/deleteAll', [OrderController::class, 'deleteAll'])
+            ->name('deleteAll');
+
+        Route::get('/orders/cancel/{id}', [OrderController::class, 'cancel'])
+            ->name('cancel');
+    });
+});

@@ -1,0 +1,1 @@
+<span>{{$order->id}}</span>
