@@ -220,7 +220,7 @@
     <p class="subtitle-plans text-center">Estamos desenvolvendo uma <span class="sub">comunicação clara</span>
         e próxima de você!</p>
 
-    <div class="d-flex flex-column flex-lg-row align-items-center container-plans position-relative">
+    {{--<div class="d-flex flex-column flex-lg-row align-items-center container-plans position-relative">
         @foreach ($plans as $plan)
             <a href="{{ route('register', ['planId' => $plan->id]) }}">
                 <div
@@ -255,7 +255,61 @@
                 </div>
             </a>
         @endforeach
+    </div>--}}
+
+    <div class="d-flex justify-content-center">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
+                    Mensal
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact</button>
+            </li>
+        </ul>
+        <div class="tab-content mt-5 pt-5" id="myTabContent">
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                O Agro Mercado faz parte de uma rede de comunicação externa ao mundo agro. Aqui, consideramos a importância de uma comunicação confiável e próxima. Nossa programação é dedicada a trazer conhecimento e insights de forma leve e interessante, com o propósito de enriquecer seu dia a dia e agregar valor ao seu trabalho.
+            </div>
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+            <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+        </div>
+
+       {{-- <div class="tab-content" id="planTabsContent">
+            <!-- Planos Mensais -->
+            <div class="tab-pane fade show active" id="monthly" role="tabpanel">
+                <div class="d-flex flex-column flex-lg-row align-items-center container-plans position-relative">
+                    @foreach ($plans->where('cycle', 'MONTHLY') as $plan)
+                        @dump($plan)
+                        @include('site.partials.plan-card', ['plan' => $plan])
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Planos Semestrais -->
+            <div class="tab-pane fade" id="semiannual" role="tabpanel">
+                <div class="d-flex flex-column flex-lg-row align-items-center container-plans position-relative">
+                    @foreach ($plans->where('period', 'semiannual') as $plan)
+                        @include('site.partials.plan-card', ['plan' => $plan])
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Planos Anuais -->
+            <div class="tab-pane fade" id="annual" role="tabpanel">
+                <div class="d-flex flex-column flex-lg-row align-items-center container-plans position-relative">
+                    @foreach ($plans->where('period', 'annual') as $plan)
+                        @include('site.partials.plan-card', ['plan' => $plan])
+                    @endforeach
+                </div>
+            </div>
+        </div>--}}
     </div>
+
 
     <p class="last-info-plans text-center">Curta nossas <strong>séries</strong>, <strong>filmes</strong> e
         </strong>conteúdos exclusivos</strong> feitos para você!</p>
@@ -293,6 +347,9 @@
 <script src="{{ asset('Auth-Panel/dist/js/adminlte.min.js') }}"></script>
 <script src="{{ asset('Auth-Panel/dist/js/demo.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<!-- Bootstrap CSS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script src="{{ asset('Auth-Panel/dist/js/front/front.js') }}"></script>
 <script>
     $(function () {
