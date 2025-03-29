@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\CycleAsaasEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,10 +21,6 @@ class Plan extends Model
         'cycle',
         'billing_type',
         'free_for_days',
-    ];
-
-    protected $casts = [
-        'cycle' => CycleAsaasEnum::class,
     ];
 
     protected function value(): Attribute
