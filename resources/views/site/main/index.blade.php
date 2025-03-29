@@ -220,99 +220,80 @@
     <p class="subtitle-plans text-center">Estamos desenvolvendo uma <span class="sub">comunicação clara</span>
         e próxima de você!</p>
 
-    {{--<div class="d-flex flex-column flex-lg-row align-items-center container-plans position-relative">
-        @foreach ($plans as $plan)
-            <a href="{{ route('register', ['planId' => $plan->id]) }}">
-                <div
-                    class="plan d-flex flex-column align-items-center {{ $plan->is_best_seller ? 'best-seller' : '' }}">
-                    @if ($plan->is_best_seller)
-                        <div class="box-best-seller position-absolute">
-                            <span>Mais vendido</span>
-                        </div>
-                    @endif
-
-                    <div class="important-info-plan d-flex flex-column align-items-center">
-                        <span class="title-plan">{{ $plan->name }}</span>
-                        <span class="value-plan">R$ <span
-                                class="value">{{ number_format($plan->value, 2, ',', '.') }}</span></span>
-                        <span
-                            style="color: black;">{{ $plan->free_for_days > 0 ? $plan->description : 'Renovação Automática' }}</span>
-                    </div>
-
-                    <div class="about-plan d-flex flex-column align-items-center">
-                        @foreach ($plan->benefits as $benefit)
-                            <div
-                                class="about-plan-item d-flex justify-content-start col-12">
-                                <img src="{{ asset('Auth-Panel/dist/img/plans-icon.svg') }}" alt="">
-                                <span style="color: black;">{{ $benefit->description }}</span>
-                            </div>
-                        @endforeach
-                    </div>
-
-                    <button type="button" class="btn start-now-button">
-                        Começar agora
-                    </button>
-                </div>
-            </a>
-        @endforeach
-    </div>--}}
-
     <div class="d-flex justify-content-center">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
-                    Mensal
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact</button>
-            </li>
+            @foreach($cycles as $cycleKey => $cycleName)
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {{ $cycleKey === $activeCycle ? 'active' : '' }}"
+                            id="{{$cycleKey.'-tab'}}"
+                            data-bs-toggle="tab" data-bs-target="{{'#'.$cycleKey}}"
+                            type="button" role="tab"
+                            aria-controls="{{$cycleKey}}"
+                            aria-selected="{{ $cycleKey === $activeCycle ? 'true' : 'false' }}">
+                        {{ $cycleName }}
+                    </button>
+                </li>
+            @endforeach
         </ul>
+
         <div class="tab-content mt-5 pt-5" id="myTabContent">
-            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                O Agro Mercado faz parte de uma rede de comunicação externa ao mundo agro. Aqui, consideramos a importância de uma comunicação confiável e próxima. Nossa programação é dedicada a trazer conhecimento e insights de forma leve e interessante, com o propósito de enriquecer seu dia a dia e agregar valor ao seu trabalho.
-            </div>
-            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-            <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+            @foreach($cycles as $cycleKey => $cycleName)
+                <div class="tab-pane fade {{ $cycleKey === $activeCycle ? 'show active' : '' }}"
+                     id="{{$cycleKey}}"
+                     role="tabpanel"
+                     aria-labelledby="{{$cycleKey.'-tab'}}">
+
+                    @if(isset($plansByCycle[$cycleKey]))
+                        <div class="d-flex flex-wrap">
+                            @foreach($plansByCycle[$cycleKey] as $plan)
+                                <div
+                                    class="d-flex flex-column flex-lg-row align-items-center container-plans position-relative">
+                                    <a href="{{ route('register', ['planId' => $plan->id]) }}" class="m-2 col-12">
+                                        <div
+                                            class="plan d-flex flex-column align-items-center {{ $plan->is_best_seller ? 'best-seller' : '' }}">
+                                            @if ($plan->is_best_seller)
+                                                <div class="box-best-seller position-absolute">
+                                                    <span>Mais vendido</span>
+                                                </div>
+                                            @endif
+
+                                            <div class="important-info-plan d-flex flex-column align-items-center">
+                                                <span class="title-plan">{{ $plan->name }}</span>
+                                                <span class="value-plan">R$
+                                        <span class="value">{{ number_format($plan->value, 2, ',', '.') }}</span>
+                                    </span>
+                                                <span style="color: black;">
+                                        {{ $plan->free_for_days > 0 ? $plan->description : 'Renovação Automática' }}
+                                    </span>
+                                            </div>
+
+                                            <div class="about-plan d-flex flex-column align-items-center">
+                                                @foreach ($plan->benefits as $benefit)
+                                                    <div class="about-plan-item d-flex justify-content-start col-12">
+                                                        <img src="{{ asset('Auth-Panel/dist/img/plans-icon.svg') }}"
+                                                             alt="">
+                                                        <span style="color: black;">{{ $benefit->description }}</span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+
+                                            <button type="button" class="btn start-now-button">
+                                                Começar agora
+                                            </button>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p>Nenhum plano disponível para este ciclo.</p>
+                    @endif
+                </div>
+            @endforeach
         </div>
-
-       {{-- <div class="tab-content" id="planTabsContent">
-            <!-- Planos Mensais -->
-            <div class="tab-pane fade show active" id="monthly" role="tabpanel">
-                <div class="d-flex flex-column flex-lg-row align-items-center container-plans position-relative">
-                    @foreach ($plans->where('cycle', 'MONTHLY') as $plan)
-                        @dump($plan)
-                        @include('site.partials.plan-card', ['plan' => $plan])
-                    @endforeach
-                </div>
-            </div>
-
-            <!-- Planos Semestrais -->
-            <div class="tab-pane fade" id="semiannual" role="tabpanel">
-                <div class="d-flex flex-column flex-lg-row align-items-center container-plans position-relative">
-                    @foreach ($plans->where('period', 'semiannual') as $plan)
-                        @include('site.partials.plan-card', ['plan' => $plan])
-                    @endforeach
-                </div>
-            </div>
-
-            <!-- Planos Anuais -->
-            <div class="tab-pane fade" id="annual" role="tabpanel">
-                <div class="d-flex flex-column flex-lg-row align-items-center container-plans position-relative">
-                    @foreach ($plans->where('period', 'annual') as $plan)
-                        @include('site.partials.plan-card', ['plan' => $plan])
-                    @endforeach
-                </div>
-            </div>
-        </div>--}}
     </div>
-
-
     <p class="last-info-plans text-center">Curta nossas <strong>séries</strong>, <strong>filmes</strong> e
-        </strong>conteúdos exclusivos</strong> feitos para você!</p>
+        <strong>conteúdos exclusivos</strong> feitos para você!</p>
 </section>
 
 <footer class="section-container d-flex flex-column align-items-center">
