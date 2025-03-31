@@ -41,9 +41,13 @@ class Plan extends Model
         return $this->hasMany(PlanBenefit::class);
     }
 
-    public static function getPlansData(): array
+    public static function getPlansData(?int $exceptId = null): array
     {
-        $plans = Plan::query()->where('is_active', 1)
+        $plans = Plan::query()
+            ->where('is_active', 1)
+            ->when($exceptId, function ($query, $exceptId) {
+                return $query->where('id', '!=', $exceptId);
+            })
             ->get();
 
         $plansByCycle = $plans->groupBy('cycle');
