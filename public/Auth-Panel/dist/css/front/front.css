@@ -384,7 +384,7 @@ li.active a{
 
 .container-plans{
     font-family: "Inter";
-    gap: 32px;
+    /*gap: 32px;*/
 }
 
 .container-plans .plan{
