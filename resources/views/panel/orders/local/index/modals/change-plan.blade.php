@@ -73,13 +73,25 @@
                                                         @endforeach
                                                     </div>
 
-                                                    <div class="absolute bottom-3">
-                                                        <a href="{{ route('changePlanStore', ['planId' => $plan->id, 'orderId' => $order->id]) }}"
-                                                           class="btn"
-                                                           style="border: none; background-color: #5A701E; color: white; font-weight: 600; padding: 8px 48px; border-radius: 8px;">
-                                                            Começar agora
-                                                        </a>
-                                                    </div>
+                                                    <form class="absolute bottom-3"
+                                                          action="{{ route('panel.orders.changePlanStore') }}"
+                                                          method="post">
+                                                        @csrf
+                                                        @method('POST')
+
+                                                        <input type="hidden" name="planId" value="{{ $plan->id }}">
+                                                        <input type="hidden" name="orderId" value="{{ $order->id }}">
+
+                                                        <div class="modal-footer justify-content-between">
+                                                            <button type="submit"
+                                                                    class="btn"
+                                                                    style="border: none; background-color: #5A701E; color: white; font-weight: 600; padding: 8px 48px; border-radius: 8px;">
+                                                                Começar agora
+                                                            </button>
+                                                        </div>
+                                                    </form>
+
+
                                                 </div>
                                             </div>
                                         </div>
