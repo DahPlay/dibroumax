@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\Site\MainController as SiteMain;
-use App\Http\Controllers\System\MainController as SystemMain;
-use App\Http\Controllers\Panel\MainController as PanelMain;
 use App\Http\Controllers\Panel\AccessController;
 use App\Http\Controllers\Panel\CustomerController;
+use App\Http\Controllers\Panel\MainController as PanelMain;
 use App\Http\Controllers\Panel\OrderController;
 use App\Http\Controllers\Panel\PlanController;
 use App\Http\Controllers\Panel\UserController;
+use App\Http\Controllers\Site\MainController as SiteMain;
+use App\Http\Controllers\System\MainController as SystemMain;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
@@ -311,5 +311,8 @@ Route::middleware('auth')->name('panel.')->group(function () {
 
         Route::get('/orders/cancel/{id}', [OrderController::class, 'cancel'])
             ->name('cancel');
+
+        Route::get('/orders/changePlan/{id}', [OrderController::class, 'changePlan'])
+            ->name('changePlan');
     });
 });
