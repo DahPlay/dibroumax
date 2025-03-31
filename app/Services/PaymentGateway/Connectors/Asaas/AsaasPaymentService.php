@@ -47,6 +47,16 @@ class AsaasPaymentService
 
                 break;
 
+            case 'PAYMENT_CREATED':
+                $order->update([
+                    'payment_asaas_id' => $paymentId,
+                    'payment_status' => $paymentStatus,
+                    'next_due_date' => $dueDate,
+                ]);
+
+                Log::info("Pagamento criado para a ordem {$order->id}.");
+                break;
+
             case 'PAYMENT_CONFIRMED':
                 $order->update([
                     'status' => 'ACTIVE',
