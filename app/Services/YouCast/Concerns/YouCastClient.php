@@ -15,8 +15,8 @@ trait YouCastClient
 
     private function gerarToken(): string
     {
-        $login = "agroplay.api";
-        $secret = "ldkjgeo29vkg99133xswrt48rq3sqyf6q4r58f8h";
+        $login = config('youcast.production.login'); //"agroplay.api";
+        $secret = config('youcast.production.secret');//"ldkjgeo29vkg99133xswrt48rq3sqyf6q4r58f8h";
         $timestamp = time();
 
         $stringToHash = $timestamp . $login . $secret;
