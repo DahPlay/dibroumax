@@ -293,8 +293,8 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::delete('/orders/canceling/{id}', [OrderController::class, 'canceling'])
             ->name('canceling');
 
-       /* Route::post('orders/changePlan', [OrderController::class, 'changePlanStore'])
-            ->name('changePlan');*/
+        Route::post('orders/changePlanStore', [OrderController::class, 'changePlanStore'])
+            ->name('changePlanStore');
 
         // Modais
         Route::get('/orders/create', [OrderController::class, 'create'])
