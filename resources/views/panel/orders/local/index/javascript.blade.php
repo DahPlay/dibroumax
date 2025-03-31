@@ -28,6 +28,11 @@
             $(document).on('click', ".btn-cancel", function(e) {
                 openModal(this, e, 'modal-lg');
             });
+
+            $(document).on('click', ".btn-change", function(e) {
+                openModal(this, e, 'modal-lg');
+            });
+
         });
 
         function removeImage() {
