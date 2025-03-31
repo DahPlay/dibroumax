@@ -321,14 +321,72 @@ class OrderController extends Controller
         ]);
     }
 
-    /*public function changePlanStore($orderId, $planId)
+    public function changePlanStore(Request $request)
     {
-        // todo: preciso criar a rota para troca de plano
-        // todo: antes de realizar a cobrança eu preciso verificar se tem um plano em aberto,
+        $validator = Validator::make($request->all(), [
+            'planId' => 'required',
+            'orderId' => 'required',
+        ]);
+
         // todo se tiver atualizo o valor da cobrança,
         // todo: senão criou uma nova
-        dd($orderId, $planId);
-    }*/
+        $plan = Plan::find($validator->validated()['planId']);
+        $order = $this->model->find($validator->validated()['orderId']);
+
+        if ($order) {
+            $adapter = app(AsaasConnector::class);
+
+            $gateway = new Gateway($adapter);
+
+            // todo: antes de realizar a cobrança eu preciso verificar se tem uma cobrança em aberto,
+            //verificar a data de vencimento
+            $payment = $gateway->payment()->get($order->payment_asaas_id);
+
+// todo> isso aqui deveria estar funcionando, mas está duplicando a fatura e não remove a cobrança não vencida
+            // se tem cobrança e ainda não está vencida
+            if ($payment['status'] === 'PENDING' && $payment['dueDate'] > Carbon::now()) {
+                // removo a cobrança
+                $paymentDeleted = $gateway->payment()->delete($order->payment_asaas_id);
+
+                if ($paymentDeleted['deleted']) {
+                    //atualizo a assinatura e gero uma nova cobrança
+                   return $this->updateSubscription($order, $plan, $gateway);
+                }
+            }
+
+            // se tem cobrança e está vencida só atualizo o plano e gero novas cobranças
+            return $this->updateSubscription($order, $plan, $gateway);
+        }
+    }
+
+    protected function updateSubscription($order, $plan, $gateway)
+    {
+        $data = [
+            'id' => $order->subscription_asaas_id,
+            'billingType' => $plan->billing_type,
+            'value' => $plan->value,
+            'nextDueDate' => now()->addDays($plan->free_for_days)->format('Y-m-d'),
+            'description' => "Assinatura com $plan->free_for_days dias grátis",
+            'externalReference' => 'Pedido: ' . $order->id,
+        ];
+
+
+        $response = $gateway->subscription()->update($order->subscription_asaas_id, $data);
+        if ($response['object'] === 'subscription') {
+        return redirect()->route('panel.orders.index');
+            /*  return response()->json([
+                  'status' => '200',
+                  'message' => 'Ação executada com sucesso!'
+              ]);*/
+        }
+
+        /*return response()->json([
+            'status' => '400',
+            'errors' => [
+                'message' => ['Erro executar a ação, tente novamente!']
+            ],
+        ]);*/
+    }
 
     public function canceling(): JsonResponse
     {
