@@ -220,7 +220,7 @@
                             e próxima de você!</p>
 
                         <div class="d-flex flex-column flex-lg-row align-items-center container-plans position-relative">
-                            @foreach ($plans as $plan)--}}{{--todo: preciso alerar aqui também para exibir as tabs--}}{{--
+                            @foreach ($plans as $plan)
                                 <a href="{{ route('register', ['planId' => $plan->id]) }}">
                                     <div
                                         class="plan d-flex flex-column align-items-center {{ $plan->is_best_seller ? 'best-seller' : '' }}">
