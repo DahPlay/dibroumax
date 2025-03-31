@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CycleAsaasEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -38,5 +39,24 @@ class Plan extends Model
     public function benefits()
     {
         return $this->hasMany(PlanBenefit::class);
+    }
+
+    public static function getPlansData(): array
+    {
+        $plans = Plan::query()->where('is_active', 1)
+            ->get();
+
+        $plansByCycle = $plans->groupBy('cycle');
+        $cycles = $plansByCycle->keys()->mapWithKeys(fn($cycle) => [
+            $cycle => CycleAsaasEnum::from($cycle)->getName()
+        ]);
+
+        $activeCycle = $plans->firstWhere('is_best_seller', true)?->cycle ?? $plansByCycle->keys()->first();
+
+        return [
+            'cycles' => $cycles,
+            'plansByCycle' => $plansByCycle,
+            'activeCycle' => $activeCycle,
+        ];
     }
 }
