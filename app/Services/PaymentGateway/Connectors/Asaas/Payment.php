@@ -26,6 +26,11 @@ class Payment implements PaymentInterface
         return $this->http->get("/payments/{$id}");
     }
 
+    public function status(int|string $id): array
+    {
+        return $this->http->get("/payments/{$id}/status");
+    }
+
     public function create(array $data): array
     {
         return $this->http->post('/payments', $data);
