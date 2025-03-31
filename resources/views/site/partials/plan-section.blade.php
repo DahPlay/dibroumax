@@ -1,10 +1,9 @@
 <section id="planos" class="sixth-section d-flex flex-column align-items-center">
-    <h3 class="text-center">Escolha o plano que mais combina com você!</h3>
-    <p class="subtitle-plans text-center">Estamos desenvolvendo uma <span class="sub">comunicação clara</span>
-        e próxima de você!</p>
+    <h3 class="subtitle-plans text-center">Escolha o plano que mais combina com você!</h3>
+    <p class="subtitle-plans text-center">Estamos desenvolvendo uma <span class="sub">comunicação clara</span> e próxima de você!</p>
 
-    <div class="d-flex justify-content-center">
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <div class="container container-plans">
+        <ul class="nav-tabs list-unstyled d-flex justify-content-center mx-auto" id="myTab" role="tablist">
             @foreach($cycles as $cycleKey => $cycleName)
                 <li class="nav-item" role="presentation">
                     <button class="nav-link {{ $cycleKey === $activeCycle ? 'active' : '' }}"
@@ -27,13 +26,11 @@
                      aria-labelledby="{{$cycleKey.'-tab'}}">
 
                     @if(isset($plansByCycle[$cycleKey]))
-                        <div class="d-flex flex-wrap">
+                        <div class="row g-4 justify-content-center">
                             @foreach($plansByCycle[$cycleKey] as $plan)
-                                <div
-                                    class="d-flex flex-column flex-lg-row align-items-center container-plans position-relative">
-                                    <a href="{{ route('register', ['planId' => $plan->id]) }}" class="m-2 col-12">
-                                        <div
-                                            class="plan d-flex flex-column align-items-center {{ $plan->is_best_seller ? 'best-seller' : '' }}">
+                                <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex container-plan">
+                                    <a href="{{ route('register', ['planId' => $plan->id]) }}" class="m-2 w-100">
+                                        <div class="plan d-flex flex-column align-items-center h-100 {{ $plan->is_best_seller ? 'best-seller' : '' }}">
                                             @if ($plan->is_best_seller)
                                                 <div class="box-best-seller position-absolute">
                                                     <span>Mais vendido</span>
@@ -43,19 +40,18 @@
                                             <div class="important-info-plan d-flex flex-column align-items-center">
                                                 <span class="title-plan">{{ $plan->name }}</span>
                                                 <span class="value-plan">R$
-                                        <span class="value">{{ number_format($plan->value, 2, ',', '.') }}</span>
-                                    </span>
-                                                <span style="color: black;">
-                                        {{ $plan->free_for_days > 0 ? $plan->description : 'Renovação Automática' }}
-                                    </span>
+                                                    <span class="value">{{ number_format($plan->value, 2, ',', '.') }}</span>
+                                                </span>
+                                                <span class="text-dark">
+                                                    {{ $plan->free_for_days > 0 ? $plan->description : 'Renovação Automática' }}
+                                                </span>
                                             </div>
 
-                                            <div class="about-plan d-flex flex-column align-items-center">
+                                            <div class="about-plan d-flex flex-column align-items-center w-100">
                                                 @foreach ($plan->benefits as $benefit)
-                                                    <div class="about-plan-item d-flex justify-content-start col-12">
-                                                        <img src="{{ asset('Auth-Panel/dist/img/plans-icon.svg') }}"
-                                                             alt="">
-                                                        <span style="color: black;">{{ $benefit->description }}</span>
+                                                    <div class="about-plan-item d-flex justify-content-start w-100">
+                                                        <img src="{{ asset('Auth-Panel/dist/img/plans-icon.svg') }}" alt="">
+                                                        <span class="text-dark">{{ $benefit->description }}</span>
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -69,12 +65,12 @@
                             @endforeach
                         </div>
                     @else
-                        <p>Nenhum plano disponível para este ciclo.</p>
+                        <p class="text-center">Nenhum plano disponível para este ciclo.</p>
                     @endif
                 </div>
             @endforeach
         </div>
     </div>
-    <p class="last-info-plans text-center">Curta nossas <strong>séries</strong>, <strong>filmes</strong> e
-        <strong>conteúdos exclusivos</strong> feitos para você!</p>
+
+    <p class="last-info-plans text-center">Curta nossas <strong>séries</strong>, <strong>filmes</strong> e <strong>conteúdos exclusivos</strong> feitos para você!</p>
 </section>

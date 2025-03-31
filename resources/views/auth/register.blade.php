@@ -213,14 +213,14 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <section id="planos" class="sixth-section d-flex flex-column align-items-center">
+                   {{-- <section id="planos" class="sixth-section d-flex flex-column align-items-center">
                         <h3 class="text-center">Escolha o plano que mais combina com você!</h3>
                         <p class="subtitle-plans text-center">Estamos desenvolvendo uma <span class="sub">comunicação
                                 clara</span>
                             e próxima de você!</p>
 
                         <div class="d-flex flex-column flex-lg-row align-items-center container-plans position-relative">
-                            @foreach ($plans as $plan){{--todo: preciso alerar aqui também para exibir as tabs--}}
+                            @foreach ($plans as $plan)--}}{{--todo: preciso alerar aqui também para exibir as tabs--}}{{--
                                 <a href="{{ route('register', ['planId' => $plan->id]) }}">
                                     <div
                                         class="plan d-flex flex-column align-items-center {{ $plan->is_best_seller ? 'best-seller' : '' }}">
@@ -260,7 +260,8 @@
                             <strong>filmes</strong> e
                             </strong>conteúdos exclusivos</strong> feitos para você!
                         </p>
-                    </section>
+                    </section>--}}
+                    @include('site.partials.plan-section')
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
