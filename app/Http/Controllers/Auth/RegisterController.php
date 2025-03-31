@@ -2,21 +2,19 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Enums\YouCastErrorCode;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Plan;
-use App\Providers\RouteServiceProvider;
 use App\Models\User;
-use App\Rules\Cpf;
+use App\Providers\RouteServiceProvider;
 use App\Services\AppIntegration\CustomerService;
 use Illuminate\Contracts\Validation\Validator as ValidationValidator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
@@ -24,13 +22,20 @@ class RegisterController extends Controller
 
     public function showRegistrationForm(int $planId = null)
     {
-        $planId = $planId ? $planId : '';
+        $planId = $planId ?: '';
 
         $plans = Plan::select(['id', 'name', 'value'])
             ->where('is_active', 1)
             ->get();
+        $data = Plan::getPlansData();
 
-        return view('auth.register', compact('plans', 'planId'));
+        return view('auth.register', [
+            'planId' => $planId,
+            'plans' => $plans,
+            'cycles' => $data['cycles'],
+            'plansByCycle' => $data['plansByCycle'],
+            'activeCycle' => $data['activeCycle']
+        ]);
     }
 
     protected $redirectTo = RouteServiceProvider::HOME;
