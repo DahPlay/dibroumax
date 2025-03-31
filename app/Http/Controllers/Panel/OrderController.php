@@ -7,16 +7,16 @@ use App\Enums\PaymentStatusOrderAsaasEnum;
 use App\Enums\StatusOrderAsaasEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Plan;
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
 use App\Services\PaymentGateway\Gateway;
-use App\Services\YouCast\Plan\PlanCancel;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Yajra\DataTables\Facades\DataTables;
 use Illuminate\View\View;
+use Yajra\DataTables\Facades\DataTables;
 
 class OrderController extends Controller
 {
@@ -308,12 +308,33 @@ class OrderController extends Controller
         return view('panel.orders.local.index.modals.cancel', compact("order"));
     }
 
+    public function changePlan($id): View
+    {
+        $order = $this->model->find($this->request->id);
+        $data = Plan::getPlansData($order->plan_id);
+
+        return view('panel.orders.local.index.modals.change-plan', [
+            'order' => $order,
+            'cycles' => $data['cycles'],
+            'plansByCycle' => $data['plansByCycle'],
+            'activeCycle' => $data['activeCycle']
+        ]);
+    }
+
+    /*public function changePlanStore($orderId, $planId)
+    {
+        // todo: preciso criar a rota para troca de plano
+        // todo: antes de realizar a cobrança eu preciso verificar se tem um plano em aberto,
+        // todo se tiver atualizo o valor da cobrança,
+        // todo: senão criou uma nova
+        dd($orderId, $planId);
+    }*/
+
     public function canceling(): JsonResponse
     {
         $order = $this->model->find($this->request->id);
 
         if ($order) {
-
             $adapter = app(AsaasConnector::class);
 
             $gateway = new Gateway($adapter);
@@ -321,7 +342,9 @@ class OrderController extends Controller
             $response = $gateway->subscription()->delete($order->subscription_asaas_id);
 
             if (!$response['deleted']) {
-                Log::error("Erro ao cancelar assinatura - linha 306 - OrderController {$order->customer->name} - {$order->id}");
+                Log::error(
+                    "Erro ao cancelar assinatura - linha 306 - OrderController {$order->customer->name} - {$order->id}"
+                );
 
                 return response()->json([
                     'status' => '400',
