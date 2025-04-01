@@ -2,6 +2,7 @@
 
 namespace App\Services\PaymentGateway\Connectors\Asaas;
 
+use App\Jobs\updateSubscriptionAfterProportionalPayJob;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Services\YouCast\Plan\PlanCancel;
@@ -29,6 +30,9 @@ class AsaasPaymentService
 
         switch ($event) {
             case 'PAYMENT_RECEIVED':
+                if ($order->changed_plan) {
+                    updateSubscriptionAfterProportionalPayJob::dispatch($order);
+                }
                 $order->update([
                     'payment_asaas_id' => $paymentId,
                     'payment_status' => $paymentStatus,
@@ -58,6 +62,9 @@ class AsaasPaymentService
                 break;
 
             case 'PAYMENT_CONFIRMED':
+                if ($order->changed_plan) {
+                    updateSubscriptionAfterProportionalPayJob::dispatch($order);
+                }
                 $order->update([
                     'status' => 'ACTIVE',
                     'payment_asaas_id' => $paymentId,
