@@ -311,9 +311,10 @@ class OrderController extends Controller
     public function changePlan($id): View
     {
         $order = $this->model->find($this->request->id);
-        $data = Plan::getPlansData($order->plan_id);
+        $data = Plan::getPlansData();
 
         return view('panel.orders.local.index.modals.change-plan', [
+            'actualPlan' => $order->plan_id,
             'order' => $order,
             'cycles' => $data['cycles'],
             'plansByCycle' => $data['plansByCycle'],
@@ -323,11 +324,11 @@ class OrderController extends Controller
 
     public function changePlanStore(Request $request)
     {
+        dd('precisa terminar de implementar');
         $validator = Validator::make($request->all(), [
             'planId' => 'required',
             'orderId' => 'required',
         ]);
-
         $planId = $validator->validated()['planId'];
 
         //verifico se por acaso não é o plano atual e bloqueio a troca
@@ -340,12 +341,50 @@ class OrderController extends Controller
         $order = $this->model->find($validator->validated()['orderId']);
 
         //verifico se tem plano vencido e não pago e bloqueio a troca
-        if ($order->next_due_date < now() && $order->payment_status !== PaymentStatusOrderAsaasEnum::RECEIVED->getName()) {
+        if ($order->next_due_date < now()
+            && $order->payment_status === PaymentStatusOrderAsaasEnum::RECEIVED->getName()
+            || $order->payment_status === PaymentStatusOrderAsaasEnum::CONFIRMED->getName()) {
             toastr('Seu plano está vencido. Realize o pagamento antes de continuar!', 'warning');
             return redirect()->back();
         }
-dd($plan);;
+
+        /*
+         * UPGRADE
+         * Antes de trocar de plano eu preciso ver:
+         *- valor do plano atual OK
+         *- quantos dias o cliente já usou o plano OK
+         *- descontar o saldo que o cliente tem da primeira cobrança do novo plano OK
+         *- o cliente precisa pagar o upgrade no ato da troca OK
+         * - se o cliente não pagar o upgrade eu preciso voltar ele para o plano anterior
+         *          - preciso guardar os dados da assinatura atual para poder voltar
+         *          - preciso rodar um job que verifica se foi paga
+         *              Rodar o job depois de quanto tempo?
+         *              se não foi pago preciso restaurar
+         *              se foi pago posso remover o registro?
+         *
+         * - em todo o processo de upgrade ou downgrade eu preciso atualizar os planos do cliente no youcast
+         *
+         * DOWNGRADE
+         * - se for downgrade eu só gero um nova cobrança com a data de vencimento do fim do período que o plano atual tem
+         * */
+
+
         if ($order) {
+            $actualPlanValue = $order->value;
+
+            // pegar a data atual
+            // e diminuir da data da próxima cobrança.
+            $daysRemaining = now()->diffInDays($order->next_due_date);
+
+            if ($daysRemaining > 0) {
+                // calculo o crédito do cliente
+                //todo: preciso cobrar proporcional ao pago, mas tenho que considerar o plano
+                // todo: se ele é mensal, anual ...
+                $credit = $actualPlanValue / $daysRemaining;
+                $invoiceValue = $plan->value - $credit;
+                //diminuo do valor da cobrança
+            }
+
             $adapter = app(AsaasConnector::class);
             $gateway = new Gateway($adapter);
 
@@ -355,38 +394,51 @@ dd($plan);;
             if ($payment['status'] === 'PENDING' && $payment['dueDate'] > Carbon::now()) {
                 // removo a cobrança
                 $paymentDeleted = $gateway->payment()->delete($order->payment_asaas_id);
-ds($paymentDeleted);
+                ds($paymentDeleted['deleted']);
                 if ($paymentDeleted['deleted']) {
-                    //atualizo a assinatura e gero uma nova cobrança
-                   $this->updateSubscription($order, $plan, $gateway);
+                    logger("pagamento removido no asaas para atualização de plano. Pedido: $order->id");
                 }
+                logger("Erro ao tentar remover pagamento no asaas para atualização de plano. Pedido: $order->id");
             }
 
             // se tem cobrança e está vencida só atualizo o plano e gero novas cobranças
-           $this->updateSubscription($order, $plan, $gateway);
+            $this->updateSubscription($order, $invoiceValue, $plan, $gateway);
+
+            return redirect()->route('panel.orders.index');
         }
+        Log::warning('erro ao processar solicitação de troca de plano.');
+        toastr('Tivemos um erro ao processar sua solicitação. Tente novamente mais tarde.', 'warning');
+        return redirect()->back();
     }
 
-    protected function updateSubscription($order, $plan, $gateway)
+    protected function updateSubscription($order, $invoiceValue, $plan, $gateway)
     {
         $data = [
             'id' => $order->subscription_asaas_id,
             'billingType' => $plan->billing_type,
-            'value' => $plan->value,
-            'nextDueDate' => now()->addDays($plan->free_for_days)->format('Y-m-d'),
-            'description' => "Assinatura com $plan->free_for_days dias grátis",
+            'value' => $invoiceValue,
+            'nextDueDate' => now()->format('Y-m-d'),
+            'description' => "Troca de plano para o plano: $plan->name",
             'externalReference' => 'Pedido: ' . $order->id,
         ];
 
 
         $response = $gateway->subscription()->update($order->subscription_asaas_id, $data);
+        ds($response);
         if ($response['object'] === 'subscription') {
+            //todo: se atualizou a assinatura preciso alterar agora na youcast
+
+            //depois de alterar os dados da assinatura no asaas eu preciso guardar o valor do plano escolhido
+            // para conseguir cobrar corretamente a próxima fatura
+            $order->update([
+                'changed_plan' => true,
+                'original_plan_value' => $plan->value
+            ]);
             toastr('Assinatura atualizada com sucesso!', 'success');
-            return redirect()->route('panel.orders.index');
+            return;
         }
 
         toastr('Erro ao atualizar assinatura!', 'error');
-        return redirect()->route('panel.orders.index');
     }
 
     public function canceling(): JsonResponse
