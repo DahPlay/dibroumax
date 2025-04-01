@@ -6,18 +6,22 @@ use App\Enums\BillingTypeAsaasEnum;
 use App\Enums\CycleAsaasEnum;
 use App\Enums\PaymentStatusOrderAsaasEnum;
 use App\Enums\StatusOrderAsaasEnum;
+use App\Observers\OrderObserver;
 use App\Traits\BelongsUserScope;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[ObservedBy(OrderObserver::class)]
 class Order extends Model
 {
-    use HasFactory, BelongsUserScope;
+    use BelongsUserScope;
 
     protected $casts = [
         'next_due_date' => 'datetime',
+        'changed_plan' => 'boolean',
     ];
 
     protected $fillable = [
@@ -64,6 +68,11 @@ class Order extends Model
         return Attribute::make(
             get: fn($value) => BillingTypeAsaasEnum::from($value)->getName()
         );
+    }
+
+    public function orderHistories(): HasMany
+    {
+        return $this->hasMany(OrderHistory::class);
     }
 
     public function customer(): BelongsTo
