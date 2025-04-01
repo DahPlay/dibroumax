@@ -26,7 +26,7 @@
                     @endforeach
                 </ul>
 
-                <div class="tab-content" id="myTabContent">
+                <div class="tab-content mt-5" id="myTabContent">
                     @foreach($cycles as $cycleKey => $cycleName)
                         <div class="tab-pane fade {{ $cycleKey === $activeCycle ? 'show active' : '' }}"
                              id="{{$cycleKey}}"
@@ -37,23 +37,34 @@
                                 <div class="row g-4 justify-content-center">
                                     @foreach($plansByCycle[$cycleKey] as $plan)
                                         <div
-                                            class="relative col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center align-content-center ml-4 p-4 border rounded bg-light">
+                                                class="relative col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center align-content-center ml-4 p-4 border rounded bg-light">
                                             <div
-                                                class="m-2 w-100">
+                                                    class="m-2 w-100">
                                                 <div
-                                                    class="plan d-flex flex-column align-items-center h-100 {{ $plan->is_best_seller ? 'best-seller' : '' }}">
-                                                    @if ($plan->is_best_seller)
-                                                        <div class="box-best-seller position-absolute">
+                                                        class="plan d-flex flex-column align-items-center h-100 {{ $plan->is_best_seller ? 'best-seller' : '' }}">
+                                                    @if ($plan->is_best_seller || $plan->id === $actualPlan)
+                                                        <div class="position-absolute"
+                                                        style="
+                                                        background-color: #98A634;
+                                                        padding: 8px 24px;
+                                                        color: var(--cor-titulo);
+                                                        font-weight: 600;
+                                                        border-radius: 6px;
+                                                        top: -23px;">
+                                                            @if($plan->id === $actualPlan)
+                                                                <span>Seu plano atual</span>
+                                                            @else
                                                             <span>Mais vendido</span>
+                                                            @endif
                                                         </div>
                                                     @endif
 
                                                     <div
-                                                        class="d-flex flex-column align-items-center">
+                                                            class="d-flex flex-column align-items-center">
                                                         <span class="badge text-xl">{{ $plan->name }}</span>
                                                         <span class="badge text-lg">R$
                                                     <span
-                                                        class="value">{{ number_format($plan->value, 2, ',', '.') }}</span>
+                                                            class="value">{{ number_format($plan->value, 2, ',', '.') }}</span>
                                                 </span>
                                                         <span class="badge fs-2">
                                                     {{ $plan->free_for_days > 0 ? $plan->description : 'Renovação Automática' }}
@@ -63,12 +74,12 @@
                                                     <div class="mb-3 d-flex flex-column align-items-center w-100">
                                                         @foreach ($plan->benefits as $benefit)
                                                             <div
-                                                                class="mb-2 d-flex justify-content-start w-100">
+                                                                    class="mb-2 d-flex justify-content-start w-100">
                                                                 <img
-                                                                    src="{{ asset('Auth-Panel/dist/img/plans-icon.svg') }}"
-                                                                    alt="">
+                                                                        src="{{ asset('Auth-Panel/dist/img/plans-icon.svg') }}"
+                                                                        alt="">
                                                                 <span
-                                                                    class="text-dark">{{ $benefit->description }}</span>
+                                                                        class="text-dark">{{ $benefit->description }}</span>
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -81,14 +92,15 @@
 
                                                         <input type="hidden" name="planId" value="{{ $plan->id }}">
                                                         <input type="hidden" name="orderId" value="{{ $order->id }}">
-
-                                                        <div class="modal-footer justify-content-between">
-                                                            <button type="submit"
-                                                                    class="btn"
-                                                                    style="border: none; background-color: #5A701E; color: white; font-weight: 600; padding: 8px 48px; border-radius: 8px;">
-                                                                Começar agora
-                                                            </button>
-                                                        </div>
+                                                        @if($plan->id !== $actualPlan)
+                                                            <div class="modal-footer justify-content-between">
+                                                                <button type="submit"
+                                                                        class="btn"
+                                                                        style="border: none; background-color: #5A701E; color: white; font-weight: 600; padding: 8px 48px; border-radius: 8px;">
+                                                                    Começar agora
+                                                                </button>
+                                                            </div>
+                                                        @endif
                                                     </form>
 
 
