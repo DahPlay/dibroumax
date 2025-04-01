@@ -328,34 +328,42 @@ class OrderController extends Controller
             'orderId' => 'required',
         ]);
 
-        // todo se tiver atualizo o valor da cobrança,
-        // todo: senão criou uma nova
-        $plan = Plan::find($validator->validated()['planId']);
+        $planId = $validator->validated()['planId'];
+
+        //verifico se por acaso não é o plano atual e bloqueio a troca
+        if (auth()->user()->hasPlan($planId)) {
+            toastr('Este é o seu plano atual, escolha outro plano.', 'warning');
+            return redirect()->back();
+        }
+
+        $plan = Plan::find($planId);
         $order = $this->model->find($validator->validated()['orderId']);
 
+        //verifico se tem plano vencido e não pago e bloqueio a troca
+        if ($order->next_due_date < now() && $order->payment_status !== PaymentStatusOrderAsaasEnum::RECEIVED->getName()) {
+            toastr('Seu plano está vencido. Realize o pagamento antes de continuar!', 'warning');
+            return redirect()->back();
+        }
+dd($plan);;
         if ($order) {
             $adapter = app(AsaasConnector::class);
-
             $gateway = new Gateway($adapter);
 
-            // todo: antes de realizar a cobrança eu preciso verificar se tem uma cobrança em aberto,
-            //verificar a data de vencimento
             $payment = $gateway->payment()->get($order->payment_asaas_id);
 
-// todo> isso aqui deveria estar funcionando, mas está duplicando a fatura e não remove a cobrança não vencida
-            // se tem cobrança e ainda não está vencida
+            // se tem cobrança e ainda não está vencida eu removo a cobrança no Asaas
             if ($payment['status'] === 'PENDING' && $payment['dueDate'] > Carbon::now()) {
                 // removo a cobrança
                 $paymentDeleted = $gateway->payment()->delete($order->payment_asaas_id);
-
+ds($paymentDeleted);
                 if ($paymentDeleted['deleted']) {
                     //atualizo a assinatura e gero uma nova cobrança
-                   return $this->updateSubscription($order, $plan, $gateway);
+                   $this->updateSubscription($order, $plan, $gateway);
                 }
             }
 
             // se tem cobrança e está vencida só atualizo o plano e gero novas cobranças
-            return $this->updateSubscription($order, $plan, $gateway);
+           $this->updateSubscription($order, $plan, $gateway);
         }
     }
 
@@ -373,19 +381,12 @@ class OrderController extends Controller
 
         $response = $gateway->subscription()->update($order->subscription_asaas_id, $data);
         if ($response['object'] === 'subscription') {
-        return redirect()->route('panel.orders.index');
-            /*  return response()->json([
-                  'status' => '200',
-                  'message' => 'Ação executada com sucesso!'
-              ]);*/
+            toastr('Assinatura atualizada com sucesso!', 'success');
+            return redirect()->route('panel.orders.index');
         }
 
-        /*return response()->json([
-            'status' => '400',
-            'errors' => [
-                'message' => ['Erro executar a ação, tente novamente!']
-            ],
-        ]);*/
+        toastr('Erro ao atualizar assinatura!', 'error');
+        return redirect()->route('panel.orders.index');
     }
 
     public function canceling(): JsonResponse
