@@ -96,7 +96,7 @@
                     </li>
                 @endcan
 
-                @can('admin')
+                @can('developer')
                     <li class="nav-item has-treeview {{ request()->is('packages') ? 'menu-open' : '' }}">
                         <a href="{{ route('panel.packages.index') }}"
                            class="nav-link {{ request()->is('packages') ? 'active' : '' }}">
