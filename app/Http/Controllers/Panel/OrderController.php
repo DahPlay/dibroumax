@@ -354,11 +354,10 @@ class OrderController extends Controller
          *- descontar o saldo que o cliente tem da primeira cobrança do novo plano OK
          *- o cliente precisa pagar o upgrade no ato da troca OK
          * - se o cliente não pagar o upgrade eu preciso voltar ele para o plano anterior
-         *          - preciso guardar os dados da assinatura atual para poder voltar
-         *          - preciso rodar um job que verifica se foi paga
-         *              Rodar o job depois de quanto tempo?
-         *              se não foi pago preciso restaurar
-         *              se foi pago posso remover o registro?
+         *          - preciso guardar os dados da assinatura atual para poder voltar OK
+         *          - preciso rodar um job que verifica se foi paga OK
+         *              Rodar o job ao vencer a fatura OK
+         *              se não foi pago preciso restaurar OK
          *
          * - em todo o processo de upgrade ou downgrade eu preciso atualizar os planos do cliente no youcast
          *
