@@ -13,9 +13,9 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PackagesController extends Controller
 {
-    public function __construct (public Package $packages, public Request $request)
+    public function __construct (public Package $model, public Request $request)
     {
-        $this->middleware('can:admin');
+        $this->middleware('can:developer');
     }
 
     public function index (): View
@@ -25,7 +25,7 @@ class PackagesController extends Controller
 
     public function loadDatatable (): JsonResponse
     {
-        $packages = $this->packages
+        $packages = $this->model
             ->get();
 
         return DataTables::of($packages)
@@ -66,9 +66,9 @@ class PackagesController extends Controller
 
         $data['is_active'] = $isActive;
 
-        $package = Package::create($data);
+        $model = Package::create($data);
 
-        if ($package) {
+        if ($model) {
             toastr('Salvo!');
             return redirect()->route('panel.packages.index');
         }
@@ -76,22 +76,31 @@ class PackagesController extends Controller
         return redirect()->route('panel.packages.index');
     }
 
-    /* public function edit($id): View
+    public function delete ($id): View
+    {
+        $package = $this->model->find($id);
+
+        return view('panel.packages.local.index.modals.delete', compact("package"));
+    }
+
+    public function destroy($id): RedirectResponse
+    {
+        $this->model->find($id)->delete();
+        toastr('Apagado!');
+        return redirect()->route('panel.packages.index');
+    }
+
+    public function edit($id): View
     {
         $plan = $this->model->find($id);
 
         return view('panel.plans.local.index.modals.edit', compact("Package"));
     }
 
-    public function duplicate(): View
-    {
-        $plan = $this->model->find($this->request->id);
-
-        return view('panel.plans.local.index.modals.duplicate', compact('Package'));
-    }
 
     public function update($id): JsonResponse
     {
+        dd('update');;
         $plan = $this->model->find($id);
 
         if ($plan) {
@@ -160,45 +169,13 @@ class PackagesController extends Controller
         }
     }
 
-    public function delete($id): View
-    {
-        $plan = $this->model->find($this->request->id);
 
-        return view('panel.plans.local.index.modals.delete', compact("Package"));
-    }
 
-    public function destroy(): JsonResponse
-    {
-        $plan = $this->model->find($this->request->id);
 
-        if ($plan) {
-            $delete = $plan->delete();
-
-            if ($delete) {
-                return response()->json([
-                    'status' => '200',
-                    'message' => 'Ação executada com sucesso!'
-                ]);
-            } else {
-                return response()->json([
-                    'status' => '400',
-                    'errors' => [
-                        'message' => ['Erro executar a ação, tente novamente!']
-                    ],
-                ]);
-            }
-        } else {
-            return response()->json([
-                'status' => '400',
-                'errors' => [
-                    'message' => ['Os dados não foram encontrados!']
-                ],
-            ]);
-        }
-    }
 
     public function deleteAll(): View
     {
+        dd('destroyallRender');
         $itens = $this->request->checkeds;
 
         session()->put('ids', $itens);
@@ -208,6 +185,7 @@ class PackagesController extends Controller
 
     public function destroyAll(): JsonResponse
     {
+        dd('destroyall');
         foreach (session()->get('ids') as $item) {
             $item = $this->model->find($item["id"]);
 
@@ -236,5 +214,5 @@ class PackagesController extends Controller
             'status' => '200',
             'message' => 'Ação executada com sucesso!'
         ]);
-    }*/
+    }
 }

@@ -9,17 +9,12 @@
             <span class="ml-2">Editar</span>
         </a>
 
-        {{-- <a href='javascript:;' class='btn-delete btn btn-danger dropdown-item' data-id='{{ $package->id }}'
+         <a href='javascript:;' class='btn-delete btn btn-danger dropdown-item' data-id='{{ $package->id }}'
             data-url='/{{ $routeCrud }}/delete'>
             <i class='fa fa-trash'></i>
             <span class="ml-2">Excluir</span>
-        </a> --}}
-
-        <a href='#' class='btn-edit btn btn-info dropdown-item' data-id='{{ $package->id }}'
-            data-url='/{{ $routeCrud }}/duplicate'>
-            <i class="fa fa-file-export"></i>
-            <span class="ml-2">Duplicar</span>
         </a>
+
 
         <div class="dropdown-divider"></div>
     </div>
