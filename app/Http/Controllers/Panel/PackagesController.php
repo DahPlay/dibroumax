@@ -116,7 +116,6 @@ class PackagesController extends Controller
 
     public function deleteAll(): View
     {
-        dd('destroyallRender');
         $itens = $this->request->checkeds;
 
         session()->put('ids', $itens);
