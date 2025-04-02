@@ -23,18 +23,18 @@ class OrderController extends Controller
     protected $model;
     protected $request;
 
-    public function __construct(Order $order, Request $request)
+    public function __construct (Order $order, Request $request)
     {
         $this->model = $order;
         $this->request = $request;
     }
 
-    public function index(): View
+    public function index (): View
     {
         return view($this->request->route()->getName());
     }
 
-    public function loadDatatable(): JsonResponse
+    public function loadDatatable (): JsonResponse
     {
         $orders = $this->model
             ->with(['customer:id,name', 'plan:id,name'])
@@ -112,14 +112,14 @@ class OrderController extends Controller
             ->toJson();
     }
 
-    public function create(): View
+    public function create (): View
     {
         $order = $this->model;
 
         return view('panel.orders.local.index.modals.create', compact('order'));
     }
 
-    public function store(): JsonResponse
+    public function store (): JsonResponse
     {
         $data = $this->request->only([
             'name',
@@ -157,14 +157,14 @@ class OrderController extends Controller
         }
     }
 
-    public function edit($id): View
+    public function edit ($id): View
     {
         $order = $this->model->find($id);
 
         return view('panel.orders.local.index.modals.edit', compact("order"));
     }
 
-    public function update($id): JsonResponse
+    public function update ($id): JsonResponse
     {
         $order = $this->model->find($id);
 
@@ -209,14 +209,14 @@ class OrderController extends Controller
         }
     }
 
-    public function delete($id): View
+    public function delete ($id): View
     {
         $order = $this->model->find($this->request->id);
 
         return view('panel.orders.local.index.modals.delete', compact("order"));
     }
 
-    public function destroy(): JsonResponse
+    public function destroy (): JsonResponse
     {
         $order = $this->model->find($this->request->id);
 
@@ -246,7 +246,7 @@ class OrderController extends Controller
         }
     }
 
-    public function deleteAll(): View
+    public function deleteAll (): View
     {
         $itens = $this->request->checkeds;
 
@@ -255,7 +255,7 @@ class OrderController extends Controller
         return view('panel.orders.local.index.modals.remove-all', compact("itens"));
     }
 
-    public function destroyAll(): JsonResponse
+    public function destroyAll (): JsonResponse
     {
         foreach (session()->get('ids') as $item) {
             $item = $this->model->find($item["id"]);
@@ -287,28 +287,28 @@ class OrderController extends Controller
         ]);
     }
 
-    public function show($id): View
+    public function show ($id): View
     {
         $order = $this->model->find($id);
 
         return view('panel.orders.local.index.modals.show', compact("order"));
     }
 
-    public function duplicate(): View
+    public function duplicate (): View
     {
         $order = $this->model->find($this->request->id);
 
         return view('panel.orders.local.index.modals.duplicate', compact('order'));
     }
 
-    public function cancel($id): View
+    public function cancel ($id): View
     {
         $order = $this->model->find($this->request->id);
 
         return view('panel.orders.local.index.modals.cancel', compact("order"));
     }
 
-    public function changePlan($id): View
+    public function changePlan ($id): View
     {
         $order = $this->model->find($this->request->id);
         $data = Plan::getPlansData();
@@ -322,16 +322,15 @@ class OrderController extends Controller
         ]);
     }
 
-    public function changePlanStore(Request $request)
+    public function changePlanStore (Request $request)
     {
-        dd('precisa terminar de implementar');
         $validator = Validator::make($request->all(), [
             'planId' => 'required',
             'orderId' => 'required',
         ]);
+
         $planId = $validator->validated()['planId'];
 
-        //verifico se por acaso não é o plano atual e bloqueio a troca
         if (auth()->user()->hasPlan($planId)) {
             toastr('Este é o seu plano atual, escolha outro plano.', 'warning');
             return redirect()->back();
@@ -340,7 +339,6 @@ class OrderController extends Controller
         $plan = Plan::find($planId);
         $order = $this->model->find($validator->validated()['orderId']);
 
-        //verifico se tem plano vencido e não pago e bloqueio a troca
         if ($order->next_due_date < now()
             && $order->payment_status === PaymentStatusOrderAsaasEnum::RECEIVED->getName()
             || $order->payment_status === PaymentStatusOrderAsaasEnum::CONFIRMED->getName()) {
@@ -371,47 +369,57 @@ class OrderController extends Controller
 
         if ($order) {
             $actualPlanValue = $order->value;
+            $billingCycle = $order->cycle;
+            $invoiceValue = $plan->value;
 
-            // pegar a data atual
-            // e diminuir da data da próxima cobrança.
-            $daysRemaining = now()->diffInDays($order->next_due_date);
-
-            if ($daysRemaining > 0) {
-                // calculo o crédito do cliente
-                //todo: preciso cobrar proporcional ao pago, mas tenho que considerar o plano
-                // todo: se ele é mensal, anual ...
-                $credit = $actualPlanValue / $daysRemaining;
-                $invoiceValue = $plan->value - $credit;
-                //diminuo do valor da cobrança
-            }
+            $cycleDays = match ($billingCycle) {
+                'WEEKLY' => 7,
+                'BIWEEKLY' => 14,
+                'MONTHLY' => 30,
+                'BIMONTHLY' => 60,
+                'QUARTERLY' => 90,
+                'SEMIANNUALLY' => 180,
+                'YEARLY' => 365,
+                default => 30,
+            };
 
             $adapter = app(AsaasConnector::class);
             $gateway = new Gateway($adapter);
 
             $payment = $gateway->payment()->get($order->payment_asaas_id);
 
-            // se tem cobrança e ainda não está vencida eu removo a cobrança no Asaas
-            if ($payment['status'] === 'PENDING' && $payment['dueDate'] > Carbon::now()) {
-                // removo a cobrança
-                $paymentDeleted = $gateway->payment()->delete($order->payment_asaas_id);
-                ds($paymentDeleted['deleted']);
-                if ($paymentDeleted['deleted']) {
-                    logger("pagamento removido no asaas para atualização de plano. Pedido: $order->id");
+            // Se tem cobrança pendente e ainda não está vencida
+            if ($payment['status'] === 'PENDING' && $payment['dueDate'] >= Carbon::now()->format('Y-m-d')) {
+
+                // Descobre quantos dias já foram usados no ciclo atual
+                $daysUsed = $cycleDays - now()->diffInDays($order->next_due_date);
+                if ($daysUsed > 0 && $daysUsed < $cycleDays) {
+                    // Calcula o valor proporcional restante do plano atual
+                    $dailyRate = $actualPlanValue / $cycleDays;
+                    $credit = $dailyRate * ($cycleDays - $daysUsed);
+
+                    // Calcula o valor final do novo plano considerando o crédito
+                    $invoiceValue = max(0, $plan->value - $credit);
                 }
-                logger("Erro ao tentar remover pagamento no asaas para atualização de plano. Pedido: $order->id");
+
+                //remove a cobrança no asaas
+                $paymentDeleted = $gateway->payment()->delete($order->payment_asaas_id);
+
+                if ($paymentDeleted['deleted']) {
+                    logger("Pagamento removido no Asaas para atualização de plano. Pedido: $order->id");
+                } else {
+                    logger("Erro ao remover pagamento no Asaas para atualização de plano. Pedido: $order->id");
+                }
             }
 
-            // se tem cobrança e está vencida só atualizo o plano e gero novas cobranças
+            // Atualiza a assinatura no Asaas com o novo valor ajustado
             $this->updateSubscription($order, $invoiceValue, $plan, $gateway);
 
             return redirect()->route('panel.orders.index');
         }
-        Log::warning('erro ao processar solicitação de troca de plano.');
-        toastr('Tivemos um erro ao processar sua solicitação. Tente novamente mais tarde.', 'warning');
-        return redirect()->back();
     }
 
-    protected function updateSubscription($order, $invoiceValue, $plan, $gateway)
+    protected function updateSubscription ($order, $invoiceValue, $plan, $gateway)
     {
         $data = [
             'id' => $order->subscription_asaas_id,
@@ -422,18 +430,16 @@ class OrderController extends Controller
             'externalReference' => 'Pedido: ' . $order->id,
         ];
 
-
         $response = $gateway->subscription()->update($order->subscription_asaas_id, $data);
-        ds($response);
+
         if ($response['object'] === 'subscription') {
             //todo: se atualizou a assinatura preciso alterar agora na youcast
 
-            //depois de alterar os dados da assinatura no asaas eu preciso guardar o valor do plano escolhido
-            // para conseguir cobrar corretamente a próxima fatura
             $order->update([
                 'changed_plan' => true,
                 'original_plan_value' => $plan->value
             ]);
+
             toastr('Assinatura atualizada com sucesso!', 'success');
             return;
         }
@@ -441,7 +447,7 @@ class OrderController extends Controller
         toastr('Erro ao atualizar assinatura!', 'error');
     }
 
-    public function canceling(): JsonResponse
+    public function canceling (): JsonResponse
     {
         $order = $this->model->find($this->request->id);
 
