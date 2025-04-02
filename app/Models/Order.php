@@ -39,7 +39,9 @@ class Order extends Model
         'payment_status',
         'description',
         'payment_date',
+        'changed_plan',
         'deleted_date',
+        'original_plan_value',
     ];
 
     protected function cycle(): Attribute
