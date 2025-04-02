@@ -29,7 +29,7 @@ class updateSubscriptionAfterProportionalPayJob implements ShouldQueue
             'id' => $this->order->subscription_asaas_id,
             'value' => $this->order->original_plan_value,
             'nextDueDate' => now()->addDays($nextDueDate),
-            'description' => "Assinatura com 0 dias grátis",
+            'description' => "Assinatura do plano  {$this->order->plan->name}",
             'externalReference' => 'Pedido: ' . $this->order->id,
         ];
 
@@ -50,9 +50,10 @@ class updateSubscriptionAfterProportionalPayJob implements ShouldQueue
             'BIWEEKLY' => 14,
             'MONTHLY' => 30,
             'BIMONTHLY' => 60,
-            'QUARTERLY' => 120,
-            'SEMIANNUALLY' => 182,
+            'QUARTERLY' => 90,
+            'SEMIANNUALLY' => 180,
             'YEARLY' => 365,
+            default => 30,
         };
     }
 }
