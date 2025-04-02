@@ -2,6 +2,7 @@
 
 namespace App\Services\PaymentGateway\Connectors\Asaas;
 
+use App\Jobs\BackOrderOldPlanJob;
 use App\Jobs\updateSubscriptionAfterProportionalPayJob;
 use App\Models\Customer;
 use App\Models\Order;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class AsaasPaymentService
 {
-    public function processEvent(string $event, array $data): bool
+    public function processEvent (string $event, array $data): bool
     {
         $paymentId = $data['payment']['id'];
         $customerId = $data['payment']['customer'];
@@ -85,6 +86,9 @@ class AsaasPaymentService
                 break;
 
             case 'PAYMENT_OVERDUE':
+                if ($order->changed_plan) {
+                    BackOrderOldPlanJob::dispatch($order);
+                }
                 $order->update(
                     ['status' => 'INACTIVE'],
                     ['payment_status' => $paymentStatus]
