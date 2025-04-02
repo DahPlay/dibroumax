@@ -3,25 +3,27 @@
 namespace App\Http\Controllers\Panel;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PackageRequest;
 use App\Models\Package;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Yajra\DataTables\Facades\DataTables;
 
 class PackagesController extends Controller
 {
-    public function __construct(public Package $packages, public Request $request)
+    public function __construct (public Package $packages, public Request $request)
     {
         $this->middleware('can:admin');
     }
 
-    public function index(): View
+    public function index (): View
     {
         return view($this->request->route()->getName());
     }
 
-    public function loadDatatable(): JsonResponse
+    public function loadDatatable (): JsonResponse
     {
         $packages = $this->packages
             ->get();
@@ -36,9 +38,6 @@ class PackagesController extends Controller
             ->editColumn('created_at', function ($package) {
                 return $package->created_at ? date('d/m/Y H:i:s', strtotime($package->created_at)) : 'Sem data';
             })
-            ->filterColumn('created_at', function ($query, $value) {
-                $query->whereRaw("DATE_FORMAT(created_at,'%d/%m/%Y %H:%i:%s') like ?", ["%$value%"]);
-            })
             ->editColumn('is_active', function ($item) {
                 return view('panel.packages.local.index.datatable.is_active', compact('item'));
             })
@@ -50,71 +49,34 @@ class PackagesController extends Controller
             ->toJson();
     }
 
-   public function create(): View
+    public function create (): View
     {
-        $package = $this->packages;
-
+        $package = new Package();
         return view('panel.packages.local.index.modals.create', compact('package'));
     }
 
-    /* public function store(): JsonResponse
+    public function store (PackageRequest $request): RedirectResponse
     {
-        $data = $this->request->only([
-            'name',
-            'value',
-            'description',
-            'cycle',
-            'is_active',
-            'is_best_seller',
-            'billing_type',
-            'free_for_days',
-        ]);
+        $isActive = match ($request->is_active) {
+            'on' => true,
+            0 => false,
+        };
 
-        $validator = Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'value' => ['required', 'string', 'min:0'],
-            'description' => ['nullable', 'string'],
-            'name' => ['required', 'string'],
-            'is_active' => ['nullable', 'string'],
-            'is_best_seller' => ['nullable', 'string'],
-            'billing_type' => ['string'],
-            'free_for_days' => ['integer'],
-        ]);
+        $data = $request->validated();
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 400,
-                'errors' => $validator->errors(),
-            ]);
+        $data['is_active'] = $isActive;
+
+        $package = Package::create($data);
+
+        if ($package) {
+            toastr('Salvo!');
+            return redirect()->route('panel.packages.index');
         }
-
-        $data['is_active'] = isset($data['is_active']) ? 1 : 0;
-        $data['is_best_seller'] = isset($data['is_best_seller']) ? 1 : 0;
-
-        $plan = $this->model->create($data);
-
-        if ($this->request->filled('benefits')) {
-            foreach ($this->request->benefits as $benefit) {
-                $plan->benefits()->create(['description' => $benefit]);
-            }
-        }
-
-        if ($plan) {
-            return response()->json([
-                'status' => '200',
-                'message' => 'Ação executada com sucesso!'
-            ]);
-        } else {
-            return response()->json([
-                'status' => '400',
-                'errors' => [
-                    'message' => ['Erro executar a ação, tente novamente!']
-                ]
-            ]);
-        }
+        toastr('Tente novamente ou entre em contato com o administrador do sistema!');
+        return redirect()->route('panel.packages.index');
     }
 
-    public function edit($id): View
+    /* public function edit($id): View
     {
         $plan = $this->model->find($id);
 

@@ -285,11 +285,6 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::delete('/packages/destroyAll', [PackagesController::class, 'destroyAll'])
             ->name('destroyAll');
 
-        Route::post('/packages/removeImage', [PackagesController::class, 'removeImage'])
-            ->name('removeImage');
-
-        Route::get('/packages/duplicate/{id}', [PackagesController::class, 'duplicate'])
-            ->name('duplicate');
 
         // Modais
         Route::get('/packages/create', [PackagesController::class, 'create'])

@@ -1,0 +1,1 @@
+<span>{{$package->id}}</span>
