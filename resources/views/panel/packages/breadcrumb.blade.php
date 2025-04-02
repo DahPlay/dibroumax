@@ -8,10 +8,10 @@
                         <i class="fa fa-plus"></i>
                     </a>
                     -
-                    <a href="#" id="btn-remover" data-token={{ csrf_token() }}
+                   {{-- <a href="#" id="btn-remover" data-token={{ csrf_token() }}
                         data-url="/{{ $routeCrud }}/deleteAll" class="btn btn-danger">
-                        <i class="fa fa-trash-restore-alt"></i> {{--todo: falta implementar isso--}}
-                    </a>
+                        <i class="fa fa-trash-restore-alt"></i>
+                    </a>--}}
                 </h1>
             </div>
 

@@ -14,7 +14,7 @@
                                     <thead>
                                         <tr>
                                             <th style="width: 1%"></th>
-                                            <th><input type="checkbox" id="btn-marcar-todos"></th>
+{{--                                            <th><input type="checkbox" id="btn-marcar-todos"></th>--}}
                                             <th>#</th>
                                             <th>Vendor</th>
                                             <th>Nome</th>

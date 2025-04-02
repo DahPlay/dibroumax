@@ -40,9 +40,9 @@ Auth::routes(['register' => false]);
 Route::get('/register/{planId?}', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
 
-Route::get('/teste', function () {
+/*Route::get('/teste', function () {
     return storage_path();
-});
+});*/
 
 Route::name('site.')->group(function () {
     Route::name('main.')->group(function () {
@@ -275,15 +275,14 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::post('/packages/store', [PackagesController::class, 'store'])
             ->name('store');
 
-        // Post por causa do envio da imagem via ajax
         Route::put('/packages/update/{id}', [PackagesController::class, 'update'])
             ->name('update');
 
         Route::delete('/packages/destroy/{id}', [PackagesController::class, 'destroy'])
             ->name('destroy');
 
-        Route::delete('/packages/destroyAll', [PackagesController::class, 'destroyAll'])
-            ->name('destroyAll');
+      /*  Route::delete('/packages/destroyAll', [PackagesController::class, 'destroyAll'])
+            ->name('destroyAll');*/
 
 
         // Modais
@@ -296,8 +295,8 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::get('/packages/edit/{id}', [PackagesController::class, 'edit'])
             ->name('edit');
 
-        Route::post('/packages/deleteAll', [PackagesController::class, 'deleteAll'])
-            ->name('deleteAll');
+       /* Route::post('/packages/deleteAll', [PackagesController::class, 'deleteAll'])
+            ->name('deleteAll');*/
     });
 
     Route::name('orders.')->group(function () {

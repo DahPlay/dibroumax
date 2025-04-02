@@ -70,12 +70,12 @@
                     searchable: false,
                     className: 'align-middle',
                 },
-                {
+                /*{
                     data: 'checkbox',
                     orderable: false,
                     searchable: false,
                     className: 'align-middle'
-                },
+                },*/
                 {
                     data: 'id',
                     orderable: true,

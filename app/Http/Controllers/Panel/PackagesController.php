@@ -114,13 +114,14 @@ class PackagesController extends Controller
 
 
 
-    public function deleteAll(): View
+    /*public function deleteAll(): View
     {
+        ds($this->request->all());
         $itens = $this->request->checkeds;
 
         session()->put('ids', $itens);
 
-        return view('panel.plans.local.index.modals.remove-all', compact("itens"));
+        return view('panel.packages.local.index.modals.remove-all', compact("itens"));
     }
 
     public function destroyAll(): JsonResponse
@@ -154,5 +155,5 @@ class PackagesController extends Controller
             'status' => '200',
             'message' => 'Ação executada com sucesso!'
         ]);
-    }
+    }*/
 }
