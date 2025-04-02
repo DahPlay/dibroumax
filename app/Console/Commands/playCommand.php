@@ -2,8 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\BackOrderOldPlanJob;
-use App\Models\Order;
 use Illuminate\Console\Command;
 
 class playCommand extends Command
@@ -14,7 +12,7 @@ class playCommand extends Command
 
     public function handle (): void
     {
-        $order = Order::find(10);
-        BackOrderOldPlanJob::dispatch($order);
+//        $order = Order::find(10);
+//        BackOrderOldPlanJob::dispatch($order);
     }
 }
