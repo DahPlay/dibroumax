@@ -4,6 +4,7 @@ use App\Http\Controllers\Panel\AccessController;
 use App\Http\Controllers\Panel\CustomerController;
 use App\Http\Controllers\Panel\MainController as PanelMain;
 use App\Http\Controllers\Panel\OrderController;
+use App\Http\Controllers\Panel\PackagesController;
 use App\Http\Controllers\Panel\PlanController;
 use App\Http\Controllers\Panel\UserController;
 use App\Http\Controllers\Site\MainController as SiteMain;
@@ -258,6 +259,49 @@ Route::middleware('auth')->name('panel.')->group(function () {
             ->name('edit');
 
         Route::post('/plans/deleteAll', [PlanController::class, 'deleteAll'])
+            ->name('deleteAll');
+    });
+
+    Route::name('packages.')->group(function () {
+        Route::get('/packages', [PackagesController::class, 'index'])
+            ->name('index')
+            ->setWheres([
+                'titleBreadCrumb'   => 'Lista de Pacotes',
+                'title'   => 'Lista de Pacotes',
+            ]);
+
+        Route::get('/packages/loadDatatable', [PackagesController::class, 'loadDatatable'])->name('loadDatatable');
+
+        Route::post('/packages/store', [PackagesController::class, 'store'])
+            ->name('store');
+
+        // Post por causa do envio da imagem via ajax
+        Route::put('/packages/update/{id}', [PackagesController::class, 'update'])
+            ->name('update');
+
+        Route::delete('/packages/destroy/{id}', [PackagesController::class, 'destroy'])
+            ->name('destroy');
+
+        Route::delete('/packages/destroyAll', [PackagesController::class, 'destroyAll'])
+            ->name('destroyAll');
+
+        Route::post('/packages/removeImage', [PackagesController::class, 'removeImage'])
+            ->name('removeImage');
+
+        Route::get('/packages/duplicate/{id}', [PackagesController::class, 'duplicate'])
+            ->name('duplicate');
+
+        // Modais
+        Route::get('/packages/create', [PackagesController::class, 'create'])
+            ->name('create');
+
+        Route::get('/packages/delete/{id}', [PackagesController::class, 'delete'])
+            ->name('delete');
+
+        Route::get('/packages/edit/{id}', [PackagesController::class, 'edit'])
+            ->name('edit');
+
+        Route::post('/packages/deleteAll', [PackagesController::class, 'deleteAll'])
             ->name('deleteAll');
     });
 
