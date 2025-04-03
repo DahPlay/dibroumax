@@ -6,6 +6,7 @@ namespace App\Observers;
 
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\Package;
 use App\Models\Plan;
 use App\Models\User;
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
@@ -28,7 +29,7 @@ class CustomerObserver
             $this->createCustomerInAsaas($customer);
             $this->createCustomerInYouCast($customer);
 
-            $plan_id = (int) request()->input('plan_id');
+            $plan_id = (int)request()->input('plan_id');
 
             $order = $this->createOrder($customer, $plan_id);
 
@@ -36,7 +37,9 @@ class CustomerObserver
         }
     }
 
-    public function deleted(Customer $customer) {}
+    public function deleted(Customer $customer)
+    {
+    }
 
     private function createUser(Customer $customer): void
     {
@@ -152,10 +155,18 @@ class CustomerObserver
             'next_due_date' => now()->addDays($plan->free_for_days)->format('Y-m-d'),
         ]);
 
-        if ($order->plan->free_for_days > 0) {
-            (new PlanCreate())->handle($customer->viewers_id, 861);
-        }
+        /* if ($order->plan->free_for_days > 0) {
+             (new PlanCreate())->handle($customer->viewers_id, 861);
+         }*/
 
+        $packs = $order->plan->packagePlans;
+
+        if ($packs->count() > 0) {
+            foreach ($packs as $pack) {
+                $package = Package::query()->firstWhere('id', $pack->package_id);
+                (new PlanCreate())->handle($customer->viewers_id, $package->cod);
+            }
+        }
         return $order;
     }
 

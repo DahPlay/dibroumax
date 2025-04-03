@@ -19,6 +19,12 @@ use Illuminate\Support\Facades\Validator;
 class RegisterController extends Controller
 {
     use RegistersUsers;
+    protected $redirectTo = RouteServiceProvider::HOME;
+
+    public function __construct()
+    {
+        $this->middleware('guest');
+    }
 
     public function showRegistrationForm(int $planId = null)
     {
@@ -36,13 +42,6 @@ class RegisterController extends Controller
             'plansByCycle' => $data['plansByCycle'],
             'activeCycle' => $data['activeCycle']
         ]);
-    }
-
-    protected $redirectTo = RouteServiceProvider::HOME;
-
-    public function __construct()
-    {
-        $this->middleware('guest');
     }
 
     protected function validator(array $data): ValidationValidator
