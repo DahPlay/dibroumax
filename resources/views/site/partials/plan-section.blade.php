@@ -28,7 +28,7 @@
                     @if(isset($plansByCycle[$cycleKey]))
                         <div class="row g-4 justify-content-center">
                             @foreach($plansByCycle[$cycleKey] as $plan)
-                                <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex container-plan">
+                                <div class="col-12 col-sm-6 col-lg-4 d-flex container-plan">
                                     <a href="{{ route('register', ['planId' => $plan->id]) }}" class="m-2 w-100">
                                         <div class="plan d-flex flex-column align-items-center h-100 {{ $plan->is_best_seller ? 'best-seller' : '' }}">
                                             @if ($plan->is_best_seller)
