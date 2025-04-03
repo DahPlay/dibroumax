@@ -73,9 +73,27 @@
 
     <div class="row">
         <div class="form-group col-12">
-            <label for="description" class="col-form-label">Descrição:</label>
+            <label for="description" class="col-form-label text-danger">Descrição: *</label>
             <div class="input-group">
                 <textarea name="description" id="description" class="form-control" placeholder="Descrição">{{ $plan->description ?? old('description') }}</textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-12">
+            <label class="col-form-label text-danger">Selecione o(s) pacote(s): *</label>
+            <div id="packages-container">
+                @if (isset($packages) && count($packages) > 0)
+                    @foreach ($packages as $index => $package)
+                        <div class="packages-item d-flex align-items-center mb-2">
+                            <input type="checkbox" name="packages[]" value="{{ $package->id }}" id="packages_{{ $index }}">
+                            <label for="packages_{{ $index }}" class="ml-2">{{ $package->name }}</label>
+                        </div>
+                    @endforeach
+                @else
+                    <p>Nenhum pacote disponível.</p>
+                @endif
             </div>
         </div>
     </div>
@@ -101,24 +119,6 @@
             <button type="button" class="btn btn-sm btn-primary" id="add-benefit">Adicionar Benefício</button>
         </div>
     </div>
-    <div class="row">
-        <div class="form-group col-12">
-            <label>Combo:</label>
-            <div id="combo-container">
-                @if (isset($packages) && count($packages) > 0)
-                    @foreach ($packages as $index => $package)
-                        <div class="combo-item d-flex align-items-center mb-2">
-                            <input type="checkbox" name="combo[]" value="{{ $package->id }}" id="combo_{{ $index }}">
-                            <label for="combo_{{ $index }}" class="ml-2">{{ $package->name }}</label>
-                        </div>
-                    @endforeach
-                @else
-                    <p>Nenhum pacote disponível.</p>
-                @endif
-            </div>
-        </div>
-    </div>
-
 </div>
 
 <script>
@@ -141,8 +141,8 @@
         });
 
         // Captura os combos selecionados
-        $('#combo-container input[name="combo[]"]:checked').each(function(index, element) {
-            formData.append(`combo[${index}]`, $(element).val());
+        $('#packages-container input[name="packages[]"]:checked').each(function(index, element) {
+            formData.append(`packages[${index}]`, $(element).val());
         });
 
         return formData;

@@ -11,12 +11,13 @@ class PlanRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'value' => ['required', 'string', 'min:0'],
-            'description' => ['nullable', 'string'],
+            'description' => ['required', 'string'],
             'is_active' => ['nullable', 'string'],
             'cycle' => ['nullable', 'string'],
             'is_best_seller' => ['nullable', 'string'],
             'billing_type' => ['string'],
             'free_for_days' => ['integer'],
+            'packages' => ['required', 'array']
         ];
     }
 

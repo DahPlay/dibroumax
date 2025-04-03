@@ -95,8 +95,8 @@ class PlanController extends Controller
     public function create(): View
     {
         $plan = $this->model;
-        $packages = Package::where('name', '!=',  'Dahplay desativado')
-        ->where('is_active', true)
+        $packages = Package::where('name', '!=', 'Dahplay desativado')
+            ->where('is_active', true)
             ->get();
 
         return view('panel.plans.local.index.modals.create', compact('plan', 'packages'));
@@ -118,17 +118,17 @@ class PlanController extends Controller
                 }
             }
 
-            if ($this->request->filled('combo')) {
-                foreach ($this->request->combo as $combo) {
+            if ($this->request->filled('packages')) {
+                foreach ($this->request->packages as $package) {
                     $plan->packagePlans()->create([
-                        'package_id' => $combo,
+                        'package_id' => $package,
                     ]);
                 }
             }
             toastr('Ação executada com sucesso!');
             return redirect()->route('panel.plans.index');
         }
-        toastr('Erro executar a ação, tente novamente!', 'error');
+        toastr('Erro executar a ação, tente novamente!');
         return redirect()->route('panel.plans.index');
     }
 
