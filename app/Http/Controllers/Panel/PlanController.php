@@ -95,7 +95,9 @@ class PlanController extends Controller
     public function create(): View
     {
         $plan = $this->model;
-        $packages = Package::where('is_active', true)->get();
+        $packages = Package::where('name', '!=',  'Dahplay desativado')
+        ->where('is_active', true)
+            ->get();
 
         return view('panel.plans.local.index.modals.create', compact('plan', 'packages'));
     }

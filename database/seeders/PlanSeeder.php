@@ -14,10 +14,11 @@ class PlanSeeder extends Seeder
      */
     public function run(): void
     {
-        $activePackages = Package::where('is_active', true)->get();
+        $activePackages = Package::where('name', '!=', 'Dahplay desativado')
+            ->where('is_active', true)
+            ->get();
 
         foreach ($activePackages as $index => $package) {
-
             $plan = Plan::updateOrCreate(
                 ['name' => $package->name],
                 [
