@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Panel;
 use App\Enums\BillingTypeAsaasEnum;
 use App\Enums\CycleAsaasEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PlanRequest;
 use App\Models\Package;
 use App\Models\Plan;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
@@ -98,52 +100,23 @@ class PlanController extends Controller
         return view('panel.plans.local.index.modals.create', compact('plan', 'packages'));
     }
 
-    public function store()
+    public function store(PlanRequest $request): RedirectResponse
     {
-        $data = $this->request->only([
-            'name',
-            'value',
-            'description',
-            'cycle',
-            'is_active',
-            'is_best_seller',
-            'billing_type',
-            'free_for_days',
-        ]);
-
-        $validator = Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'value' => ['required', 'string', 'min:0'],
-            'description' => ['nullable', 'string'],
-            'name' => ['required', 'string'],
-            'is_active' => ['nullable', 'string'],
-            'is_best_seller' => ['nullable', 'string'],
-            'billing_type' => ['string'],
-            'free_for_days' => ['integer'],
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 400,
-                'errors' => $validator->errors(),
-            ]);
-        }
+        $data = $request->validated();
 
         $data['is_active'] = isset($data['is_active']) ? 1 : 0;
         $data['is_best_seller'] = isset($data['is_best_seller']) ? 1 : 0;
 
         $plan = $this->model->create($data);
 
-        if ($this->request->filled('benefits')) {
-            foreach ($this->request->benefits as $benefit) {
-                $plan->benefits()->create(['description' => $benefit]);
-            }
-        }
-
-
-
         if ($plan) {
-            if($this->request->filled('combo')) {
+            if ($this->request->filled('benefits')) {
+                foreach ($this->request->benefits as $benefit) {
+                    $plan->benefits()->create(['description' => $benefit]);
+                }
+            }
+
+            if ($this->request->filled('combo')) {
                 foreach ($this->request->combo as $combo) {
                     ds($plan->id);
                     $plan->packagePlans()->create([
@@ -151,18 +124,11 @@ class PlanController extends Controller
                     ]);
                 }
             }
-            return response()->json([
-                'status' => '200',
-                'message' => 'Ação executada com sucesso!'
-            ]);
-        } else {
-            return response()->json([
-                'status' => '400',
-                'errors' => [
-                    'message' => ['Erro executar a ação, tente novamente!']
-                ]
-            ]);
+            toastr('Ação executada com sucesso!');
+            return redirect()->route(' panel.plans.index');
         }
+        toastr('Erro executar a ação, tente novamente!', 'error');
+        return redirect()->route(' panel.plans.index');
     }
 
     public function edit($id): View
@@ -220,7 +186,9 @@ class PlanController extends Controller
 
             $plan->benefits()->delete();
 
-            if ($this->request->filled('benefits') && count($this->request->input('benefits')) > 0 && !is_null($this->request->input('benefits')[0])) {
+            if ($this->request->filled('benefits') && count($this->request->input('benefits')) > 0 && !is_null(
+                    $this->request->input('benefits')[0]
+                )) {
                 foreach ($this->request->benefits as $benefit) {
                     $plan->benefits()->create(['description' => $benefit]);
                 }
