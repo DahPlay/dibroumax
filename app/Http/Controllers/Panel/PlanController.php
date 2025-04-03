@@ -124,10 +124,10 @@ class PlanController extends Controller
                 }
             }
             toastr('Ação executada com sucesso!');
-            return redirect()->route(' panel.plans.index');
+            return redirect()->route('panel.plans.index');
         }
         toastr('Erro executar a ação, tente novamente!', 'error');
-        return redirect()->route(' panel.plans.index');
+        return redirect()->route('panel.plans.index');
     }
 
     public function edit($id): View

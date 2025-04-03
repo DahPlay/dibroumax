@@ -159,11 +159,12 @@ class CustomerObserver
              (new PlanCreate())->handle($customer->viewers_id, 861);
          }*/
 
+        // new code
         $packs = $order->plan->packagePlans;
 
         if ($packs->count() > 0) {
             foreach ($packs as $pack) {
-                $package = Package::query()->firstWhere('id', $pack->package_id);
+                $package = Package::query()->where('id', $pack->package_id)->first();
                 (new PlanCreate())->handle($customer->viewers_id, $package->cod);
             }
         }
