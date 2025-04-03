@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Panel;
 use App\Enums\BillingTypeAsaasEnum;
 use App\Enums\CycleAsaasEnum;
 use App\Http\Controllers\Controller;
+use App\Models\Package;
 use App\Models\Plan;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Yajra\DataTables\Facades\DataTables;
 use Illuminate\View\View;
+use Yajra\DataTables\Facades\DataTables;
 
 class PlanController extends Controller
 {
@@ -92,11 +93,12 @@ class PlanController extends Controller
     public function create(): View
     {
         $plan = $this->model;
+        $packages = Package::where('is_active', true)->get();
 
-        return view('panel.plans.local.index.modals.create', compact('plan'));
+        return view('panel.plans.local.index.modals.create', compact('plan', 'packages'));
     }
 
-    public function store(): JsonResponse
+    public function store()
     {
         $data = $this->request->only([
             'name',
@@ -138,7 +140,17 @@ class PlanController extends Controller
             }
         }
 
+
+
         if ($plan) {
+            if($this->request->filled('combo')) {
+                foreach ($this->request->combo as $combo) {
+                    ds($plan->id);
+                    $plan->packagePlans()->create([
+                        'package_id' => $combo,
+                    ]);
+                }
+            }
             return response()->json([
                 'status' => '200',
                 'message' => 'Ação executada com sucesso!'

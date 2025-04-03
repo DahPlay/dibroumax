@@ -101,6 +101,24 @@
             <button type="button" class="btn btn-sm btn-primary" id="add-benefit">Adicionar Benefício</button>
         </div>
     </div>
+    <div class="row">
+        <div class="form-group col-12">
+            <label>Combo:</label>
+            <div id="combo-container">
+                @if (isset($packages) && count($packages) > 0)
+                    @foreach ($packages as $index => $package)
+                        <div class="combo-item d-flex align-items-center mb-2">
+                            <input type="checkbox" name="combo[]" value="{{ $package->id }}" id="combo_{{ $index }}">
+                            <label for="combo_{{ $index }}" class="ml-2">{{ $package->name }}</label>
+                        </div>
+                    @endforeach
+                @else
+                    <p>Nenhum pacote disponível.</p>
+                @endif
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -120,6 +138,11 @@
             if ($(element).val()) {
                 formData.append(`benefits[${index}]`, $(element).val());
             }
+        });
+
+        // Captura os combos selecionados
+        $('#combo-container input[name="combo[]"]:checked').each(function(index, element) {
+            formData.append(`combo[${index}]`, $(element).val());
         });
 
         return formData;
