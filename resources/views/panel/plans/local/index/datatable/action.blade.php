@@ -9,11 +9,11 @@
             <span class="ml-2">Editar</span>
         </a>
 
-        {{-- <a href='javascript:;' class='btn-delete btn btn-danger dropdown-item' data-id='{{ $plan->id }}'
+         <a href='javascript:;' class='btn-delete btn btn-danger dropdown-item' data-id='{{ $plan->id }}'
             data-url='/{{ $routeCrud }}/delete'>
             <i class='fa fa-trash'></i>
             <span class="ml-2">Excluir</span>
-        </a> --}}
+        </a>
 
         <a href='#' class='btn-edit btn btn-info dropdown-item' data-id='{{ $plan->id }}'
             data-url='/{{ $routeCrud }}/duplicate'>
