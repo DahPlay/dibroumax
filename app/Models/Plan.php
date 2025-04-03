@@ -52,6 +52,7 @@ class Plan extends Model
             ->when($exceptId, function ($query, $exceptId) {
                 return $query->where('id', '!=', $exceptId);
             })
+            ->orderBy('value')
             ->get();
 
         $plansByCycle = $plans->groupBy('cycle');
