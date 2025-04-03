@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Plan extends Model
 {
     use HasFactory;
-
     protected $fillable = [
         'id',
         'name',
@@ -36,9 +35,14 @@ class Plan extends Model
         return $this->hasMany(Order::class);
     }
 
-    public function benefits()
+    public function benefits(): HasMany
     {
         return $this->hasMany(PlanBenefit::class);
+    }
+
+    public function packagePlans(): HasMany
+    {
+        return $this->hasMany(PackagePlan::class);
     }
 
     public static function getPlansData(?int $exceptId = null): array
