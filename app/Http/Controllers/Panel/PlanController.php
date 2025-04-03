@@ -118,7 +118,6 @@ class PlanController extends Controller
 
             if ($this->request->filled('combo')) {
                 foreach ($this->request->combo as $combo) {
-                    ds($plan->id);
                     $plan->packagePlans()->create([
                         'package_id' => $combo,
                     ]);
