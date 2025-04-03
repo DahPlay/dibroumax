@@ -6,15 +6,14 @@ namespace App\Observers;
 
 use App\Models\Customer;
 use App\Models\Order;
-use App\Models\Package;
 use App\Models\Plan;
 use App\Models\User;
+use App\Services\AppIntegration\PlanCreateService;
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
 use App\Services\PaymentGateway\Gateway;
 use App\Services\YouCast\Customer\CustomerCreate;
 use App\Services\YouCast\Customer\CustomerSearch;
 use App\Services\YouCast\Customer\CustomerUpdate;
-use App\Services\YouCast\Plan\PlanCreate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -159,15 +158,8 @@ class CustomerObserver
              (new PlanCreate())->handle($customer->viewers_id, 861);
          }*/
 
-        // new code
-        $packs = $order->plan->packagePlans;
+        (new PlanCreateService($order, $customer))->createPlan();
 
-        if ($packs->count() > 0) {
-            foreach ($packs as $pack) {
-                $package = Package::query()->where('id', $pack->package_id)->first();
-                (new PlanCreate())->handle($customer->viewers_id, $package->cod);
-            }
-        }
         return $order;
     }
 

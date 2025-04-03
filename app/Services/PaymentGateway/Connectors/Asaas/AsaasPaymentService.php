@@ -6,8 +6,8 @@ use App\Jobs\BackOrderOldPlanJob;
 use App\Jobs\updateSubscriptionAfterProportionalPayJob;
 use App\Models\Customer;
 use App\Models\Order;
-use App\Services\YouCast\Plan\PlanCancel;
-use App\Services\YouCast\Plan\PlanCreate;
+use App\Services\AppIntegration\PlanCancelService;
+use App\Services\AppIntegration\PlanCreateService;
 use App\Services\YouCast\Plan\PlanList;
 use Illuminate\Support\Facades\Log;
 
@@ -44,11 +44,14 @@ class AsaasPaymentService
 
                 $customer = Customer::where('customer_id', $customerId)->first();
 
-                $youcast = (new PlanCreate())->handle($customer->viewers_id, 861);
+                //todo: adicionar lógica de combos
+//                $youcast = (new PlanCreate())->handle($customer->viewers_id, 861);
 
-                if ($youcast["status"] == 1) {
+                (new PlanCreateService($order, $customer))->createPlan();
+
+                /*if ($youcast["status"] == 1) {
                     Log::info("Plano criado no youcast para o Customer {$customer->id}.");
-                }
+                }*/
 
                 break;
 
@@ -77,11 +80,9 @@ class AsaasPaymentService
 
                 $customer = Customer::where('customer_id', $customerId)->first();
 
-                $youcast = (new PlanCreate())->handle($customer->viewers_id, 861);
-
-                if ($youcast["status"] == 1) {
-                    Log::info("Plano criado no youcast para o Customer {$customer->id}.");
-                }
+                //todo: adicionar lógica de combos
+//                $youcast = (new PlanCreate())->handle($customer->viewers_id, 861);
+                (new PlanCreateService($order, $customer))->createPlan();
 
                 break;
 
@@ -100,8 +101,9 @@ class AsaasPaymentService
                 $youcast = (new PlanList)->handle($customer->viewers_id);
 
                 if ($youcast["status"] == 1) {
-                    $youcast = (new PlanCancel())->handle($customer->viewers_id, 861);
-                    Log::warning("Pacote cancelado para a Customer {$customer->customer_id}.");
+                    //todo: validar lógica de combos
+//                    $youcast = (new PlanCancel())->handle($customer->viewers_id, 861);
+                    (new PlanCancelService($order, $customer))->cancelPlan();
                 }
 
                 break;
