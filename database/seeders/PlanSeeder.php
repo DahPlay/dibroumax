@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\CycleAsaasEnum;
+use App\Models\Package;
 use App\Models\Plan;
 use Illuminate\Database\Seeder;
 
@@ -13,51 +14,28 @@ class PlanSeeder extends Seeder
      */
     public function run(): void
     {
-        $cycles = [
-            'MONTHLY' => 'Mensal',
-            'YEARLY' => 'Anual'
-        ];
+        $activePackages = Package::where('is_active', true)->get();
 
-        $plans = [
-            [
-                'name' => 'Dahplay Superior',
-                'value' => rand(10, 100),
-                'cycle' => CycleAsaasEnum::MONTHLY,
-                'description' => "Plano Dahplay Superior",
-                'is_active' => 1,
-                'is_best_seller' => 1,
-                'free_for_days' => 7,
-                'billing_type' => 'CREDIT_CARD',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Dahplay Completo',
-                'value' => rand(10, 100),
-                'cycle' => CycleAsaasEnum::MONTHLY,
-                'description' => "Plano Dahplay Completo",
-                'is_active' => 1,
-                'is_best_seller' => 0,
-                'free_for_days' => 7,
-                'billing_type' => 'CREDIT_CARD',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Dahplay Premium',
-                'value' => rand(10, 100),
-                'cycle' => CycleAsaasEnum::MONTHLY,
-                'description' => "Plano Dahplay Premium",
-                'is_active' => 1,
-                'is_best_seller' => 0,
-                'free_for_days' => 7,
-                'billing_type' => 'CREDIT_CARD',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ];
-        foreach ($plans as $plan) {
-            Plan::create($plan);
+        foreach ($activePackages as $index => $package) {
+
+            $plan = Plan::updateOrCreate(
+                ['name' => $package->name],
+                [
+                    'value' => rand(10, 100),
+                    'cycle' => CycleAsaasEnum::MONTHLY,
+                    'description' => "Plano {$package->name}",
+                    'is_active' => 1,
+                    'is_best_seller' => $index === 1 ? 1 : 0,
+                    'free_for_days' => 7,
+                    'billing_type' => 'CREDIT_CARD',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+
+            $plan->packagePlans()->create([
+                'package_id' => $package->id,
+            ]);
         }
     }
 }
