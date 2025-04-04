@@ -7,7 +7,9 @@ use App\Enums\PaymentStatusOrderAsaasEnum;
 use App\Enums\StatusOrderAsaasEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\PackagePlan;
 use App\Models\Plan;
+use App\Services\AppIntegration\PlanCancelService;
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
 use App\Services\PaymentGateway\Gateway;
 use Carbon\Carbon;
@@ -23,18 +25,18 @@ class OrderController extends Controller
     protected $model;
     protected $request;
 
-    public function __construct (Order $order, Request $request)
+    public function __construct(Order $order, Request $request)
     {
         $this->model = $order;
         $this->request = $request;
     }
 
-    public function index (): View
+    public function index(): View
     {
         return view($this->request->route()->getName());
     }
 
-    public function loadDatatable (): JsonResponse
+    public function loadDatatable(): JsonResponse
     {
         $orders = $this->model
             ->with(['customer:id,name', 'plan:id,name'])
@@ -112,14 +114,14 @@ class OrderController extends Controller
             ->toJson();
     }
 
-    public function create (): View
+    public function create(): View
     {
         $order = $this->model;
 
         return view('panel.orders.local.index.modals.create', compact('order'));
     }
 
-    public function store (): JsonResponse
+    public function store(): JsonResponse
     {
         $data = $this->request->only([
             'name',
@@ -157,14 +159,14 @@ class OrderController extends Controller
         }
     }
 
-    public function edit ($id): View
+    public function edit($id): View
     {
         $order = $this->model->find($id);
 
         return view('panel.orders.local.index.modals.edit', compact("order"));
     }
 
-    public function update ($id): JsonResponse
+    public function update($id): JsonResponse
     {
         $order = $this->model->find($id);
 
@@ -209,14 +211,14 @@ class OrderController extends Controller
         }
     }
 
-    public function delete ($id): View
+    public function delete($id): View
     {
         $order = $this->model->find($this->request->id);
 
         return view('panel.orders.local.index.modals.delete', compact("order"));
     }
 
-    public function destroy (): JsonResponse
+    public function destroy(): JsonResponse
     {
         $order = $this->model->find($this->request->id);
 
@@ -246,7 +248,7 @@ class OrderController extends Controller
         }
     }
 
-    public function deleteAll (): View
+    public function deleteAll(): View
     {
         $itens = $this->request->checkeds;
 
@@ -255,7 +257,7 @@ class OrderController extends Controller
         return view('panel.orders.local.index.modals.remove-all', compact("itens"));
     }
 
-    public function destroyAll (): JsonResponse
+    public function destroyAll(): JsonResponse
     {
         foreach (session()->get('ids') as $item) {
             $item = $this->model->find($item["id"]);
@@ -287,28 +289,28 @@ class OrderController extends Controller
         ]);
     }
 
-    public function show ($id): View
+    public function show($id): View
     {
         $order = $this->model->find($id);
 
         return view('panel.orders.local.index.modals.show', compact("order"));
     }
 
-    public function duplicate (): View
+    public function duplicate(): View
     {
         $order = $this->model->find($this->request->id);
 
         return view('panel.orders.local.index.modals.duplicate', compact('order'));
     }
 
-    public function cancel ($id): View
+    public function cancel($id): View
     {
         $order = $this->model->find($this->request->id);
 
         return view('panel.orders.local.index.modals.cancel', compact("order"));
     }
 
-    public function changePlan ($id): View
+    public function changePlan($id): View
     {
         $order = $this->model->find($this->request->id);
         $data = Plan::getPlansData();
@@ -322,7 +324,7 @@ class OrderController extends Controller
         ]);
     }
 
-    public function changePlanStore (Request $request)
+    public function changePlanStore(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'planId' => 'required',
@@ -338,6 +340,9 @@ class OrderController extends Controller
 
         $plan = Plan::find($planId);
         $order = $this->model->find($validator->validated()['orderId']);
+        //todo: parei aqui, preciso fazer o fluxo de troca de plano na youcast
+        //usada para cancelar na youcast os pacotes antigos
+        $oldPlan = Plan::where('id', $order->plan_id)->first();
 
         if ($order->next_due_date < now()
             && $order->payment_status === PaymentStatusOrderAsaasEnum::RECEIVED->getName()
@@ -389,7 +394,6 @@ class OrderController extends Controller
 
             // Se tem cobrança pendente e ainda não está vencida
             if ($payment['status'] === 'PENDING' && $payment['dueDate'] >= Carbon::now()->format('Y-m-d')) {
-
                 // Descobre quantos dias já foram usados no ciclo atual
                 $daysUsed = $cycleDays - now()->diffInDays($order->next_due_date);
                 if ($daysUsed > 0 && $daysUsed < $cycleDays) {
@@ -418,7 +422,7 @@ class OrderController extends Controller
         }
     }
 
-    protected function updateSubscription ($order, $invoiceValue, $plan, $gateway)
+    protected function updateSubscription($order, $invoiceValue, $plan, $gateway, $oldCombos)
     {
         $data = [
             'id' => $order->subscription_asaas_id,
@@ -434,6 +438,10 @@ class OrderController extends Controller
         if ($response['object'] === 'subscription') {
             //todo: se atualizou a assinatura preciso alterar agora na youcast
 
+            (new PlanCancelService($order, $customer))->cancelPlan();
+
+            $combos = PackagePlan::where('plan_id', $plan->id)->get();
+
             $order->update([
                 'changed_plan' => true,
                 'original_plan_value' => $plan->value
@@ -446,7 +454,7 @@ class OrderController extends Controller
         toastr('Erro ao atualizar assinatura!', 'error');
     }
 
-    public function canceling (): JsonResponse
+    public function canceling(): JsonResponse
     {
         $order = $this->model->find($this->request->id);
 
