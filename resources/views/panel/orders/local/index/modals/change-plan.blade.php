@@ -37,7 +37,7 @@
                                 <div class="row g-4 justify-content-center">
                                     @foreach($plansByCycle[$cycleKey] as $plan)
                                         <div
-                                                class="relative col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center align-content-center ml-4 p-4 border rounded bg-light">
+                                                class="relative col-5 mb-5 d-flex justify-content-center align-content-center ml-4 p-4 border rounded bg-light">
                                             <div
                                                     class="m-2 w-100">
                                                 <div
