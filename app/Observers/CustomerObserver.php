@@ -182,7 +182,7 @@ class CustomerObserver
             'value' => $plan->value,
             'nextDueDate' => now()->addDays($plan->free_for_days)->format('Y-m-d'),
             'cycle' => $plan->cycle,
-            'description' => "Assinatura com $plan->free_for_days dias grátis",
+            'description' => "Assinatura do plano $plan->name",
             'externalReference' => 'Pedido: ' . $order->id,
         ];
 
