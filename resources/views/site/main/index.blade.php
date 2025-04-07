@@ -315,7 +315,36 @@
                 }, 1000);
             }
         });
-    })
+    });
+
+     document.addEventListener('DOMContentLoaded', function () {
+        @foreach($cycles as $cycleKey => $cycleName)
+        new Swiper('.mySwiper-{{ $cycleKey }}', {
+            slidesPerView: 1,
+            spaceBetween: 20,
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination-{{ $cycleKey }}',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-next-{{ $cycleKey }}',
+                prevEl: '.swiper-prev-{{ $cycleKey }}',
+            },
+            breakpoints: {
+                576: {
+                    slidesPerView: 1,
+                },
+                768: {
+                    slidesPerView: 2,
+                },
+                992: {
+                    slidesPerView: 3,
+                }
+            }
+        });
+        @endforeach
+    });
 </script>
 
 <!-- inicio Flut -->
