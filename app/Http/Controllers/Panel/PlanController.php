@@ -112,7 +112,7 @@ class PlanController extends Controller
         $plan = $this->model->create($data);
 
         if ($plan) {
-            if ($this->request->filled('benefits')) {
+            if ($this->request->filled('benefits') && $this->request->benefits[0] !== null) {
                 foreach ($this->request->benefits as $benefit) {
                     $plan->benefits()->create(['description' => $benefit]);
                 }
