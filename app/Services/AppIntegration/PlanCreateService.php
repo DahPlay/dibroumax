@@ -2,40 +2,31 @@
 
 namespace App\Services\AppIntegration;
 
-use App\Models\Customer;
-use App\Models\Order;
-use App\Models\Package;
 use App\Services\YouCast\Plan\PlanCreate;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
 class PlanCreateService
 {
     public function __construct(
-        protected readonly Order|Model $order,
-        protected readonly Customer|Model $customer,
+        protected readonly array $packageCodes,
+        protected readonly int|string $viewerId,
     ) {
         //
     }
 
     public function createPlan(): void
     {
-        $packs = $this->order->plan->packagePlans;
-
-        if ($packs->count() > 0) {
-            foreach ($packs as $pack) {
-                try {
-                    $package = Package::query()->where('id', $pack->package_id)->first();
-                    (new PlanCreate())->handle($this->customer->viewers_id, $package->cod);
-                    Log::info(
-                        "PlanCreateService - linha 31 - Plano criado no youcast para o Customer {$this->customer->id}."
-                    );
-                } catch (\Exception $exception) {
-                    Log::error($exception->getMessage());
-                    Log::error(
-                        "PlanCreateService - linha 34 - Err0 ao criar plano no youcast para o Customer {$this->customer->id}."
-                    );
-                }
+        foreach ($this->packageCodes as $pack) {
+            try {
+                (new PlanCreate())->handle($this->viewerId, $pack->cod);
+                Log::info(
+                    "PlanCreateService - linha 27 - Plano Código: {$pack->cod} criado no youcast para o Customer {$this->viewerId}."
+                );
+            } catch (\Exception $exception) {
+                Log::error($exception->getMessage());
+                Log::error(
+                    "PlanCreateService - linha 32 - Erro ao criar Plano Código: {$pack->cod} no youcast para o Customer {$this->viewerId}."
+                );
             }
         }
     }
