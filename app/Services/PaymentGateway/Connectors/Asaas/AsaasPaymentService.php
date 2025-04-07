@@ -4,16 +4,17 @@ namespace App\Services\PaymentGateway\Connectors\Asaas;
 
 use App\Jobs\BackOrderOldPlanJob;
 use App\Jobs\updateSubscriptionAfterProportionalPayJob;
-use App\Models\Customer;
 use App\Models\Order;
+use App\Models\Package;
 use App\Services\AppIntegration\PlanCancelService;
 use App\Services\AppIntegration\PlanCreateService;
+use App\Services\YouCast\Plan\PlanHistory;
 use App\Services\YouCast\Plan\PlanList;
 use Illuminate\Support\Facades\Log;
 
 class AsaasPaymentService
 {
-    public function processEvent (string $event, array $data): bool
+    public function processEvent(string $event, array $data): bool
     {
         $paymentId = $data['payment']['id'];
         $customerId = $data['payment']['customer'];
@@ -43,10 +44,25 @@ class AsaasPaymentService
 
                 Log::info("Pagamento confirmado para a ordem {$order->id}.");
 
-                $customer = Customer::where('customer_id', $customerId)->first();
 
-                (new PlanCreateService($order, $customer))->createPlan();
+                $packagesToCreate = [];
 
+                foreach ($order->plan->packagePlans as $packagePlan) {
+                    $pack = Package::find($packagePlan->package_id);
+                    $packagesToCreate[] = $pack->cod;
+                };
+
+                $planInYoucast = (new PlanHistory())->handle($order->customer->viewers_id);
+
+                if ($planInYoucast['response']) {
+                    foreach ($planInYoucast['response'] as $item) {
+                        $planExists = in_array($item['viewers_bouquets_products_id'], $packagesToCreate);
+
+                        if (!$planExists || $item['viewers_bouquets_cancelled'] == 1) {
+                            (new PlanCreateService($packagesToCreate, $order->customer->viewers_id))->createPlan();
+                        }
+                    }
+                };
                 break;
 
             case 'PAYMENT_CREATED':
@@ -59,26 +75,18 @@ class AsaasPaymentService
                 Log::info("Pagamento criado para a ordem {$order->id}.");
                 break;
 
+            // esta comentado para só criar a assinatura na youcast se o pagamento e recebido
             case 'PAYMENT_CONFIRMED':
-                if ($order->changed_plan) {
-                    updateSubscriptionAfterProportionalPayJob::dispatch($order);
-                }
                 $order->update([
-                    'status' => 'ACTIVE',
-                    'payment_asaas_id' => $paymentId,
                     'payment_status' => $paymentStatus,
-                    'next_due_date' => $dueDate,
                 ]);
 
-                Log::info("Pagamento confirmado para a ordem {$order->id}.");
-
-                $customer = Customer::where('customer_id', $customerId)->first();
-
-                (new PlanCreateService($order, $customer))->createPlan();
+                Log::info("Pagamento criado para a ordem {$order->id}.");
 
                 break;
 
             case 'PAYMENT_OVERDUE':
+
                 if ($order->changed_plan) {
                     BackOrderOldPlanJob::dispatch($order);
                 }
@@ -86,16 +94,18 @@ class AsaasPaymentService
                     ['status' => 'INACTIVE'],
                     ['payment_status' => $paymentStatus]
                 );
+
                 Log::warning("Pagamento atrasado para a ordem {$order->id}.");
 
-                $customer = Customer::where('customer_id', $customerId)->first();
-
-                $youcast = (new PlanList)->handle($customer->viewers_id);
+                $youcast = (new PlanList)->handle($order->customer->viewers_id);
 
                 if ($youcast["status"] == 1) {
-                    //todo: validar lógica de combos
-//                    $youcast = (new PlanCancel())->handle($customer->viewers_id, 861);
-                    (new PlanCancelService($order, $customer))->cancelPlan();
+                    $packagesToCancel = [];
+                    foreach ($order->plan->packagePlans as $packagePlan) {
+                        $pack = Package::find($packagePlan->package_id);
+                        $packagesToCancel[] = $pack->cod;
+                    };
+                    (new PlanCancelService($packagesToCancel, $order->customer->viewers_id))->cancelPlan();
                 }
 
                 break;
