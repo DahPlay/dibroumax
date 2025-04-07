@@ -6,6 +6,7 @@ namespace App\Observers;
 
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\Package;
 use App\Models\Plan;
 use App\Models\User;
 use App\Services\AppIntegration\PlanCreateService;
@@ -157,8 +158,12 @@ class CustomerObserver
         /* if ($order->plan->free_for_days > 0) {
              (new PlanCreate())->handle($customer->viewers_id, 861);
          }*/
-
-        (new PlanCreateService($order, $customer))->createPlan();
+        $packagesToCreate = [];
+        foreach ($order->plan->packagePlans as $packagePlan) {
+            $pack = Package::find($packagePlan->package_id);
+            $packagesToCreate[] = $pack->cod;
+        };
+        (new PlanCreateService($packagesToCreate, $order->customer->viewers_id))->createPlan();
 
         return $order;
     }
