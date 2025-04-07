@@ -20,7 +20,7 @@ class AsaasPaymentService
         $subscriptionId = $data['payment']['subscription'];
         $paymentStatus = $data['payment']['status'];
         $dueDate = $data['payment']['dueDate'];
-        // $clientPaymentDate = $data['payment']['clientPaymentDate'] ?? null;
+        $paymentDate = $data['payment']['paymentDate'];
 
         $order = Order::where('subscription_asaas_id', $subscriptionId)->first();
 
@@ -38,20 +38,14 @@ class AsaasPaymentService
                     'payment_asaas_id' => $paymentId,
                     'payment_status' => $paymentStatus,
                     'next_due_date' => $dueDate,
+                    'payment_date' => $paymentDate,
                 ]);
 
                 Log::info("Pagamento confirmado para a ordem {$order->id}.");
 
                 $customer = Customer::where('customer_id', $customerId)->first();
 
-                //todo: adicionar lógica de combos
-//                $youcast = (new PlanCreate())->handle($customer->viewers_id, 861);
-
                 (new PlanCreateService($order, $customer))->createPlan();
-
-                /*if ($youcast["status"] == 1) {
-                    Log::info("Plano criado no youcast para o Customer {$customer->id}.");
-                }*/
 
                 break;
 
@@ -80,8 +74,6 @@ class AsaasPaymentService
 
                 $customer = Customer::where('customer_id', $customerId)->first();
 
-                //todo: adicionar lógica de combos
-//                $youcast = (new PlanCreate())->handle($customer->viewers_id, 861);
                 (new PlanCreateService($order, $customer))->createPlan();
 
                 break;
