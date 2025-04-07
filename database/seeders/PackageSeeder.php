@@ -10,7 +10,7 @@ class PackageSeeder extends Seeder
     public function run (): void
     {
         $packages = [
-            ['name' => 'Dahplay desativado', 'cod' => 0, 'is_active' => true],
+            ['name' => 'Dahplay desativado', 'cod' => 58, 'is_active' => false],
             ['name' => 'Dahplay Superior', 'cod' => 59, 'is_active' => true],
             ['name' => 'Dahplay Completo', 'cod' => 76, 'is_active' => true],
             ['name' => 'Dahplay Premium', 'cod' => 130, 'is_active' => true],
