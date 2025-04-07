@@ -16,6 +16,14 @@ class PlanSeeder extends Seeder
     {
         $plans = [
             [
+                'name' => 'Pacote Superior',
+                'cod' => [59]
+            ],
+            [
+                'name' => 'Pacote Completo',
+                'cod' => [76]
+            ],
+            /*[
                 'name' => 'Pacote Superior + Premiere(F) + Telecine(F)',
                 'cod' => [59, 132, 131]
             ],
@@ -62,7 +70,7 @@ class PlanSeeder extends Seeder
             [
                 'name' => 'Pacote Premium + Premiere(A) + Telecine(A)',
                 'cod' => [130, 118, 129]
-            ],
+            ],*/
         ];
 
         foreach ($plans as $index => $data) {
