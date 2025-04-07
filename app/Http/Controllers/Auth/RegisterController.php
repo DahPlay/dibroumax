@@ -179,11 +179,11 @@ class RegisterController extends Controller
             }
 
             $data = request()->only(['login', 'name', 'document', 'mobile', 'birthdate', 'email']);
-            $customer = Customer::create([
+           Customer::create([
                 'viewers_id' => $customerData['viewers_id'],
                 'login' => $customerData['login'],
                 'name' => $customerData['name'],
-                'email' => $customerData['email']
+                'email' => $data['email']
             ]);
 
             return redirect()->route('login')->with([
