@@ -16,18 +16,16 @@ class PlanCreateService
 
     public function createPlan(): void
     {
-        foreach ($this->packageCodes as $pack) {
-            try {
-                (new PlanCreate())->handle($this->viewerId, $pack->cod);
-                Log::info(
-                    "PlanCreateService - linha 27 - Plano Código: {$pack->cod} criado no youcast para o Customer {$this->viewerId}."
-                );
-            } catch (\Exception $exception) {
-                Log::error($exception->getMessage());
+        foreach ($this->packageCodes as $code) {
+            $response = (new PlanCreate())->handle($this->viewerId, $code);
+            if ($response['status'] === 404) {
                 Log::error(
-                    "PlanCreateService - linha 32 - Erro ao criar Plano Código: {$pack->cod} no youcast para o Customer {$this->viewerId}."
+                    "PlanCreateService - Erro ao criar Plano Código: {$code} no youcast para o Customer {$this->viewerId}."
                 );
-            }
+            };
+            Log::info(
+                "PlanCreateService - Plano Código: {$code} criado no youcast para o Customer {$this->viewerId}."
+            );
         }
     }
 }
