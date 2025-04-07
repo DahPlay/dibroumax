@@ -25,37 +25,37 @@ class BackOrderOldPlanJob implements ShouldQueue
      */
     public function handle (): void
     {
-        $data = OrderHistory::where('order_id', $this->order->id)
+        $oldOrder = OrderHistory::where('order_id', $this->order->id)
             ->where('created_at', $this->order->updated_at)
             ->first();
 
-        if ($data) {
+        if ($oldOrder) {
             $adapter = app(AsaasConnector::class);
             $gateway = new Gateway($adapter);
             $data = [
                 'id' => $this->order->subscription_asaas_id,
-                'billingType' => $data['billing_type'],
-                'value' => $data['value'],
-                'nextDueDate' => $data['next_due_date'],
-                'description' => $data['description'],
-                'externalReference' => $data['externalReference'],
+                'billingType' => $oldOrder['data']['billing_type'],
+                'value' => $oldOrder['data']['value'],
+                'nextDueDate' => $oldOrder['data']['next_due_date'],
+                'description' => $oldOrder['data']['description'],
             ];
 
             $response = $gateway->subscription()->update($this->order->subscription_asaas_id, $data);
 
             if ($response['object'] === 'subscription') {
+
                 $this->order->update([
-                    "cycle" => $data['cycle'],
-                    "value" => $data['value'],
-                    "status" => $data['status'],
-                    "plan_id" => $data['plan_id'],
-                    "end_date" => $data['end_date'],
-                    "description" => $data['description'],
-                    "billing_type" => $data['billing_type'],
+                    "cycle" => $response['cycle'],
+                    "value" => $response['value'],
+                    "status" => $response['status'],
+                    "plan_id" => $oldOrder['data']['plan_id'],
+                    "end_date" => $oldOrder['data']['end_date'],
+                    "description" => $response['description'],
+                    "billing_type" => $response['billingType'],
                     "changed_plan" => false,
-                    "payment_date" => $data['payment_date'],
-                    "next_due_date" => $data['next_due_date'],
-                    "payment_status" => $data['payment_status'],
+                    "payment_date" => $response['paymentDate'],
+                    "next_due_date" => $response['nextDueDate'],
+                    "payment_status" => $response['paymentStatus'],
                     "original_plan_value" => null,
                 ]);
             }
