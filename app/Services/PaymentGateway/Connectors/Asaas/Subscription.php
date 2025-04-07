@@ -16,6 +16,12 @@ class Subscription implements SubscriptionInterface
         public AdapterInterface $http,
     ) {}
 
+
+    public function getPayments(int|string $id)
+    {
+        return $this->http->get("subscriptions/$id/payments");
+    }
+
     public function list(array $filters = []): array
     {
         return $this->http->get('/subscriptions' . $this->filter($filters));
