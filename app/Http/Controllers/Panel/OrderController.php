@@ -7,9 +7,10 @@ use App\Enums\PaymentStatusOrderAsaasEnum;
 use App\Enums\StatusOrderAsaasEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Models\PackagePlan;
+use App\Models\Package;
 use App\Models\Plan;
 use App\Services\AppIntegration\PlanCancelService;
+use App\Services\AppIntegration\PlanCreateService;
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
 use App\Services\PaymentGateway\Gateway;
 use Carbon\Carbon;
@@ -340,36 +341,20 @@ class OrderController extends Controller
 
         $plan = Plan::find($planId);
         $order = $this->model->find($validator->validated()['orderId']);
-        //todo: parei aqui, preciso fazer o fluxo de troca de plano na youcast
-        //usada para cancelar na youcast os pacotes antigos
+
         $oldPlan = Plan::where('id', $order->plan_id)->first();
 
         if ($order->next_due_date < now()
-            && $order->payment_status === PaymentStatusOrderAsaasEnum::RECEIVED->getName()
-            || $order->payment_status === PaymentStatusOrderAsaasEnum::CONFIRMED->getName()) {
-            toastr('Seu plano está vencido. Realize o pagamento antes de continuar!', 'warning');
+            && $order->payment_status !== PaymentStatusOrderAsaasEnum::RECEIVED->getName()) {
+            toastr(
+                'Se já fez o pagamento, por favor, aguarde a efetivação pelo sistema.',
+                'info',
+                'Seu plano está vencido. Realize o pagamento antes de continuar!',
+            );
             return redirect()->back();
         }
-
-        /*
-         * UPGRADE
-         * Antes de trocar de plano eu preciso ver:
-         *- valor do plano atual OK
-         *- quantos dias o cliente já usou o plano OK
-         *- descontar o saldo que o cliente tem da primeira cobrança do novo plano OK
-         *- o cliente precisa pagar o upgrade no ato da troca OK
-         * - se o cliente não pagar o upgrade eu preciso voltar ele para o plano anterior
-         *          - preciso guardar os dados da assinatura atual para poder voltar OK
-         *          - preciso rodar um job que verifica se foi paga OK
-         *              Rodar o job ao vencer a fatura OK
-         *              se não foi pago preciso restaurar OK
-         *
-         * - em todo o processo de upgrade ou downgrade eu preciso atualizar os planos do cliente no youcast
-         *
-         * DOWNGRADE
-         * - se for downgrade eu só gero um nova cobrança com a data de vencimento do fim do período que o plano atual tem
-         * */
-
+        $adapter = app(AsaasConnector::class);
+        $gateway = new Gateway($adapter);
 
         if ($order) {
             $actualPlanValue = $order->value;
@@ -386,9 +371,6 @@ class OrderController extends Controller
                 'YEARLY' => 365,
                 default => 30,
             };
-
-            $adapter = app(AsaasConnector::class);
-            $gateway = new Gateway($adapter);
 
             $payment = $gateway->payment()->get($order->payment_asaas_id);
 
@@ -415,14 +397,19 @@ class OrderController extends Controller
                 }
             }
 
-            // Atualiza a assinatura no Asaas com o novo valor ajustado
-            $this->updateSubscription($order, $invoiceValue, $plan, $gateway);
+            //caso seja downgrade eu só atualizo a fatura do próximo mês
+            if ($order->plan->value < $plan->value) {
+                $this->updateSubscription($order, $plan->value, $plan, $gateway, $oldPlan);
+            }
+
+            // Atualiza a assinatura no Asaas com o novo valor ajustado e na Youcast com os novos pacotes
+            $this->updateSubscription($order, $invoiceValue, $plan, $gateway, $oldPlan);
 
             return redirect()->route('panel.orders.index');
         }
     }
 
-    protected function updateSubscription($order, $invoiceValue, $plan, $gateway, $oldCombos)
+    protected function updateSubscription($order, $invoiceValue, $plan, $gateway, $oldPlan)
     {
         $data = [
             'id' => $order->subscription_asaas_id,
@@ -436,13 +423,28 @@ class OrderController extends Controller
         $response = $gateway->subscription()->update($order->subscription_asaas_id, $data);
 
         if ($response['object'] === 'subscription') {
-            //todo: se atualizou a assinatura preciso alterar agora na youcast
+            $packagesToCancel = [];
+            foreach ($oldPlan->packagePlans as $packagePlan) {
+                $pack = Package::find($packagePlan->package_id);
+                $packagesToCancel[] = $pack->cod;
+            };
 
-            (new PlanCancelService($order, $customer))->cancelPlan();
+            //cancelo na youcast os pacotes antigos
+            (new PlanCancelService($packagesToCancel, $order->customer->viewers_id))->cancelPlan();
 
-            $combos = PackagePlan::where('plan_id', $plan->id)->get();
+            //cadastro na youcast os pacotes novos
+            $packagesToCreate = [];
+            foreach ($plan->packagePlans as $packagePlan) {
+                $pack = Package::find($packagePlan->package_id);
+                $packagesToCreate[] = $pack->cod;
+            };
 
+            (new PlanCreateService($packagesToCreate, $order->customer->viewers_id))->createPlan();
+
+            //Salvo na order os dados do plano antigo para voltar o cliente se ele não pagar
             $order->update([
+                'plan_id' => $plan->id,
+                'description' => $plan->description,
                 'changed_plan' => true,
                 'original_plan_value' => $plan->value
             ]);
