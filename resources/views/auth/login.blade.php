@@ -26,7 +26,7 @@
                 <div class="card mb-5">
                     <div class="card-body text-center">
                         <div class="d-flex justify-content-center">
-                            <p>Acessar Agro Play</p>
+                            <p>Acessar {{config('app.name')}}</p>
                             <i class="fa fa-arrow-down ml-2 animate__animated animate__bounce"></i>
                         </div>
 
@@ -82,7 +82,7 @@
                     <div class="">
                         <div class="col-12">
                             <div class="social-auth-links text-center mb-3">
-                                <p>Não tem uma conta? <a href="{{ env('APP_URL') . '#planos' }}"
+                                <p>Não tem uma conta? <a href="{{ config('app.url') . '#planos' }}"
                                         class="">Cadastre-se</a></p>
 
                             </div>
