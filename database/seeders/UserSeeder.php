@@ -30,7 +30,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'name'      => 'Developer',
-                'email'     => 'alexandre.areds@gmail.com',
+                'email'     => 'contato@tiagoneitzke.com.br',
                 'login'     => 'developer',
                 'password'  => Hash::make('Rsg@9090'),
                 'access_id' => 3
