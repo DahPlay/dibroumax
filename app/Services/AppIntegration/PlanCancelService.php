@@ -32,7 +32,7 @@ class PlanCancelService
         }
 
         //adiciono o plano que não vê nada só para o cliente não ficar com a plataforma vazia
-        $dahPlayDesativado = Package::where('name', 'Dahplay desativado')->first();
+        $dahPlayDesativado = Package::where('cod', '136')->first();
         (new PlanCreate())->handle($this->viewerId, $dahPlayDesativado->cod);
     }
 }
