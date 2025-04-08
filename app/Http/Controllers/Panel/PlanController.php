@@ -9,7 +9,6 @@ use App\Http\Requests\PlanRequest;
 use App\Models\Package;
 use App\Models\Plan;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
@@ -102,7 +101,7 @@ class PlanController extends Controller
         return view('panel.plans.local.index.modals.create', compact('plan', 'packages'));
     }
 
-    public function store(PlanRequest $request): RedirectResponse
+    public function store(PlanRequest $request): JsonResponse
     {
         $data = $request->validated();
 
@@ -125,25 +124,35 @@ class PlanController extends Controller
                     ]);
                 }
             }
-            toastr('Ação executada com sucesso!');
-            return redirect()->route('panel.plans.index');
+            return response()->json([
+                'status' => 200,
+                'message' => 'Ação executada com sucesso!'
+            ]);
         }
-        toastr('Erro executar a ação, tente novamente!');
-        return redirect()->route('panel.plans.index');
+        return response()->json([
+            'status' => 400,
+            'errors' => [
+                'message' => ['Erro executar a ação, tente novamente!']
+            ]
+        ]);
     }
 
     public function edit($id): View
     {
         $plan = $this->model->find($id);
-
-        return view('panel.plans.local.index.modals.edit', compact("plan"));
+        $packages = Package::where('name', '!=', 'Dahplay desativado')
+            ->where('is_active', true)
+            ->get();
+        return view('panel.plans.local.index.modals.edit', compact("plan", 'packages'));
     }
 
     public function duplicate(): View
     {
         $plan = $this->model->find($this->request->id);
-
-        return view('panel.plans.local.index.modals.duplicate', compact('plan'));
+        $packages = Package::where('name', '!=', 'Dahplay desativado')
+            ->where('is_active', true)
+            ->get();
+        return view('panel.plans.local.index.modals.duplicate', compact('plan', 'packages'));
     }
 
     public function update($id): JsonResponse
@@ -187,11 +196,21 @@ class PlanController extends Controller
 
             $plan->benefits()->delete();
 
+            $plan->packagePlans()->delete();
+
             if ($this->request->filled('benefits') && count($this->request->input('benefits')) > 0 && !is_null(
                     $this->request->input('benefits')[0]
                 )) {
                 foreach ($this->request->benefits as $benefit) {
                     $plan->benefits()->create(['description' => $benefit]);
+                }
+            }
+
+            if ($this->request->filled('packages')) {
+                foreach ($this->request->packages as $package) {
+                    $plan->packagePlans()->create([
+                        'package_id' => $package,
+                    ]);
                 }
             }
 

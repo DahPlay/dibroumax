@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\Package;
 use App\Services\AppIntegration\PlanCancelService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -26,9 +27,13 @@ class CancelPlanYouCast implements ShouldQueue
             $customer = Customer::where('id', $this->order->customer_id)->first();
 
             if ($customer) {
-                //todo: validar a lógica para considerar combos
 //                $youcast = (new PlanCancel())->handle($customer->viewers_id, 861);
-                (new PlanCancelService($this->order, $customer))->cancelPlan();
+                $packagesToCreate = [];
+                foreach ($this->order->plan->packagePlans as $packagePlan) {
+                    $pack = Package::find($packagePlan->package_id);
+                    $packagesToCreate[] = $pack->cod;
+                };
+                (new PlanCancelService($packagesToCreate, $customer))->cancelPlan();
             }
         }
     }

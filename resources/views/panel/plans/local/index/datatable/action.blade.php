@@ -15,11 +15,12 @@
             <span class="ml-2">Excluir</span>
         </a>
 
-        <a href='#' class='btn-edit btn btn-info dropdown-item' data-id='{{ $plan->id }}'
+        todo: implementar a duplicação de plano
+       {{-- <a href='#' class='btn-edit btn btn-info dropdown-item' data-id='{{ $plan->id }}'
             data-url='/{{ $routeCrud }}/duplicate'>
             <i class="fa fa-file-export"></i>
             <span class="ml-2">Duplicar</span>
-        </a>
+        </a>--}}
 
         <div class="dropdown-divider"></div>
     </div>

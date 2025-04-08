@@ -89,7 +89,8 @@
                     @foreach ($packages as $index => $package)
                         <div class="packages-item d-flex align-items-center mb-2">
                             <input type="checkbox" name="packages[]" value="{{ $package->id }}"
-                                   id="packages_{{ $index }}">
+                                   id="packages_{{ $index }}"
+                                    {{ (isset($plan) && $plan->packagePlans->pluck('package_id')->contains($package->id)) ? 'checked' : '' }}>
                             <label for="packages_{{ $index }}" class="ml-2">{{ $package->name }}</label>
                         </div>
                     @endforeach
