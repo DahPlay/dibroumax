@@ -135,8 +135,10 @@ class PlanController extends Controller
     public function edit($id): View
     {
         $plan = $this->model->find($id);
-
-        return view('panel.plans.local.index.modals.edit', compact("plan"));
+        $packages = Package::where('name', '!=', 'Dahplay desativado')
+            ->where('is_active', true)
+            ->get();
+        return view('panel.plans.local.index.modals.edit', compact("plan", 'packages'));
     }
 
     public function duplicate(): View
@@ -187,11 +189,21 @@ class PlanController extends Controller
 
             $plan->benefits()->delete();
 
+            $plan->packagePlans()->delete();
+
             if ($this->request->filled('benefits') && count($this->request->input('benefits')) > 0 && !is_null(
                     $this->request->input('benefits')[0]
                 )) {
                 foreach ($this->request->benefits as $benefit) {
                     $plan->benefits()->create(['description' => $benefit]);
+                }
+            }
+
+            if ($this->request->filled('packages')) {
+                foreach ($this->request->packages as $package) {
+                    $plan->packagePlans()->create([
+                        'package_id' => $package,
+                    ]);
                 }
             }
 
