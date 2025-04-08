@@ -75,7 +75,7 @@
         <div class="form-group col-12">
             <label for="description" class="col-form-label text-danger">Descrição: *</label>
             <div class="input-group">
-                <textarea name="description" id="description" class="form-control"
+                <textarea name="description" id="description" class="form-control" required
                           placeholder="Descrição">{{ $plan->description ?? old('description') }}</textarea>
             </div>
         </div>
