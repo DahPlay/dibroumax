@@ -144,8 +144,10 @@ class PlanController extends Controller
     public function duplicate(): View
     {
         $plan = $this->model->find($this->request->id);
-
-        return view('panel.plans.local.index.modals.duplicate', compact('plan'));
+        $packages = Package::where('name', '!=', 'Dahplay desativado')
+            ->where('is_active', true)
+            ->get();
+        return view('panel.plans.local.index.modals.duplicate', compact('plan', 'packages'));
     }
 
     public function update($id): JsonResponse
