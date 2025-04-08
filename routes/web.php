@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\View;
 
 # Insert Global Variables
 View::composer("*", function ($view) {
+    Log::info('View Composer executado!');
     $routeCurrent   =   Route::getCurrentRoute();
     $titleBreadCrumb =   isset($routeCurrent->wheres["titleBreadCrumb"]) ? $routeCurrent->wheres["titleBreadCrumb"] : 'Sem título BreadCrumb';
     $title =   isset($routeCurrent->wheres["title"]) ? $routeCurrent->wheres["title"] : 'Sem título';
