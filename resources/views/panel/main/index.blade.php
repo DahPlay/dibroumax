@@ -64,7 +64,7 @@
                                     <div class="small-box bg-gradient-cyan">
                                         <div class="inner">
                                             <h3>{{ $quantityUsers }}</h3>
-                                            <p>Usuários teste</p>
+                                            <p>Usuários teste 2</p>
                                         </div>
                                         <div class="icon">
                                             <i class="fa fa-user"></i>
