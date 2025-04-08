@@ -52,7 +52,7 @@
 
                                             <div class="form-group col-12 col-lg-3">
                                                 <button type="button" id="btnLimpar" class="form-control btn btn-primary"><i
-                                                        class="fa fa-filter"></i> Limpar 2</button>
+                                                        class="fa fa-filter"></i> Limpar</button>
                                             </div>
                                         </div>
                                     </form>
