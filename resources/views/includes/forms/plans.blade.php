@@ -197,7 +197,7 @@
     }
 
     $('#packages-container input[type="checkbox"]').on('change', function () {
-        const exclusives = ['Dahplay Superior', 'Dahplay Completo', 'Dahplay Premium'];
+        const exclusives = ['Dahplay - Pacote Superior', 'Dahplay - Completo', 'Dahplay - Premium'];
 
         const label = $(this).next('label').text().trim();
         const isChecked = $(this).is(':checked');
@@ -213,7 +213,7 @@
     });
 
     $('#packages-container input[type="checkbox"]').on('change', function () {
-        const exclusives = ['Dahplay Premiere (Aberto)', 'Dahplay Premiere (Fechado)'];
+        const exclusives = ['Dahplay - Premiere (A)', 'Dahplay - Premiere (F)'];
 
         const label = $(this).next('label').text().trim();
         const isChecked = $(this).is(':checked');
@@ -229,7 +229,7 @@
     });
 
     $('#packages-container input[type="checkbox"]').on('change', function () {
-        const exclusives = ['Dahplay Telecine (Aberto)', 'Dahplay Telecine (Fechado)'];
+        const exclusives = ['Dahplay - Telecine (A)', 'Dahplay - Telecine (F)'];
 
         const label = $(this).next('label').text().trim();
         const isChecked = $(this).is(':checked');
