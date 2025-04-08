@@ -23,53 +23,25 @@ class PlanSeeder extends Seeder
                 'name' => 'Pacote Completo',
                 'cod' => [76]
             ],
+            [
+                'name' => 'Pacote Sports',
+                'cod' => [118]
+            ],
+            [
+                'name' => 'Pacote Premium',
+                'cod' => [130]
+            ],
             /*[
-                'name' => 'Pacote Superior + Premiere(F) + Telecine(F)',
-                'cod' => [59, 132, 131]
+                'name' => 'Telecine(A)',
+                'cod' => [129]
             ],
             [
-                'name' => 'Pacote Completo + Premiere(F) + Telecine(F)',
-                'cod' => [76, 132, 131]
+                'name' => 'Telecine(F)',
+                'cod' => [131]
             ],
             [
-                'name' => 'Pacote Premium + Premiere(F) + Telecine(F)',
-                'cod' => [130, 132, 131]
-            ],
-            [
-                'name' => 'Pacote Superior + Premiere(A) + Telecine(F)',
-                'cod' => [59, 118, 131]
-            ],
-            [
-                'name' => 'Pacote Completo + Premiere(A) + Telecine(F)',
-                'cod' => [76, 118, 131]
-            ],
-            [
-                'name' => 'Pacote Premium + Premiere(A) + Telecine(F)',
-                'cod' => [130, 118, 131]
-            ],
-            [
-                'name' => 'Pacote Superior + Premiere(F) + Telecine(A)',
-                'cod' => [59, 132, 129]
-            ],
-            [
-                'name' => 'Pacote Completo + Premiere(F) + Telecine(A)',
-                'cod' => [76, 132, 129]
-            ],
-            [
-                'name' => 'Pacote Premium + Premiere(F) + Telecine(A)',
-                'cod' => [130, 132, 129]
-            ],
-            [
-                'name' => 'Pacote Superior + Premiere(A) + Telecine(A)',
-                'cod' => [59, 118, 129]
-            ],
-            [
-                'name' => 'Pacote Completo + Premiere(A) + Telecine(A)',
-                'cod' => [76, 118, 129]
-            ],
-            [
-                'name' => 'Pacote Premium + Premiere(A) + Telecine(A)',
-                'cod' => [130, 118, 129]
+                'name' => 'Pacote Premiere(F)',
+                'cod' => [132]
             ],*/
         ];
 
