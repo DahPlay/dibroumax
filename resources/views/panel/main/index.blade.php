@@ -52,7 +52,7 @@
 
                                             <div class="form-group col-12 col-lg-3">
                                                 <button type="button" id="btnLimpar" class="form-control btn btn-primary"><i
-                                                        class="fa fa-filter"></i> Limpar</button>
+                                                        class="fa fa-filter"></i> Limpar 2</button>
                                             </div>
                                         </div>
                                     </form>
@@ -64,7 +64,7 @@
                                     <div class="small-box bg-gradient-cyan">
                                         <div class="inner">
                                             <h3>{{ $quantityUsers }}</h3>
-                                            <p>Usuários teste 2</p>
+                                            <p>Usuários</p>
                                         </div>
                                         <div class="icon">
                                             <i class="fa fa-user"></i>
