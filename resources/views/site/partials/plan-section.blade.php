@@ -44,11 +44,14 @@
                                                     <div class="important-info-plan d-flex flex-column align-items-center">
                                                         <span class="title-plan">{{ $plan->name }}</span>
                                                         <span class="value-plan">R$
-                                    <span class="value">{{ number_format($plan->value, 2, ',', '.') }}</span>
-                                </span>
+                                                        <span class="value">{{ number_format($plan->value, 2, ',', '.') }}</span>
+                                                        </span>
                                                         <span class="text-dark">
-                                    {{ $plan->free_for_days > 0 ? $plan->description : 'Renovação Automática' }}
-                                </span>
+                                                             {{ $plan->free_for_days > 0 ?? 'Renovação Automática' }}
+                                                        </span>
+                                                        <span class="text-dark">
+                                                             {{ $plan->description }}
+                                                        </span>
                                                     </div>
 
                                                     <div class="about-plan d-flex flex-column align-items-center w-100">
