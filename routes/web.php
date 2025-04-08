@@ -11,30 +11,7 @@ use App\Http\Controllers\Site\MainController as SiteMain;
 use App\Http\Controllers\System\MainController as SystemMain;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\View;
 
-# Insert Global Variables
-View::composer("*", function ($view) {
-    Log::info('View Composer executado!');
-    $routeCurrent   =   Route::getCurrentRoute();
-    $titleBreadCrumb =   isset($routeCurrent->wheres["titleBreadCrumb"]) ? $routeCurrent->wheres["titleBreadCrumb"] : 'Sem título BreadCrumb';
-    $title =   isset($routeCurrent->wheres["title"]) ? $routeCurrent->wheres["title"] : 'Sem título';
-    $routeActive    =   Route::currentRouteName();
-    $route          =   explode('.', $routeActive);
-    $routeAmbient   =   $route[0] ?? null;
-    $routeCrud      =   $route[1] ?? null;
-    $routeMethod    =   $route[2] ?? null;
-
-    $view
-        ->with('routeCurrent', $routeCurrent)
-        ->with('routeActive', $routeActive)
-        ->with('route', $route)
-        ->with('routeAmbient', $routeAmbient)
-        ->with('routeCrud', $routeCrud)
-        ->with('routeMethod', $routeMethod)
-        ->with('titleBreadCrumb', $titleBreadCrumb)
-        ->with('title', $title);
-});
 
 Auth::routes(['register' => false]);
 
