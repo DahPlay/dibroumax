@@ -15,7 +15,7 @@
             <span class="ml-2">Excluir</span>
         </a>
 
-        todo: implementar a duplicação de plano
+{{--        todo: implementar a duplicação de plano--}}
        {{-- <a href='#' class='btn-edit btn btn-info dropdown-item' data-id='{{ $plan->id }}'
             data-url='/{{ $routeCrud }}/duplicate'>
             <i class="fa fa-file-export"></i>
