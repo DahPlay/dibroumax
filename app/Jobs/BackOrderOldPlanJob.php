@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class BackOrderOldPlanJob implements ShouldQueue
 {
@@ -28,6 +29,7 @@ class BackOrderOldPlanJob implements ShouldQueue
         if (!$this->order->changed_plan) {
             return; // Já foi revertido ou não é upgrade
         }
+        Log::info('BackOrderOldPlan acionado');
         $oldOrder = OrderHistory::where('order_id', $this->order->id)
             ->where('created_at', $this->order->updated_at)
             ->first();

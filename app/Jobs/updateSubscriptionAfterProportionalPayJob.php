@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class updateSubscriptionAfterProportionalPayJob implements ShouldQueue
 {
@@ -32,6 +33,8 @@ class updateSubscriptionAfterProportionalPayJob implements ShouldQueue
             'description' => "Assinatura do plano  {$this->order->plan->name}",
             'externalReference' => 'Pedido: ' . $this->order->id,
         ];
+
+        Log::info('updateSubscriptionAfterProportionalPayJob acionado');
 
         $response = $gateway->subscription()->update($this->order->subscription_asaas_id, $data);
 

@@ -24,7 +24,7 @@ class AsaasPaymentService
         $paymentDate = $data['payment']['paymentDate'];
 
         $order = Order::where('subscription_asaas_id', $subscriptionId)->first();
-
+        Log::info('AsaasPaymentService acionado');
         if (!$order) {
             Log::warning("Ordem não encontrada para a assinatura $subscriptionId no evento $event.");
             return false;

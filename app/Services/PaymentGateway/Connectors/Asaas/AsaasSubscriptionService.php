@@ -18,7 +18,7 @@ class AsaasSubscriptionService
         $description = $data['subscription']['description'];
 
         $order = Order::where('subscription_asaas_id', $subscriptionId)->first();
-
+        Log::info('AsaasSubscriptionService acionado');
         if ($order) {
             switch ($event) {
                 case 'SUBSCRIPTION_CREATED':

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Webhooks;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Services\PaymentGateway\Connectors\Asaas\AsaasSubscriptionService;
 use App\Services\PaymentGateway\Connectors\Asaas\AsaasCustomerService;
 use App\Services\PaymentGateway\Connectors\Asaas\AsaasPaymentService;
+use App\Services\PaymentGateway\Connectors\Asaas\AsaasSubscriptionService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class AsaasWebhookController extends Controller
@@ -14,6 +14,7 @@ class AsaasWebhookController extends Controller
     public function handle(Request $request)
     {
         $event = $request->input('event');
+        Log::info('Webhook acionado', $event);
 
         if (str_starts_with($event, 'SUBSCRIPTION')) {
             $processed = app(AsaasSubscriptionService::class)->processEvent($event, $request->all());
