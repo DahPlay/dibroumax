@@ -342,8 +342,6 @@ class OrderController extends Controller
         $plan = Plan::find($planId);
         $order = $this->model->find($validator->validated()['orderId']);
 
-        $oldPlan = Plan::where('id', $order->plan_id)->first();
-
         if ($order->next_due_date < now()
             && $order->payment_status !== PaymentStatusOrderAsaasEnum::RECEIVED->getName()) {
             toastr(
@@ -353,14 +351,8 @@ class OrderController extends Controller
             );
             return redirect()->back();
         }
-        $adapter = app(AsaasConnector::class);
-        $gateway = new Gateway($adapter);
 
-        $actualPlanValue = $order->value;
-        $billingCycle = $order->cycle;
-        $newPlanValue = $plan->value;
-
-        $cycleDays = match ($billingCycle) {
+        $cycleDays = match ($order->cycle) {
             'WEEKLY' => 7,
             'BIWEEKLY' => 14,
             'MONTHLY' => 30,
@@ -370,38 +362,52 @@ class OrderController extends Controller
             'YEARLY' => 365,
             default => 30,
         };
+        $adapter = app(AsaasConnector::class);
+        $gateway = new Gateway($adapter);
 
+        $subscription = $gateway->subscription()->get($order->subscription_asaas_id);
+        $daysUsed = $cycleDays - now()->diffInDays($subscription['nextDueDate']);
+        $actualPlanValue = $order->value;
+        $newPlanValue = $plan->value;
         $isUpgrade = $newPlanValue > $actualPlanValue;
         $isDowngrade = $newPlanValue < $actualPlanValue;
-        $daysUsed = $cycleDays - now()->diffInDays($order->next_due_date);
         $invoiceValue = $newPlanValue;
 
         if ($isUpgrade) {
-            $paymentsFromSubscription = $gateway->subscription()->getPayments($order->subscription_asaas_id);
+            $asaasPaymentsFromActualSubscription = $gateway->subscription()->getPayments($order->subscription_asaas_id);
 
-            foreach ($paymentsFromSubscription['data'] as $payment) {
-                if ($payment['status'] === 'PENDING') {
-                    if ($daysUsed > 0 && $daysUsed < $cycleDays) {
-                        $dailyRate = $actualPlanValue / $cycleDays;
-                        $credit = $dailyRate * ($cycleDays - $daysUsed);
-                        $invoiceValue = max(0, $newPlanValue - $credit);
-                    }
-
-                    $paymentDeleted = $gateway->payment()->delete($payment['id']);
+            foreach ($asaasPaymentsFromActualSubscription['data'] as $subscriptionPayment) {
+                if ($subscriptionPayment['status'] === 'PENDING') {
+                    $paymentDeleted = $gateway->payment()->delete($subscriptionPayment['id']);
                     logger(
                         $paymentDeleted['deleted']
                             ? "Pagamento removido no Asaas para atualização de plano. Pedido: $order->id"
                             : "Erro ao remover pagamento no Asaas para atualização de plano. Pedido: $order->id"
                     );
                 }
-            }
+            };
+
+            $dailyRate = (float)$actualPlanValue / (float)$cycleDays;
+            $dailyRate = floor($dailyRate * 100) / 100;
+            $credit = $dailyRate * ($cycleDays - $daysUsed);
+            $invoiceValue = max(0, $newPlanValue - $credit);
+
+
+            logger('cálculos',[
+                    'credito' => $credit,
+                    'valor usado' => $dailyRate,
+                    'valor do plano atual ' => (float)$actualPlanValue,
+                    'ciclo' => (float)$cycleDays,
+                    'valor do novo plano' => $newPlanValue,
+                    'valor a ser cobrado' => $invoiceValue
+                ]);
         }
 
         // Define se a troca deve ser aplicada no próximo ciclo
         $forNextCycle = $isDowngrade;
 
         // Atualiza assinatura e troca os pacotes
-        $result = $this->updateSubscription($order, $invoiceValue, $plan, $gateway, $oldPlan, $forNextCycle, $daysUsed);
+        $result = $this->updateSubscription($order, $invoiceValue, $plan, $gateway, $forNextCycle, $daysUsed);
 
         if ($isDowngrade && $result) {
             toastr(
@@ -426,7 +432,6 @@ class OrderController extends Controller
         $invoiceValue,
         $plan,
         $gateway,
-        $oldPlan,
         $forNextCycle,
         $daysUsed
     ): bool {
@@ -446,6 +451,7 @@ class OrderController extends Controller
         if ($response['object'] === 'subscription') {
             // Cancela pacotes antigos na Youcast
             $packagesToCancel = [];
+            $oldPlan = Plan::where('id', $order->plan_id)->first();
             foreach ($oldPlan->packagePlans as $packagePlan) {
                 $pack = Package::find($packagePlan->package_id);
                 $packagesToCancel[] = $pack->cod;
@@ -467,10 +473,8 @@ class OrderController extends Controller
                 'changed_plan' => true,
                 'original_plan_value' => $plan->value
             ]);
-
             return true;
         }
-
         return false;
     }
 

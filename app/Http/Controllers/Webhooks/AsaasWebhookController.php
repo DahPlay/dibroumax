@@ -14,7 +14,7 @@ class AsaasWebhookController extends Controller
     public function handle(Request $request)
     {
         $event = $request->input('event');
-        Log::info('Webhook acionado', $event);
+        Log::info('Webhook acionado');
 
         if (str_starts_with($event, 'SUBSCRIPTION')) {
             $processed = app(AsaasSubscriptionService::class)->processEvent($event, $request->all());

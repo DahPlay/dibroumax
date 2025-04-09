@@ -2,10 +2,17 @@
 
 namespace App\Jobs;
 
+use App\Enums\PaymentStatusOrderAsaasEnum;
+use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderHistory;
+use App\Models\Package;
+use App\Models\PackagePlan;
+use App\Services\AppIntegration\PlanCancelService;
+use App\Services\AppIntegration\PlanCreateService;
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
 use App\Services\PaymentGateway\Gateway;
+use App\Services\YouCast\Plan\PlanHistory;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -29,9 +36,10 @@ class BackOrderOldPlanJob implements ShouldQueue
         if (!$this->order->changed_plan) {
             return; // Já foi revertido ou não é upgrade
         }
+
         Log::info('BackOrderOldPlan acionado');
         $oldOrder = OrderHistory::where('order_id', $this->order->id)
-            ->where('created_at', $this->order->updated_at)
+            ->orderByDesc('created_at')
             ->first();
 
         if ($oldOrder) {
@@ -41,8 +49,9 @@ class BackOrderOldPlanJob implements ShouldQueue
             $paymentsFromSubscription = $gateway->subscription()->getPayments($this->order->subscription_asaas_id);
 
             foreach ($paymentsFromSubscription['data'] as $payment) {
-                if ($payment['status'] === 'OVERDUE' && $payment['dueDate'] === $this->order->next_due_date) {
+                if ($payment['status'] == 'PENDING' || $payment['status'] == 'OVERDUE') {
                     $paymentDeleted = $gateway->payment()->delete($payment['id']);
+
                     logger(
                         $paymentDeleted['deleted']
                             ? "Pagamento removido no Asaas para atualização de plano. Pedido: $this->order->id"
@@ -51,19 +60,61 @@ class BackOrderOldPlanJob implements ShouldQueue
                 }
             }
 
+            $nextDueDate = $this->getNewDate($this->order->cycle);
 
             $data = [
                 'id' => $this->order->subscription_asaas_id,
-                'billingType' => $oldOrder['data']['billing_type'],
-                'value' => $oldOrder['data']['value'],
-                'nextDueDate' => $oldOrder['data']['next_due_date'],
-                'description' => $oldOrder['data']['description'],
-                'updatePendingPayments' => true,
+                'value' => $this->order->original_plan_value,
+                'nextDueDate' => now()->addDays($nextDueDate),
+                'description' => "Assinatura do plano  {$this->order->plan->name}",
+                'externalReference' => 'Pedido: ' . $this->order->id,
+                'updatePendingPayments' => true
             ];
+
+            Log::info('updateSubscriptionAfterProportionalPayJob acionado');
 
             $response = $gateway->subscription()->update($this->order->subscription_asaas_id, $data);
 
             if ($response['object'] === 'subscription') {
+                $customer = Customer::where('id', $oldOrder->data['customer_id'])->first();
+                if (!$customer) {
+                    Log::error('Customer não encontrado em BackOrderOldPlanJob');
+                    return;
+                }
+
+                $youcast = (new PlanHistory())->handle($customer->viewers_id);
+                if ($youcast["status"] == 1) {
+                    $packagesToCancel = [];
+                    $packagePlans = PackagePlan::where('plan_id', $this->order->plan_id)->get();
+                    foreach ($packagePlans as $packagePlan) {
+                        $pack = Package::find($packagePlan->package_id);
+                        $packagesToCancel[] = $pack->cod;
+                    };
+                    foreach ($youcast['response'] as $item) {
+                        //verifica se o plano de suspensão está ativo e remove ele
+                        if ($item['viewers_bouquets_cancelled'] === 136 && $item['viewers_bouquets_cancelled'] === 0) {
+                            $packagesToCancel[] = 136;
+                        }
+                    }
+
+                    (new PlanCancelService($packagesToCancel, $customer->viewers_id))->cancelPlan();
+
+                    //preciso voltar aos pacotes anteriores
+                    $packagesToCreate = [];
+                    $packagesOld = PackagePlan::where('plan_id', $oldOrder->data['plan_id'])->get();
+                    foreach ($packagesOld as $packagePlan) {
+                        $pack = Package::find($packagePlan->package_id);
+                        $packagesToCreate[] = $pack->cod;
+                    };
+                    (new PlanCreateService($packagesToCreate, $customer->viewers_id))->createPlan();
+                }
+                $paymentStatus = match ($oldOrder['data']['payment_status']) {
+                    'CONFIRMADO' => PaymentStatusOrderAsaasEnum::CONFIRMED,
+                    'PENDENTE' => PaymentStatusOrderAsaasEnum::PENDING,
+                    'VENCIDO' => PaymentStatusOrderAsaasEnum::OVERDUE,
+                    'RECEBIDO' => PaymentStatusOrderAsaasEnum::RECEIVED,
+                };
+
                 $this->order->update([
                     "cycle" => $response['cycle'],
                     "value" => $response['value'],
@@ -75,10 +126,25 @@ class BackOrderOldPlanJob implements ShouldQueue
                     "changed_plan" => false,
                     "payment_date" => null,
                     "next_due_date" => $response['nextDueDate'],
-                    "payment_status" => $response['paymentStatus'],
+                    "payment_status" => $paymentStatus,
                     "original_plan_value" => null,
                 ]);
+                Log::info('assinatura atualizada no asaas para pedido: ' . $this->order->id);
             }
         }
+    }
+
+    private function getNewDate($cycle): int
+    {
+        return match ($cycle) {
+            'WEEKLY' => 7,
+            'BIWEEKLY' => 14,
+            'MONTHLY' => 30,
+            'BIMONTHLY' => 60,
+            'QUARTERLY' => 90,
+            'SEMIANNUALLY' => 180,
+            'YEARLY' => 365,
+            default => 30,
+        };
     }
 }

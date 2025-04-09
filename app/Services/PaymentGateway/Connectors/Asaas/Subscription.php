@@ -27,6 +27,11 @@ class Subscription implements SubscriptionInterface
         return $this->http->get('/subscriptions' . $this->filter($filters));
     }
 
+    public function get(int|string $id): array
+    {
+        return $this->http->get('/subscriptions/' . $id);
+    }
+
     public function create(array $data): array
     {
         return $this->http->post('/subscriptions', $data);
