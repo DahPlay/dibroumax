@@ -37,7 +37,7 @@
                                 <div class="row g-4 justify-content-center">
                                     @foreach($plansByCycle[$cycleKey] as $plan)
                                         <div
-                                                class="relative col-5 mb-5 d-flex justify-content-center align-content-center ml-4 p-4 border rounded bg-light">
+                                                class="relative col-12 col-md-6 col-lg-5 mb-5 d-flex justify-content-center align-content-center ml-4 p-4 border rounded bg-light">
                                             <div
                                                     class="m-2 w-100">
                                                 <div
@@ -60,15 +60,24 @@
                                                     @endif
 
                                                     <div
-                                                            class="d-flex flex-column align-items-center">
-                                                        <span class="badge text-xl">{{ $plan->name }}</span>
-                                                        <span class="badge text-lg">R$
-                                                    <span
-                                                            class="value">{{ number_format($plan->value, 2, ',', '.') }}</span>
-                                                </span>
-                                                        <span class="badge fs-2">
-                                                    {{ $plan->free_for_days > 0 ? $plan->description : 'Renovação Automática' }}
-                                                </span>
+                                                            class="d-flex flex-column align-items-center text-center mb-3">
+                                                        <div class="w-100 text-center">
+                                                            <div class="badge text-lg text-break" style="max-width: 100%; white-space: normal;">
+                                                                {{ $plan->name }}
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="badge text-lg mb-2">R$
+                                                            <span
+                                                            class="value text-xl ">{{ number_format($plan->value, 2, ',', '.') }}
+                                                            </span>
+                                                         </div>
+                                                        <span class="badge fs-2 text-sm">
+                                                             {{ $plan->free_for_days > 0 ? $plan->description : 'Renovação Automática' }}
+                                                        </span>
+                                                        <span class="badge fs-2 text-sm">
+                                                            {{ $plan->description }}
+                                                        </span>
                                                     </div>
 
                                                     <div class="mb-3 d-flex flex-column align-items-center w-100">
@@ -79,7 +88,7 @@
                                                                         src="{{ asset('Auth-Panel/dist/img/plans-icon.svg') }}"
                                                                         alt="">
                                                                 <span
-                                                                        class="text-dark">{{ $benefit->description }}</span>
+                                                                        class="pl-2 text-dark">{{ $benefit->description }}</span>
                                                             </div>
                                                         @endforeach
                                                     </div>
