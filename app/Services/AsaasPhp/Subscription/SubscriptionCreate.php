@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\AsaasPhp\Customer;
+namespace App\Services\AsaasPhp\Subscription;
 
 use App\Services\AsaasPhp\Concerns\AsaasClient;
 use Illuminate\Support\Facades\Http;

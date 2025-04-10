@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services\AsaasPhp\Customer;
+namespace App\Services\AsaasPhp\Subscription;
 
 use App\Services\PaymentGateway\Connectors\AsaasConnector;
 use App\Services\PaymentGateway\Gateway;
