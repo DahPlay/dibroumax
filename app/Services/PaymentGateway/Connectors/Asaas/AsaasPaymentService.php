@@ -24,7 +24,7 @@ class AsaasPaymentService
         $paymentDate = $data['payment']['paymentDate'];
 
         $order = Order::where('subscription_asaas_id', $subscriptionId)->first();
-
+        Log::info('AsaasPaymentService acionado');
         if (!$order) {
             Log::warning("Ordem não encontrada para a assinatura $subscriptionId no evento $event.");
             return false;
@@ -44,7 +44,6 @@ class AsaasPaymentService
 
                 Log::info("Pagamento confirmado para a ordem {$order->id}.");
 
-
                 $packagesToCreate = [];
 
                 foreach ($order->plan->packagePlans as $packagePlan) {
@@ -58,6 +57,13 @@ class AsaasPaymentService
                     foreach ($planInYoucast['response'] as $item) {
                         $planExists = in_array($item['viewers_bouquets_products_id'], $packagesToCreate);
 
+                        //verifica se o plano de suspensão está ativo e remove ele
+                        if ($item['viewers_bouquets_cancelled'] === 136 && $item['viewers_bouquets_cancelled'] === 0) {
+                            $planToCancel = [];
+                            $planToCancel[] = 136;
+                            (new PlanCancelService($planToCancel, $order->customer->viewers_id))->cancelPlan();
+                        }
+                        //ativa novamente os planos cancelados que pertencem ao pedido pago
                         if (!$planExists || $item['viewers_bouquets_cancelled'] == 1) {
                             (new PlanCreateService($packagesToCreate, $order->customer->viewers_id))->createPlan();
                         }
@@ -89,6 +95,7 @@ class AsaasPaymentService
 
                 if ($order->changed_plan) {
                     BackOrderOldPlanJob::dispatch($order);
+                   break;
                 }
                 $order->update(
                     ['status' => 'INACTIVE'],

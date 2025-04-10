@@ -11,7 +11,7 @@ class PackageSeeder extends Seeder
     {
         $packages = [
             ['name' => 'Dahplay - Suspensão', 'cod' => 136, 'is_active' => false],
-            ['name' => 'Dahplay - Pacote Superior', 'cod' => 59, 'is_active' => true],
+            ['name' => 'Dahplay - Superior', 'cod' => 59, 'is_active' => true],
             ['name' => 'Dahplay - Completo', 'cod' => 76, 'is_active' => true],
             ['name' => 'Dahplay - Premium', 'cod' => 130, 'is_active' => true],
             ['name' => 'Dahplay - Premiere (A)', 'cod' => 118, 'is_active' => true],

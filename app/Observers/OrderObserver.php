@@ -9,9 +9,11 @@ class OrderObserver
 {
     public function updating(Order $order): void
     {
-        OrderHistory::create([
-            'order_id' => $order->id,
-            'data' => $order->getOriginal(),
-        ]);
+        if ($order->isDirty('plan_id')) {
+            OrderHistory::create([
+                'order_id' => $order->id,
+                'data' => $order->getOriginal(),
+            ]);
+        }
     }
 }
