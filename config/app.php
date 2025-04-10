@@ -170,6 +170,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
         App\Providers\ViewComposerServiceProvider::class,
+        MarvinLabs\DiscordLogger\ServiceProvider::class
     ])->toArray(),
 
     /*

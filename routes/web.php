@@ -18,9 +18,11 @@ Auth::routes(['register' => false]);
 Route::get('/register/{planId?}', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
 
-/*Route::get('/teste', function () {
-    return storage_path();
-});*/
+Route::get('/teste', function () {
+    Log::info('funciona');
+    return 'ok.';
+//    return storage_path();
+});
 
 Route::name('site.')->group(function () {
     Route::name('main.')->group(function () {
