@@ -26,7 +26,7 @@ class RegisterController extends Controller
         $this->middleware('guest');
     }
 
-    public function showRegistrationForm(int $planId = null)
+    public function showRegistrationForm(int|string $planId = null)
     {
         $planId = $planId ?: '';
 
