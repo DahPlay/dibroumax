@@ -507,10 +507,9 @@ footer p:first-child{
 
 .login-page{
     align-items: center !important;
-    background-color: #e9ecef !important;
     height: 100vh !important;
     flex-direction: row !important;
-    background-color: #F9F3F3 !important;
+   
 }
 
 .login-logo{

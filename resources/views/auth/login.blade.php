@@ -2,8 +2,8 @@
 
 @section('content')
     <div class="background-login col-6 d-none d-md-flex"
-        style="background-image: url('/Auth-Panel/dist/img/background-login.svg')"></div>
-    <div class="login-box login-page col-12 col-md-6 p-0">
+        style="background-image: url('/Auth-Panel/dist/img/{{ config('custom.background_login') }}')"></div>
+    <div class="login-box login-page col-12 col-md-6 p-0" style="background-color: {{ config('custom.background_login_color') }};">
 
 
         @if (count($errors) > 0)
@@ -26,19 +26,19 @@
                 <div class="card mb-5">
                     <div class="card-body text-center">
                         <div class="d-flex justify-content-center">
-                            <p>Acessar {{config('app.name')}}</p>
-                            <i class="fa fa-arrow-down ml-2 animate__animated animate__bounce"></i>
+                            <p style=" color: {{ config('custom.text_color_acessar') }};">Acessar {{config('custom.project_name')}}</p>
+                            <i class="fa fa-arrow-down ml-2 animate__animated animate__bounce" style=" color: {{ config('custom.text_color_acessar') }};"></i>
                         </div>
 
-                        <a href="https://portal.agroplay.tv.br/login" target="_blank">
-                            <img src="{{ asset('/Auth-Panel/dist/img/logo-agro-play.png') }}" style="width: 140px;"
+                        <a href="{{ config('custom.portal_link') }}" target="_blank">
+                            <img src="{{ config('custom.logo_1') }}" style="width: 140px;"
                                 alt="Agro Play">
                         </a>
                     </div>
                 </div>
 
 
-                <h3 class="login-box-msg">Gerenciar Conta</h3>
+                <h3 class="login-box-msg" style=" color: {{ config('custom.text_color_gerenciar') }};">Gerenciar Conta</h3>
 
                 <form action="{{ route('login') }}" method="post">
                     @csrf
@@ -68,13 +68,13 @@
 
                     <div class="">
                         <div class="col-12 d-flex align-items-center justify-content-center">
-                            <button type="submit" class="acess-button">Entrar</button>
+                            <button type="submit" class="acess-button" style="background-color: {{ config('custom.button_color_entrar') }}; color: {{ config('custom.button_text_color_entrar') }};">Entrar</button>
                         </div>
 
-                        <div class="col-12 d-flex align-items-center justify-content-center">
+                        <div class="col-12 d-flex align-items-center justify-content-center" >
                             {{-- {{ route('password.email') }} --}}
-                            <a href="{{ route('password.request') }}" class="password-button text-center border text-black">
-                                <i class="fab fa-lock mr-2"></i> Esqueci minha senha
+                            <a href="{{ route('password.request') }}" class="password-button text-center border text-black" style="background-color: {{ config('custom.button_color_senha') }}; color: {{ config('custom.button_text_color_senha') }}; border: {{ config('custom.button_color_senha') }}!important;">
+                                <i class="fab fa-lock mr-2" ></i> Esqueci minha senha
                             </a>
                         </div>
                     </div>
@@ -82,8 +82,8 @@
                     <div class="">
                         <div class="col-12">
                             <div class="social-auth-links text-center mb-3">
-                                <p>Não tem uma conta? <a href="{{ config('app.url') . '#planos' }}"
-                                        class="">Cadastre-se</a></p>
+                                <p style=" color: {{ config('custom.text_color_conta') }};">Não tem uma conta? <a href="{{ config('app.url') . '#planos' }}"
+                                        class="" style=" color: {{ config('custom.text_color_cadastre') }};">Cadastre-se</a></p>
 
                             </div>
                         </div>
@@ -93,7 +93,7 @@
         </div>
         <div class="login-logo position-absolute">
             <a href="{{ route('login') }}">
-                <img src="{{ asset('Auth-Panel/dist/img/logo.svg') }}" alt="">
+                <img src="{{ config('custom.logo_2') }}" alt="">
             </a>
         </div>
     </div>

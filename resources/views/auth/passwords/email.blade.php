@@ -2,9 +2,9 @@
 
 @section('content')
     <div class="background-login col-6 d-none d-md-flex"
-        style="background-image: url('/Auth-Panel/dist/img/background-login.svg')"></div>
+        style="background-image: url('/Auth-Panel/dist/img/{{ config('custom.background_password_image') }}')"></div>
 
-    <div class="login-box login-page col-12 col-md-6 p-0">
+    <div class="login-box login-page col-12 col-md-6 p-0" style="background-color: {{ config('custom.background_password_color') }};">
         <div class="card col p-0">
             @if (session('status'))
                 <div class="alert alert-success">
@@ -26,17 +26,17 @@
                 <div class="card mb-5">
                     <div class="card-body text-center">
                         <div class="d-flex justify-content-center">
-                            <p>Recuperar Senha</p>
-                            <i class="fa fa-arrow-down ml-2 animate__animated animate__bounce"></i>
+                            <p style="color: {{ config('custom.text_color_recuperar') }};">Recuperar Senha</p>
+                            <i class="fa fa-arrow-down ml-2 animate__animated animate__bounce" style="color: {{ config('custom.text_color_recuperar') }};"></i>
                         </div>
-                        <a href="https://portal.agroplay.tv.br/login" target="_blank">
-                            <img src="{{ asset('/Auth-Panel/dist/img/logo-agro-play.png') }}" style="width: 140px;"
-                                alt="Agro Play">
+                        <a href="{{ config('custom.portal_link') }}" target="_blank">
+                            <img src="{{ config('custom.logo_1') }}" style="width: 140px;"
+                                alt="{{ config('custom.project_name') }}">
                         </a>
                     </div>
                 </div>
 
-                <h3 class="login-box-msg">Recuperar sua conta</h3>
+                <h3 class="login-box-msg" style="color: {{ config('custom.text_color_gerenciar') }};">Recuperar sua conta</h3>
 
                 <form action="{{ route('password.email') }}" method="post">
                     @csrf
@@ -52,7 +52,7 @@
                     </div>
 
                     <div class="col-12 d-flex align-items-center justify-content-center">
-                        <button type="submit" class="acess-button">Enviar link de recuperação</button>
+                        <button type="submit" class="acess-button" style="background-color: {{ config('custom.button_color_entrar') }}; color: {{ config('custom.button_text_color_entrar') }};">Enviar link de recuperação</button>
                     </div>
                 </form>
             </div>
@@ -60,7 +60,7 @@
 
         <div class="login-logo position-absolute">
             <a href="{{ route('login') }}">
-                <img src="{{ asset('Auth-Panel/dist/img/logo.svg') }}" alt="">
+                <img src="{{ config('custom.logo_2') }}" alt="">
             </a>
         </div>
     </div>

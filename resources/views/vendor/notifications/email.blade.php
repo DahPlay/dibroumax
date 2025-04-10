@@ -40,7 +40,7 @@
 {{ $salutation }}
 @else
 @lang('Atenciosamente'),<br>
-{{ config('app.name') }}
+{{ config('custom.project_name') }}
 @endif
 
 {{-- Subtexto --}}

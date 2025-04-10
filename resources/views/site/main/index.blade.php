@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{config('app.name')}}</title>
+    <title>{{config('custom.project_name')}}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -15,17 +15,32 @@
     <link rel="stylesheet" href="{{ asset('Auth-Panel/dist/css/adminlte.min.css') }}">
     <link rel="stylesheet"
           href="{{ asset('Auth-Panel/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
-    <link rel="shortcut icon" href="{{ asset('Auth-Panel/dist/img/favicon.png') }}"/>
+    <link rel="shortcut icon" href="{{ config('custom.favicon') }}"/>
     <link rel="stylesheet" href="{{ asset('Auth-Panel/dist/css/front/front.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
 </head>
 
 <body>
 <header class="d-flex justify-content-center justify-content-lg-end position-relative"
-        style="background-image: url('{{ asset('Auth-Panel/dist/img/background-header.svg') }}'); background-repeat: no-repeat;">
+        style="background-image: url('{{ config('custom.background_home_image') }}'); background-repeat: no-repeat;">
+   <!-- Escurece a imagem, mas fica por baixo de tudo -->
+<div style="
+    background-color: {{ config('custom.background_home_image_blur') }};
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+"></div>
+
+<!-- Tudo que vem depois, com z-index: 1, fica acima -->
+<div style="z-index: 1;">
+    <!-- texto, imagem, menu, etc. -->
+</div>
 
     <div class="align-items-center container-nav d-flex justify-content-between position-absolute">
-        <img src="{{ asset('Auth-Panel/dist/img/logo.svg') }}">
+        <img src="{{ config('custom.logo_1') }}">
 
         <div class="d-flex flex-column d-lg-none menu" onclick="toggleMenu()">
             <div class="menu-bar"></div>
@@ -35,15 +50,17 @@
 
         <nav
             class="justify-content-end justify-content-lg-center ml-0 mr-0 navbar navbar-expand col nav d-none d-lg-flex">
-            <ul class="d-lg-flex d-none justify-content-lg-center navbar-nav">
-                <li class="px-4"><a href="#planos">Planos</a></li>
-                <li class="px-4"><a href="#sobre-a-plataforma">Sobre a plataforma</a></li>
-                <li class="px-4"><a href="#catalogo">Catálogo</a></li>
-                <li class="px-4"><a href="{{ route('login') }}">Gerenciar</a></li>
-                <li class="active px-4"><a href="#planos">Cadastre-se</a></li>
-                <li class="active px-4" style="background-color: white;">
-                    <a href="https://portal.agroplay.tv.br/login" target="_blank">
-                        <img src="{{ asset('Auth-Panel/dist/img/logo-agro-play.png') }}"
+            <ul class="d-lg-flex d-none justify-content-lg-center navbar-nav" >
+            <li class="px-4" style="background-color: {{ config('custom.background_home_menu_color') }};"><a href="#planos" style="color: {{ config('custom.text_home_menu_color') }};">Planos</a>
+</li>
+
+                <li class="px-4" style="background-color: {{ config('custom.background_home_menu_color') }};"><a href="#sobre-a-plataforma" style="color: {{ config('custom.text_home_menu_color') }};">Sobre a plataforma</a></li>
+                <li class="px-4" style="background-color: {{ config('custom.background_home_menu_color') }};"><a href="#catalogo" style="color: {{ config('custom.text_home_menu_color') }};">Catálogo</a></li>
+                <li class="px-4" style="background-color: {{ config('custom.background_home_menu_color') }};"><a href="{{ route('login') }}" style="color: {{ config('custom.text_home_menu_color') }};">Gerenciar</a></li>
+                <li class="active px-4" style="background-color: {{ config('custom.background_button_home_menu_color_cadastre') }};"><a href="#planos">Cadastre-se</a></li>
+                <li class="active px-4" style="background-color: {{ config('custom.background_home_menu_color') }}; color: {{ config('custom.text_home_menu_color') }};">
+                    <a href="{{ config('custom.portal_link') }}" target="_blank">
+                        <img src="{{ config('custom.logo_1') }}"
                              style="width: 100px; margin: 0px;" alt="">
                     </a>
                 </li>
@@ -67,21 +84,23 @@
         </ul>
     </nav>
 
-    <div class="div-header d-flex div-header flex-column justify-content-center px-5 px-lg-0">
-        <span>Conecte-se ao futuro do Agronegócio</span>
+    <div class="div-header d-flex flex-column justify-content-center px-5 px-lg-0"
+     style="position: relative; z-index: 1;">
+    <span style="color: {{ config('custom.title_home_color_capa') }};">{{ config('custom.titulo_home_capa') }}</span>
 
-        <p>Agora o conteúdo mais relevante do mercado agro está ao seu alcance, em qualquer lugar! Notícias, eventos
-            e muitos mais na nossa plataforma de streaming.</p>
+    <p style="color: {{ config('custom.text_home_color_capa') }};">{{ config('custom.text_home_capa') }}</p>
 
-        <a href="#planos">Experimente Grátis por 7 dias</a>
+    <a href="#planos" style="background-color: {{ config('custom.background_button_home_menu_color_cadastre') }}; color: {{ config('custom.text_button_home_menu_color_cadastre') }};">{{ config('custom.text_button_home_menu_experimente') }}</a>
+</div>
+
     </div>
 </header>
 
 
 <section id="sobre-a-plataforma" class="d-flex first-section flex-column flex-lg-row section-container text-center">
     <div>
-        <h3>Assista quando e onde quiser!</h3>
-        <p>Disponível na sua smart TV, celular, tablet ou notebook, sem nenhum custo adicional.</p>
+        <h3 style="color: {{ config('custom.text_home') }};">Assista quando e onde quiser!</h3>
+        <p style="color: {{ config('custom.text_home') }};">Disponível na sua smart TV, celular, tablet ou notebook, sem nenhum custo adicional.</p>
     </div>
 
     <div class="first-section-video">
@@ -101,7 +120,7 @@
                 <img src="{{ asset('Auth-Panel/dist/img/about-icon.svg') }}" alt="">
 
                 <div class="about-item">
-                    <span class="about-title">Conteúdo ilimitado</span>
+                    <span class="about-title" >Conteúdo ilimitado</span>
                     <span class="about-subtitle">Assista quando e onde quiser!</span>
                 </div>
             </div>
@@ -128,41 +147,41 @@
              alt="">
     </div>
     <div class="">
-        <h2 class="font-weight-bold">Explore o universo agro com nosso canal de streaming exclusivo!</h2>
+        <h2 class="font-weight-bold" style="color: {{ config('custom.text_home') }};">Explore o universo agro com nosso canal de streaming exclusivo!</h2>
 
-        <p>Além dos melhores filmes e séries, você tem acesso a conteúdos dedicados ao mundo agro: insights,
+        <p style="color: {{ config('custom.text_home') }};">Além dos melhores filmes e séries, você tem acesso a conteúdos dedicados ao mundo agro: insights,
             tendências e novidades feitas para quem vive e respira esse setor. Assine e mergulhe no que há de
             mais completo para o campo e além!</p>
     </div>
 </section>
 
 <section id="catalogo" class="third-section section-container pr-0">
-    <h3 class="font-weight-bold">Canais Agro</h3>
+    <h3 class="font-weight-bold" style="color: {{ config('custom.text_home') }};">Canais Agro</h3>
 
     <div class="swiper mySwiper">
         <div class="swiper-wrapper channels-agro">
             <div class="channel-item swiper-slide d-flex justify-content-center align-items-center">
-                <span class="channel-number">1</span>
+                <span class="channel-number" style="color: {{ config('custom.number_home') }};">1</span>
                 <img class="channel-photo" src="{{ asset('Auth-Panel/dist/img/agro-1.svg') }}" alt="">
             </div>
 
             <div class="channel-item swiper-slide d-flex justify-content-center align-items-center">
-                <span class="channel-number">2</span>
+                <span class="channel-number" style="color: {{ config('custom.number_home') }};">2</span>
                 <img class="channel-photo" src="{{ asset('Auth-Panel/dist/img/agro-2.svg') }}" alt="">
             </div>
 
             <div class="channel-item swiper-slide d-flex justify-content-center align-items-center">
-                <span class="channel-number">3</span>
+                <span class="channel-number" style="color: {{ config('custom.number_home') }};">3</span>
                 <img class="channel-photo" src="{{ asset('Auth-Panel/dist/img/agro-3.svg') }}" alt="">
             </div>
 
             <div class="channel-item swiper-slide d-flex justify-content-center align-items-center">
-                <span class="channel-number">4</span>
+                <span class="channel-number" style="color: {{ config('custom.number_home') }};">4</span>
                 <img class="channel-photo" src="{{ asset('Auth-Panel/dist/img/agro-4.svg') }}" alt="">
             </div>
 
             <div class="channel-item swiper-slide d-flex justify-content-center align-items-center">
-                <span class="channel-number">5</span>
+                <span class="channel-number" style="color: {{ config('custom.number_home') }};">5</span>
                 <img class="channel-photo" src="{{ asset('Auth-Panel/dist/img/agro-1.svg') }}" alt="">
             </div>
         </div>
@@ -173,7 +192,7 @@
 </section>
 
 <section class="fourth-section section-container pr-0">
-    <h3 class="font-weight-bold">Filmes e séries</h3>
+    <h3 class="font-weight-bold" style="color: {{ config('custom.text_home') }};">Filmes e séries</h3>
 
     <div class="swiper moviesSwiper">
         <div class="swiper-wrapper movies-area">
@@ -209,8 +228,8 @@
     </div>
 
     <div class="container-infos col-6">
-        <h3>O melhor conteúdo agro!</h3>
-        <p>Salve seus filmes ou séries favoritas e assista mesmo sem internet.</p>
+        <h3 style="color: {{ config('custom.text_home') }};">O melhor conteúdo agro!</h3>
+        <p style="color: {{ config('custom.text_home') }};">Salve seus filmes ou séries favoritas e assista mesmo sem internet.</p>
     </div>
 </section>
 

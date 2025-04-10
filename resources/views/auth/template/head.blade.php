@@ -1,7 +1,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name') }}</title>
+    <title>{{ config('custom.project_name') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{{ asset('Auth-Panel/plugins/fontawesome-free/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('Auth-Panel/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('Auth-Panel/dist/css/adminlte.min.css') }}">
-    <link rel="shortcut icon" href="{{ asset('Auth-Panel/dist/img/favicon.png') }}" />
+    <link rel="shortcut icon" href="{{ config('custom.favicon') }}" />
     <link rel="stylesheet" href="{{ asset('Auth-Panel/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('Auth-Panel/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('Auth-Panel/dist/css/front/front.css') }}">

@@ -12,7 +12,7 @@
     <link rel="stylesheet"
         href="{{ asset('Auth-Panel/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
-    <link rel="shortcut icon" href="{{ asset('Auth-Panel/dist/img/favicon.png') }}" />
+    <link rel="shortcut icon" href="{{ config('custom.favicon') }}" />
     <link rel="stylesheet" href="{{ asset('Auth-Panel/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('Auth-Panel/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 

@@ -1,8 +1,8 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="{{ route('panel.main.index') }}" class="brand-link">
-        <img src="{{ asset('Auth-Panel/dist/img/favicon.png') }}" alt="Agro Mercado"
+        <img src="{{ config('custom.favicon') }}" alt="{{ config('custom.project_name') }}"
              class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light">{{ env('APP_NAME') }}</span>
+        <span class="brand-text font-weight-light">{{ config('custom.project_name') }}</span>
     </a>
 
     <div class="sidebar">
