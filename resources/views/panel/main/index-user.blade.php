@@ -3,7 +3,7 @@
 @section('content')
     <div class="content-wrapper">
         <div class="content"
-            style="background-image: url('{{ asset('/Auth-Panel/dist/img/back-dash.png') }}'); background-size: cover; background-repeat: no-repeat; width: 100%; height: 100vh;">
+            style="background-image: url('{{ config('custom.back_dash') }} '); background-size: cover; background-repeat: no-repeat; width: 100%; height: 100vh;">
         </div>
     </div>
 @endsection

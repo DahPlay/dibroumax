@@ -33,16 +33,16 @@
                                         <div class="d-flex container-plan h-100">
                                             <a href="{{ route('register', ['planId' => $plan->id]) }}"
                                                class="m-2 w-100">
-                                                <div class="plan d-flex flex-column align-items-center h-100 {{ $plan->is_best_seller ? 'best-seller' : '' }}">
+                                                <div class="plan d-flex flex-column align-items-center h-100 {{ $plan->is_best_seller ? 'best-seller' : '' }}" style="border-color: {{ config('custom.mais_vendido') }};" >
                                                     @if ($plan->is_best_seller)
-                                                        <div class="box-best-seller position-absolute">
+                                                        <div class="box-best-seller position-absolute" style="background-color: {{ config('custom.mais_vendido') }}; color: {{ config('custom.text_mais_vendido') }};">
                                                             <span>Mais vendido</span>
                                                         </div>
                                                     @endif
 
-                                                    <div class="important-info-plan d-flex flex-column align-items-center">
-                                                        <span class="title-plan">{{ $plan->name }}</span>
-                                                        <span class="value-plan">R$
+                                                    <div class="important-info-plan d-flex flex-column align-items-center" >
+                                                        <span class="title-plan" style="color: {{ config('custom.mais_vendido') }};">{{ $plan->name }}</span>
+                                                        <span class="value-plan" style="color: {{ config('custom.mais_vendido') }};">R$
                                                         <span class="value">{{ number_format($plan->value, 2, ',', '.') }}</span>
                                                         </span>
                                                         <span class="text-dark">
@@ -63,7 +63,7 @@
                                                         @endforeach
                                                     </div>
 
-                                                    <button type="button" class="btn start-now-button">
+                                                    <button type="button" class="btn start-now-button" style="background-color: {{ config('custom.mais_vendido') }};">
                                                         Começar agora
                                                     </button>
                                                 </div>

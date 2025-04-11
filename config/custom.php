@@ -9,6 +9,7 @@ return [
     */
     'favicon' => env('FAVICON', '/Auth-Panel/dist/img/favion32x32.png'),
     'project_name' => env('PROJECT_NAME', 'DahPlay'),
+    'back_dash' => env('BACK_DASH', '/Auth-Panel/dist/img/background_home.jpg'),
 
     /*
     |--------------------------------------------------------------------------
@@ -153,6 +154,9 @@ return [
     'title_plan' => env('TITLE_PLAN', 'Escolha o plano que mais combina com você!'),
     'text_plan_1' => env('TEXT_PLAN_1', 'Estamos desenvolvendo uma comunicação clara e próxima de você!'),
     'text_plan_2' => env('TEXT_PLAN_2', 'Curta nossas séries, filmes e conteúdos exclusivos feitos para você!'),
+    'mais_vendido' => env('MAIS_VENDIDO', 'rgb(80, 88, 218)'),
+    'border_mais_vendido' => env('BORDER_MAIS_VENDIDO', 'rgb(80, 88, 218)'),
+    'text_mais_vendido' => env('TEXT_MAIS_VENDIDO', 'rgb(255, 255, 255)'),
 
     /*
     |--------------------------------------------------------------------------
