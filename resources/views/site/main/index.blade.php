@@ -378,6 +378,24 @@
                 });
             @endforeach
     });
+
+        $(document).ready(function () {
+            // Espera um pequeno tempo para garantir que todos os elementos estejam no DOM (ajuste se necessário)
+            setTimeout(function () {
+                let maxHeight = 0;
+
+                // Seleciona todos os cards
+                $('.swiper-slide').each(function () {
+                    let cardHeight = $(this).height();
+                    if (cardHeight > maxHeight) {
+                        maxHeight = cardHeight;
+                    }
+                });
+
+                // Aplica a maior altura a todos os cards
+                $('.swiper-slide').height(maxHeight);
+            }, 300); // você pode aumentar esse delay se os elementos demorarem mais a aparecer
+        });
     </script>
 
     <!-- inicio Flut -->
