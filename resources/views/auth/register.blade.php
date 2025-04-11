@@ -4,6 +4,19 @@
     <link rel="stylesheet" href="{{ asset('Auth-Panel/dist/css/front/front.css') }}">
 @endsection
 
+<style>
+    .title-input2 {
+        color: {{ config('custom.text_color_form') }};
+        font-weight: 500;
+    }
+    .subtitle-register2{
+    font-weight: 700;
+    color: {{ config('custom.text_color_form') }};
+    margin-bottom: 50px !important;
+    text-align: center;
+    }
+</style>
+
 @section('content')
     <div class="register-box flex-column">
         @if ($errors->any())
@@ -16,27 +29,27 @@
             </div>
         @endif
 
-        <div class="card-register m-auto">
+        <div class="card-register m-auto" style="background-color: {{ config('custom.background_form') }}; color: {{ config('custom.text_color_recuperar') }};">
             <div class="card-body-register login-card-body">
                 <div class="login-logo">
                     <a href="{{ route('login') }}">
-                        <img src="{{ asset('Auth-Panel/dist/img/logo.svg') }}" alt="">
+                        <img src="{{ config('custom.logo_1') }}" alt="">
                     </a>
                 </div>
 
-                <p class="subtitle-register">Crie sua conta e aproveite todo nosso conteúdo!</p>
+                <p class="subtitle-register2">Crie sua conta e aproveite todo nosso conteúdo!</p>
 
-                <form action="{{ route('register') }}" method="post">
+                <form action="{{ route('register') }}" method="post" >
                     @csrf
 
                     <input type="hidden" name="source" id="source" class="form-control" required
                         value="{{ old('source', session('customerData')['source'] ?? '') }}"
                         {{ isset(session('customerData')['source']) ? 'readonly' : '' }}>
 
-                    <div class="input-group mb-3">
+                    <div class="input-group mb-3" style="color: {{ config('custom.text_color_recuperar') }};">
                         <div class="d-flex align-items-center justify-content-between mb-2">
-                            <label class="title-input mb-0" for="plan">Planos *</label>
-                            <button type="button" class="btn btn-primary btn-view" data-toggle="modal"
+                            <label class="title-input2 mb-0" for="plan">Planos *</label>
+                            <button type="button" class="btn btn-primary btn-view title-input2" data-toggle="modal"
                                 data-target="#modalPlanos">Ver
                                 planos</button>
                         </div>
@@ -52,7 +65,7 @@
                     </div>
 
                     <div class="input-group mb-3">
-                        <label class="title-input" for="usuario">Digite seu usuário *</label>
+                        <label class="title-input2" for="usuario">Digite seu usuário *</label>
                         <input type="text" name="login" id="usuario" class="form-control" placeholder="Usuário *"
                             required value="{{ old('login', session('customerData')['login'] ?? '') }}">
                     </div>
@@ -63,7 +76,7 @@
                     @enderror
 
                     <div class="input-group mb-3">
-                        <label class="title-input" for="name">Qual seu nome completo *</label>
+                        <label class="title-input2" for="name">Qual seu nome completo *</label>
                         <input type="text" name="name" id="name" class="form-control"
                             placeholder="Digite seu nome completo *" required
                             value="{{ old('name', session('customerData')['name'] ?? '') }}">
@@ -75,7 +88,7 @@
                     @enderror
 
                     <div class="input-group mb-3">
-                        <label class="title-input" for="document">CPF *</label>
+                        <label class="title-input2" for="document">CPF *</label>
                         <input type="text" @error('document') has-error @enderror value="{{ old('document') ?? '' }}"
                             name="document" id="document" class="form-control" placeholder="Digite seu cpf *" required>
                     </div>
@@ -86,7 +99,7 @@
                     @enderror
 
                     <div class="input-group mb-3">
-                        <label class="title-input" for="mobile">Digite seu número *</label>
+                        <label class="title-input2" for="mobile">Digite seu número *</label>
                         <input type="text" @error('mobile') has-error @enderror value="{{ old('mobile') ?? '' }}"
                             name="mobile" id="mobile" class="form-control" placeholder="(00) 00000-0000" required>
                     </div>
@@ -97,7 +110,7 @@
                     @enderror
 
                     <div class="input-group mb-3">
-                        <label class="title-input" for="email">Digite seu email *</label>
+                        <label class="title-input2" for="email">Digite seu email *</label>
                         <input type="email" name="email" id="email" class="form-control"
                             placeholder="meuemail@mail.com" required
                             value="{{ old('email', session('customerData')['email'] ?? '') }}">
@@ -112,7 +125,7 @@
                         !session()->has('customerData') ||
                             (session()->has('customerData') && session('customerData')['source'] !== 'temporarily'))
                         <div class="input-group mb-3">
-                            <label class="title-input" for="password">Crie sua senha *</label>
+                            <label class="title-input2" for="password">Crie sua senha *</label>
                             <input type="password" @error('password') has-error @enderror
                                 value="{{ session()->has('authenticate') ? session('customerData')['password'] : '' }}"
                                 name="password" id="password" class="form-control" placeholder="Crie uma senha forte"
@@ -131,7 +144,7 @@
                         @enderror
 
                         <div class="input-group mb-3">
-                            <label class="title-input" for="password_confirmation">Confirmação de senha *</label>
+                            <label class="title-input2" for="password_confirmation">Confirmação de senha *</label>
                             <input type="password" @error('password_confirmation') has-error @enderror
                                 value="{{ old('password_confirmation') ?? '' }}" name="password_confirmation"
                                 id="password_confirmation" class="form-control" placeholder="Repita sua senha" required>
@@ -161,7 +174,7 @@
 
                     <div class="row">
                         <div class="col-9 m-auto d-flex justify-content-center">
-                            <button type="submit" class="acess-button register">Continuar</button>
+                            <button type="submit" class="acess-button register" style="background-color: {{ config('custom.button_color_entrar') }};">Continuar</button>
                         </div>
                     </div>
                     <div class="row">
@@ -169,7 +182,7 @@
                             {{-- <a href="{{ route('password.email') }}" class="btn btn-block btn-primary">
                                 <i class="fa fa-lock mr-2"></i> Esqueci minha senha
                             </a> --}}
-                            <a href="{{ route('login') }}" class="btn btn-block have-account acess-button">
+                            <a href="{{ route('login') }}" class="btn btn-block have-account acess-button" style="background-color: {{ config('custom.button_color_entrar') }};">
                                 <i class="fa fa-user-plus mr-2"></i> Já tenho conta.
                             </a>
                         </div>
@@ -178,29 +191,25 @@
             </div>
         </div>
     </div>
-    <footer class="section-container d-flex flex-column align-items-center footer-register">
-        <p>
-            O Agro Mercado faz parte de uma rede de comunicação externa ao mundo agro.
-            Aqui, consideramos a importância de uma comunicação confiável e próxima.
-            Nossa programação é dedicada a trazer conhecimento e insights de forma leve e interessante,
-            com o propósito de enriquecer seu dia a dia e agregar valor ao seu trabalho.
-        </p>
+    <footer class="section-container d-flex flex-column align-items-center footer-register" style="background-color: {{ config('custom.background_people') }};">
+        <p>{{ config('custom.text_baseboard') }}</p>
+
         <div
             class="d-flex align-items-center justify-content-center w-100 position-relative container-media flex-column flex-sm-row">
             <div class="social-media d-flex justify-content-center">
-                <div class="container-social-media">
-                    <a href="#"><img src="{{ asset('Auth-Panel/dist/img/instagram.svg') }}" alt=""></a>
+                <div class="container-social-media" style="background-color: {{ config('custom.background_social_media') }};">
+                    <a href="{{ config('custom.link_social_media_1') }}"><img src="{{ config('custom.image_social_media_1') }}" alt=""></a>
                 </div>
-                <div class="container-social-media">
-                    <a href="#"><img src="{{ asset('Auth-Panel/dist/img/youtube.svg') }}" alt=""></a>
+                 <div class="container-social-media" style="background-color: {{ config('custom.background_social_media') }};">
+                    <a href="{{ config('custom.link_social_media_2') }}"><img src="{{ config('custom.image_social_media_2') }}" alt=""></a>
                 </div>
-                <div class="container-social-media">
-                    <a href="#"><img src="{{ asset('Auth-Panel/dist/img/facebook.svg') }}" alt=""></a>
+                 <div class="container-social-media" style="background-color: {{ config('custom.background_social_media') }};">
+                    <a href="{{ config('custom.link_social_media_3') }}"><img src="{{ config('custom.image_social_media_3') }}" alt=""></a>
                 </div>
             </div>
-            <img class="logo-footer" src="{{ asset('Auth-Panel/dist/img/logo-white.svg') }}" alt="">
+            <img class="logo-footer" src="{{ config('custom.logo_baseboard') }}" alt="">
         </div>
-        <p class="copyright-footer">Copyright © 2024. Todos os direitos reservados.</p>
+        <p class="copyright-footer">{{ config('custom.text_copy') }}</p>
     </footer>
 
     <div class="modal fade" id="modalPlanos" tabindex="-1" aria-labelledby="modalLabelPlanos" aria-hidden="true">

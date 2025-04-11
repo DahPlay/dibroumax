@@ -1,7 +1,6 @@
 <section id="planos" class="sixth-section d-flex flex-column align-items-center">
-    <h3 class="subtitle-plans text-center" style="color: {{ config('custom.text_home') }};">Escolha o plano que mais combina com você!</h3>
-    <p class="subtitle-plans text-center" style="color: {{ config('custom.text_home') }};">Estamos desenvolvendo uma <span class="sub">comunicação clara</span> e próxima
-        de você!</p>
+    <h3 class="subtitle-plans text-center" style="color: {{ config('custom.text_home') }};">{{ config('custom.title_plan') }}</h3>
+    <p class="subtitle-plans text-center" style="color: {{ config('custom.text_home') }};">{{ config('custom.text_plan_1') }} </p>
 
     <div class="container container-plans">
         <ul class="nav-tabs list-unstyled d-flex justify-content-center mx-auto" id="myTab" role="tablist">
@@ -87,6 +86,5 @@
         </div>
     </div>
 
-    <p class="last-info-plans text-center" style="color: {{ config('custom.text_home') }};">Curta nossas <strong>séries</strong>, <strong>filmes</strong> e <strong>conteúdos
-            exclusivos</strong> feitos para você!</p>
+    <p class="last-info-plans text-center" style="color: {{ config('custom.text_home') }};">{{ config('custom.text_plan_2') }}</p>
 </section>

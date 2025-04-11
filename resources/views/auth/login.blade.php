@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="background-login col-6 d-none d-md-flex"
-        style="background-image: url('/Auth-Panel/dist/img/{{ config('custom.background_login') }}')"></div>
+        style="background-image: url('/Auth-Panel/dist/img/{{ config('custom.background_login_image') }}')"></div>
     <div class="login-box login-page col-12 col-md-6 p-0" style="background-color: {{ config('custom.background_login_color') }};">
 
 
@@ -32,7 +32,7 @@
 
                         <a href="{{ config('custom.portal_link') }}" target="_blank">
                             <img src="{{ config('custom.logo_1') }}" style="width: 140px;"
-                                alt="Agro Play">
+                                alt="{{config('custom.project_name')}}">
                         </a>
                     </div>
                 </div>
