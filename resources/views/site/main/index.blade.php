@@ -89,7 +89,7 @@
                 <li><a href="{{ route('login') }}">{{ config('custom.text_menu_4') }}</a></li>
                 <li><a href="#planos">{{ config('custom.text_menu_5') }}</a></li>
                 <li class="active px-4" style="background-color: white;">
-                    <a href="https://portal.agroplay.tv.br/login" target="_blank">
+                    <a href="{{ config('custom.portal_link') }}" target="_blank">
                         <img src="{{ asset('Auth-Panel/dist/img/logo-agro-play.png') }}"
                             style="width: 140px; margin: 0px;" alt="">
                     </a>

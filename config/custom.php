@@ -17,7 +17,7 @@ return [
     */
     'logo_1' => env('LOGO_1', '/Auth-Panel/dist/img/logo.png'),
     'logo_2' => env('LOGO_2', '/Auth-Panel/dist/img/logo.png'),
-    'portal_link' => env('PORTAL_LINK', 'https://portal.dahplay.com.br/login'),
+    'portal_link' => env('PORTAL_LINK', 'https://'),
 
     /*
     |--------------------------------------------------------------------------

@@ -18,7 +18,7 @@
                                             <th>#</th>
                                             <th>Nome</th>
                                             <th>Cliente Asaas</th>
-                                            <th>Cliente Agro Play</th>
+                                            <th>Cliente {{ config('custom.project_name') }}</th>
                                             <th>Login</th>
                                             <th>E-mail</th>
                                             <th>Documento</th>

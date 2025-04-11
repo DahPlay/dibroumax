@@ -28,9 +28,9 @@
                             <p>Redefinir Senha</p>
                             <i class="fa fa-arrow-down ml-2 animate__animated animate__bounce"></i>
                         </div>
-                        <a href="https://portal.agroplay.tv.br/login" target="_blank">
-                            <img src="{{ asset('/Auth-Panel/dist/img/logo-agro-play.png') }}" style="width: 140px;"
-                                alt="Agro Play">
+                        <a href="{{ config('custom.portal_link') }}" target="_blank">
+                            <img src="{{ config('custom.logo_1') }}" style="width: 140px;"
+                                alt="{{ config('custom.project_name') }}">
                         </a>
                     </div>
                 </div>

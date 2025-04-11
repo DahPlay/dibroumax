@@ -174,7 +174,7 @@ class RegisterController extends Controller
                 ]);
 
                 return redirect()->route('login')->with([
-                    'info' => 'Usuário localizado na Agro Play. Efetue o login ou recupere a senha.',
+                    'info' => 'Usuário localizado na plataforma de Streaming. Efetue o login ou recupere a senha.',
                 ]);
             }
 
@@ -187,7 +187,7 @@ class RegisterController extends Controller
             ]);
 
             return redirect()->route('login')->with([
-                'error' => 'Usuário localizado na Agro Play. Login ou senha incorretos. Tente novamente ou clique em recuperar senha informando o email cadastrado: ' . $customerData['email'],
+                'error' => 'Usuário localizado na plataforma de Streaming. Login ou senha incorretos. Tente novamente ou clique em recuperar senha informando o email cadastrado: ' . $customerData['email'],
             ]);
         }
 

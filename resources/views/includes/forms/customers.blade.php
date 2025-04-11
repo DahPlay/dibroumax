@@ -27,7 +27,7 @@
 
     <div class="row">
         <div class="form-group col-12 col-md-4">
-            <label for="viewers_id" class="col-form-label">Cliente Agro Play:</label>
+            <label for="viewers_id" class="col-form-label">Cliente {{ config('custom.project_name') }}:</label>
             <div class="input-group">
                 <input type="text" id="viewers_id" class="form-control" name="viewers_id" placeholder="viewers_id"
                     value="{{ $customer->viewers_id ?? old('viewers_id') }}" disabled>

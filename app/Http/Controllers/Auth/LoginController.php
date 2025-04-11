@@ -58,7 +58,7 @@ class LoginController extends Controller
                     ]);
 
                     toastr()
-                        ->info('Usuário localizado na Agro Play. Complete o registro.', 'Informações');
+                        ->info('Usuário localizado na plataforma de Streaming. Complete o registro.', 'Informações');
 
                     return redirect()->route('register');
                 }
@@ -72,7 +72,7 @@ class LoginController extends Controller
                 ]);
 
                 toastr()
-                    ->error('Usuário localizado na Agro Play. Login ou senha incorretos. Tente novamente ou clique em recuperar senha informando o email cadastrado: ' . $customerData['email'] .  '', 'Atenção');
+                    ->error('Usuário localizado na plataforma de Streaming. Login ou senha incorretos. Tente novamente ou clique em recuperar senha informando o email cadastrado: ' . $customerData['email'] .  '', 'Atenção');
 
                 return redirect()->route('login');
             }
