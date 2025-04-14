@@ -27,4 +27,9 @@ class Package extends Model
     {
         return $this->hasMany(PackagePlan::class);
     }
+
+    public function getSuspensionPackage(): ?Package
+    {
+        return $this->where('is_suspension', true)->first();
+    }
 }

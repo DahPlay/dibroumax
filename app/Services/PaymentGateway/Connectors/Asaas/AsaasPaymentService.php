@@ -58,11 +58,13 @@ class AsaasPaymentService
                         $planExists = in_array($item['viewers_bouquets_products_id'], $packagesToCreate);
 
                         //verifica se o plano de suspensão está ativo e remove ele
-                        if ($item['viewers_bouquets_cancelled'] === 136 && $item['viewers_bouquets_cancelled'] === 0) {
-                            $planToCancel = [];
-                            $planToCancel[] = 136;
+                        $suspension = (new Package())->getSuspensionPackage();
+
+                        if ($suspension && $item['viewers_bouquets_products_id'] == $suspension->cod && $item['viewers_bouquets_cancelled'] == 0) {
+                            $planToCancel = [$suspension->cod];
                             (new PlanCancelService($planToCancel, $order->customer->viewers_id))->cancelPlan();
                         }
+
                         //ativa novamente os planos cancelados que pertencem ao pedido pago
                         if (!$planExists || $item['viewers_bouquets_cancelled'] == 1) {
                             (new PlanCreateService($packagesToCreate, $order->customer->viewers_id))->createPlan();

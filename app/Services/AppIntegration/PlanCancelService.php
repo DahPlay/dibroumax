@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Log;
 
 class PlanCancelService
 {
+    //todo: se eu chamo este service de cancelamento para cancelar o plano desativado, mas no final eu ativo ele novamente.
+    //todo: preciso corrigir isso em todos os lugares
     public function __construct(
         protected readonly array $packageCodes,
         protected readonly int|string $viewerId,
