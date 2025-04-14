@@ -32,6 +32,15 @@
                     <label class="custom-control-label font-weight-normal ml-2" for="is_active">Ativo</label>
                 </div>
             </div>
+            <div class="form-group col-12 col-md-3 p-0">
+                <div class="custom-control custom-switch custom-switch-on-primary d-flex align-items-center"
+                     style="width: 250px;">
+                    <input type="hidden" name="is_suspension" value="0">
+                    <input type="checkbox" class="custom-control-input overdue" name="is_suspension" id="is_suspension"
+                            {{ $package->is_suspension ? 'checked' : '' }}>
+                    <label class="custom-control-label font-weight-normal ml-2" for="is_suspension">Pacote suspensão</label>
+                </div>
+            </div>
         </div>
     </div>
 </div>
