@@ -9,10 +9,7 @@ use App\Http\Controllers\Panel\PlanController;
 use App\Http\Controllers\Panel\UserController;
 use App\Http\Controllers\Site\MainController as SiteMain;
 use App\Http\Controllers\System\MainController as SystemMain;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
 
@@ -21,7 +18,7 @@ Auth::routes(['register' => false]);
 Route::get('/register/{planId?}', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
 
-Route::get('/teste', function () {
+/*Route::get('/teste', function () {
     Model::withoutEvents(function () {
         $developer = User::where('login', 'Developer')->first();
 
@@ -43,7 +40,7 @@ Route::get('/teste', function () {
     });
 
     return 'ok.';
-});
+});*/
 
 Route::name('site.')->group(function () {
     Route::name('main.')->group(function () {
