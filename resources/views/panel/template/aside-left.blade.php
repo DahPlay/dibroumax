@@ -96,11 +96,23 @@
                     </li>
                 @endcan
 
+                @can('admin')
+                    <li class="nav-item has-treeview {{ request()->is('coupons') ? 'menu-open' : '' }}">
+                        <a href="{{ route('panel.coupons.index') }}"
+                           class="nav-link {{ request()->is('coupons') ? 'active' : '' }}">
+                            <i class="nav-icon fa fa-ticket-alt"></i>
+                            <p>
+                                Cupons
+                            </p>
+                        </a>
+                    </li>
+                @endcan
+
                 @can('developer')
                     <li class="nav-item has-treeview {{ request()->is('packages') ? 'menu-open' : '' }}">
                         <a href="{{ route('panel.packages.index') }}"
                            class="nav-link {{ request()->is('packages') ? 'active' : '' }}">
-                            <i class="nav-icon fa fa-file-alt"></i>
+                            <i class="nav-icon fa fa-layer-group"></i>
                             <p>
                                 Pacotes
                             </p>
