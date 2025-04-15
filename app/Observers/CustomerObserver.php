@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Observers;
 
+use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Package;
@@ -144,15 +145,24 @@ class CustomerObserver
     {
         $customer = Customer::query()->firstWhere('email', $customer->email);
         $plan = Plan::query()->firstWhere('id', $plan_id);
+        $coupon = null;
+        $value = $plan->value;
+        if($customer->coupon_id !== null){
+            $coupon = Coupon::find($customer->coupon_id);
+        }
 
+        if($coupon){
+            $value = $plan->value - ($plan->value * ($coupon->percent / 100));
+        }
         $order = Order::create([
             'customer_id' => $customer->id,
             'plan_id' => $plan->id,
             'customer_asaas_id' => $customer->customer_id,
-            'value' => $plan->value,
+            'value' => $value,
             'cycle' => $plan->cycle,
             'billing_type' => 'CREDIT_CARD',
             'next_due_date' => now()->addDays($plan->free_for_days)->format('Y-m-d'),
+            'original_plan_value' => $plan->value,
         ]);
 
         /* if ($order->plan->free_for_days > 0) {
@@ -172,14 +182,22 @@ class CustomerObserver
     {
         $customer = Customer::query()->firstWhere('email', $customer->email);
         $plan = Plan::query()->firstWhere('id', $plan_id);
+        $coupon = null;
+        $value = $plan->value;
+        if($customer->coupon_id !== null){
+            $coupon = Coupon::find($customer->coupon_id);
+        }
 
+        if($coupon){
+            $value = $plan->value - ($plan->value * ($coupon->percent / 100));
+        }
         $adapter = new AsaasConnector();
         $gateway = new Gateway($adapter);
 
         $data = [
             'customer' => $customer->customer_id,
             'billingType' => $plan->billing_type,
-            'value' => $plan->value,
+            'value' => $value,
             'nextDueDate' => now()->addDays($plan->free_for_days)->format('Y-m-d'),
             'cycle' => $plan->cycle,
             'description' => "Assinatura do plano $plan->name",
