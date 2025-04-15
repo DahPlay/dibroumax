@@ -24,6 +24,7 @@ class Customer extends Model
         'birthdate',
         'email',
         'mobile',
+        'coupon_id',
     ];
 
     protected function document(): Attribute
