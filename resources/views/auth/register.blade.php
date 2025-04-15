@@ -54,7 +54,7 @@
                                 planos</button>
                         </div>
 
-                        <select id="plan_id" id="plan_id" class="form-control" name="plan_id" required>
+                        <select id="plan_id" class="form-control" name="plan_id" required>
                             <option value="">Selecione...</option>
                             @foreach ($plans as $plan)
                                 <option value='{{ $plan->id }}' @selected($plan->id == $planId)>
