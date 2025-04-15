@@ -77,7 +77,7 @@ class OrderController extends Controller
                 if ($nextDueDate->gte($currentDate)) {
                     return 'GRÁTIS';
                 }
-                return 'PAGO';
+                return $order->payment_status;
             })
             ->filterColumn('payment_status', function ($query, $keyword) {
                 $matchingCycles = collect(PaymentStatusOrderAsaasEnum::cases())
@@ -393,21 +393,28 @@ class OrderController extends Controller
             $invoiceValue = max(0, $newPlanValue - $credit);
 
 
-            logger('cálculos',[
-                    'credito' => $credit,
-                    'valor usado' => $dailyRate,
-                    'valor do plano atual ' => (float)$actualPlanValue,
-                    'ciclo' => (float)$cycleDays,
-                    'valor do novo plano' => $newPlanValue,
-                    'valor a ser cobrado' => $invoiceValue
-                ]);
+            logger('cálculos', [
+                'credito' => $credit,
+                'valor usado' => $dailyRate,
+                'valor do plano atual ' => (float)$actualPlanValue,
+                'ciclo' => (float)$cycleDays,
+                'valor do novo plano' => $newPlanValue,
+                'valor a ser cobrado' => $invoiceValue
+            ]);
         }
 
         // Define se a troca deve ser aplicada no próximo ciclo
         $forNextCycle = $isDowngrade;
 
+        //calcular o próximo vencimento
+        $days = max(0, $cycleDays - $daysUsed);
+
+        $dueDate = $forNextCycle
+            ? $order->next_due_date->copy()->addDays($days)->format('Y-m-d')
+            : now()->format('Y-m-d');
+
         // Atualiza assinatura e troca os pacotes
-        $result = $this->updateSubscription($order, $invoiceValue, $plan, $gateway, $forNextCycle, $daysUsed);
+        $result = $this->updateSubscription($order, $invoiceValue, $plan, $gateway, $dueDate);
 
         if ($isDowngrade && $result) {
             toastr(
@@ -432,23 +439,20 @@ class OrderController extends Controller
         $invoiceValue,
         $plan,
         $gateway,
-        $forNextCycle,
-        $daysUsed
+        $due_date
     ): bool {
         $data = [
             'id' => $order->subscription_asaas_id,
             'billingType' => $plan->billing_type,
             'value' => $invoiceValue,
-            'nextDueDate' => $forNextCycle
-                ? $order->next_due_date->copy()->addDays($daysUsed)->format('Y-m-d')
-                : now()->format('Y-m-d'),
+            'nextDueDate' => $due_date,
             'description' => "Troca de plano para o plano: $plan->name",
             'externalReference' => 'Pedido: ' . $order->id,
         ];
 
         $response = $gateway->subscription()->update($order->subscription_asaas_id, $data);
 
-        if ($response['object'] === 'subscription') {
+        if (isset($response['object']) && $response['object'] === 'subscription') {
             // Cancela pacotes antigos na Youcast
             $packagesToCancel = [];
             $oldPlan = Plan::where('id', $order->plan_id)->first();
@@ -475,6 +479,12 @@ class OrderController extends Controller
             ]);
             return true;
         }
+
+        Log::error('Erro no retorno do Asaas ao atualizar assinatura.', [
+            'response' => $response,
+            'order_id' => $order->id,
+        ]);
+
         return false;
     }
 
