@@ -74,7 +74,7 @@ class OrderController extends Controller
                 $currentDate = Carbon::now()->startOfDay();
                 $nextDueDate = Carbon::parse($order->next_due_date)->startOfDay();
 
-                if ($nextDueDate->gte($currentDate)) {
+                if ($nextDueDate > $currentDate) {
                     return 'GRÁTIS';
                 }
                 return $order->payment_status;
