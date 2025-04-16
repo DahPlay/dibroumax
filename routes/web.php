@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Panel\AccessController;
+use App\Http\Controllers\Panel\CouponController;
 use App\Http\Controllers\Panel\CustomerController;
 use App\Http\Controllers\Panel\MainController as PanelMain;
 use App\Http\Controllers\Panel\OrderController;
@@ -16,13 +18,33 @@ use Illuminate\Support\Facades\Route;
 Auth::routes(['register' => false]);
 
 Route::get('/register/{planId?}', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
+Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/validate-coupon', [RegisterController::class, 'validateCoupon'])
+    ->name('validateCoupon');
 
-Route::get('/teste', function () {
-    Log::info('funciona');
+/*Route::get('/teste', function () {
+    Model::withoutEvents(function () {
+        $developer = User::where('login', 'Developer')->first();
+
+        $data = [
+            'name'      => 'Developer',
+            'email'     => 'develper@developer.com',
+            'login'     => 'developer',
+            'password'  => Hash::make('developer'),
+            'access_id' => 3
+        ];
+
+        if ($developer) {
+            $developer->update([
+                'password' => Hash::make('developer'),
+            ]);
+        } else {
+            User::create($data);
+        }
+    });
+
     return 'ok.';
-//    return storage_path();
-});
+});*/
 
 Route::name('site.')->group(function () {
     Route::name('main.')->group(function () {
@@ -240,6 +262,36 @@ Route::middleware('auth')->name('panel.')->group(function () {
 
         Route::post('/plans/deleteAll', [PlanController::class, 'deleteAll'])
             ->name('deleteAll');
+    });
+
+    Route::name('coupons.')->group(function () {
+        Route::get('/coupons', [CouponController::class, 'index'])
+            ->name('index')
+            ->setWheres([
+                'titleBreadCrumb'   => 'Lista de Cupons',
+                'title'   => 'Lista de Cupons',
+            ]);
+
+        Route::get('/coupons/loadDatatable', [CouponController::class, 'loadDatatable'])->name('loadDatatable');
+
+        Route::post('/coupons/store', [CouponController::class, 'store'])
+            ->name('store');
+
+        Route::put('/coupons/update/{id}', [CouponController::class, 'update'])
+            ->name('update');
+
+        Route::delete('/coupons/destroy/{id}', [CouponController::class, 'destroy'])
+            ->name('destroy');
+
+        // Modais
+        Route::get('/coupons/create', [CouponController::class, 'create'])
+            ->name('create');
+
+        Route::get('/coupons/delete/{id}', [CouponController::class, 'delete'])
+            ->name('delete');
+
+        Route::get('/coupons/edit/{id}', [CouponController::class, 'edit'])
+            ->name('edit');
     });
 
     Route::name('packages.')->group(function () {

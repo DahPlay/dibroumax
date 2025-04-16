@@ -23,14 +23,14 @@ class UserSeeder extends Seeder
             ],
             [
                 'name'      => 'Admin',
-                'email'     => 'alexandre.areds@gmail.com',
+                'email'     => 'admin@admin.com',
                 'login'     => 'admin',
                 'password'  => Hash::make('admin'),
                 'access_id' => 2
             ],
             [
                 'name'      => 'Developer',
-                'email'     => 'contato@tiagoneitzke.com.br',
+                'email'     => 'developer@developer.com',
                 'login'     => 'developer',
                 'password'  => Hash::make('developer'),
                 'access_id' => 3

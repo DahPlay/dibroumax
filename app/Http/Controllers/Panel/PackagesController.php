@@ -13,17 +13,17 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PackagesController extends Controller
 {
-    public function __construct (public Package $model, public Request $request)
+    public function __construct(public Package $model, public Request $request)
     {
         $this->middleware('can:developer');
     }
 
-    public function index (): View
+    public function index(): View
     {
         return view($this->request->route()->getName());
     }
 
-    public function loadDatatable (): JsonResponse
+    public function loadDatatable(): JsonResponse
     {
         $packages = $this->model
             ->get();
@@ -49,22 +49,28 @@ class PackagesController extends Controller
             ->toJson();
     }
 
-    public function create (): View
+    public function create(): View
     {
         $package = new Package();
         return view('panel.packages.local.index.modals.create', compact('package'));
     }
 
-    public function store (PackageRequest $request): RedirectResponse
+    public function store(PackageRequest $request): RedirectResponse
     {
-        $isActive = match ($request->is_active) {
+        $isActive = match ($request->validated()['is_active']) {
             'on' => true,
-            0 => false,
+            '0' => false,
+        };
+
+        $isSuspension = match ($request->validated()['is_suspension']) {
+            'on' => true,
+            '0' => false,
         };
 
         $data = $request->validated();
 
         $data['is_active'] = $isActive;
+        $data['is_suspension'] = $isSuspension;
 
         $model = Package::create($data);
 
@@ -76,7 +82,7 @@ class PackagesController extends Controller
         return redirect()->route('panel.packages.index');
     }
 
-    public function delete ($id): View
+    public function delete($id): View
     {
         $package = $this->model->find($id);
 
@@ -100,7 +106,22 @@ class PackagesController extends Controller
 
     public function update($id, PackageRequest $request): RedirectResponse
     {
-       $model = $this->model->find($id)->update($request->validated());
+        $isActive = match ($request->validated()['is_active']) {
+            'on' => true,
+            '0' => false,
+        };
+
+        $isSuspension = match ($request->validated()['is_suspension']) {
+            'on' => true,
+            '0' => false,
+        };
+
+        $data = $request->validated();
+
+        $data['is_active'] = $isActive;
+        $data['is_suspension'] = $isSuspension;
+
+        $model = $this->model->find($id)->update($data);
 
         if ($model) {
             toastr('Salvo!');
@@ -109,9 +130,6 @@ class PackagesController extends Controller
         toastr('Tente novamente ou entre em contato com o administrador do sistema!');
         return redirect()->route('panel.packages.index');
     }
-
-
-
 
 
     /*public function deleteAll(): View

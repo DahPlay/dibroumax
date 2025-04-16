@@ -103,7 +103,7 @@ class UserController extends Controller
         }
 
         if ($this->request->hasFile('photo')) {
-            $data["photo"] = $this->request->file('photo')->store('avatars');
+            $data["photo"] = $this->request->file('photo')->store('avatars', 'public');
         }
 
         $user = $this->model->create($data);
@@ -191,14 +191,14 @@ class UserController extends Controller
 
             if ($this->request->hasFile('photo')) {
                 if ($user->photo) {
-                    $file_path_photo = public_path('storage\\') . $user->photo;
+                    $file_path_photo = public_path('storage/' . $user->photo);
 
                     if (file_exists($file_path_photo) && $user->photo != "avatars/default.png") {
                         unlink($file_path_photo);
                     }
                 }
 
-                $data["photo"] = $this->request->file('photo')->store('avatars');
+                $data["photo"] = $this->request->file('photo')->store('avatars', 'public');
             }
 
             $user->update($data);
@@ -238,8 +238,8 @@ class UserController extends Controller
         $user = $this->model->find($this->request->id);
 
         if ($user) {
-            if ($user->photo != "avatars/default.png") {
-                $file_path_photo = public_path('storage/') . $user->photo;
+            if ($user->photo && $user->photo !== 'avatars/default.png') {
+                $file_path_photo = storage_path('app/public/' . $user->photo);
 
                 if (file_exists($file_path_photo)) {
                     unlink($file_path_photo);

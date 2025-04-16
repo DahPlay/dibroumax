@@ -15,14 +15,21 @@ class Package extends Model
         'name',
         'cod',
         'is_active',
+        'is_suspension'
     ];
 
     protected $casts = [
-        "is_active" => "boolean",
+        'is_active' => 'boolean',
+        'is_suspension' => 'boolean',
     ];
 
     public function packagePlans(): HasMany
     {
         return $this->hasMany(PackagePlan::class);
+    }
+
+    public function getSuspensionPackage(): ?Package
+    {
+        return $this->where('is_suspension', true)->first();
     }
 }

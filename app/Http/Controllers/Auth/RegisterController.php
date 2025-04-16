@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\Plan;
 use App\Models\User;
@@ -19,11 +20,34 @@ use Illuminate\Support\Facades\Validator;
 class RegisterController extends Controller
 {
     use RegistersUsers;
+
     protected $redirectTo = RouteServiceProvider::HOME;
 
     public function __construct()
     {
         $this->middleware('guest');
+    }
+
+    public function validateCoupon(Request $request)
+    {
+        $couponName = $request->input('coupon');
+        $planId = $request->input('plan_id');
+
+        $plan = Plan::find($planId);
+        $coupon = $this->getCoupon($couponName);
+
+        if (!$coupon->is_active || !$plan) {
+            return response()->json(['valid' => false, 'message' => 'Cupom inválido.']);
+        }
+
+        $discountedValue = $this->getDiscount($plan, $coupon);
+
+        return response()->json([
+            'valid' => true,
+            'discounted_value' => number_format($discountedValue, 2, ',', '.'),
+            'raw_value' => $discountedValue,
+            'message' => 'Cupom aplicado com sucesso! Você pagará R$ ' . number_format($discountedValue, 2, ',', '.'),
+        ]);
     }
 
     public function showRegistrationForm(int|string $planId = null)
@@ -116,6 +140,7 @@ class RegisterController extends Controller
                 return $externalCustomer;
             }
         }
+        $data['coupon_id'] = $this->getCoupon($request->coupon)->id ?? null;
 
         try {
             $customer = Customer::updateOrCreate(
@@ -158,11 +183,12 @@ class RegisterController extends Controller
     {
         $login = request()->login;
         $password = request()->password;
+        $couponName = request()->coupon;
+        $coupon = $this->getCoupon($couponName);
 
         $externalCustomer = $customerService->findExternalCustomerByLogin($login, $password);
 
         if ($externalCustomer) {
-
             $authenticateExternalCustomer = $customerService->authenticateExternalCustomer($login, $password);
 
             $customerData = $externalCustomer['customer'];
@@ -179,11 +205,13 @@ class RegisterController extends Controller
             }
 
             $data = request()->only(['login', 'name', 'document', 'mobile', 'birthdate', 'email']);
-           Customer::create([
+
+            Customer::create([
                 'viewers_id' => $customerData['viewers_id'],
                 'login' => $customerData['login'],
                 'name' => $customerData['name'],
-                'email' => $data['email']
+                'email' => $data['email'],
+                'coupon_id' => $coupon->id ?? null,
             ]);
 
             return redirect()->route('login')->with([
@@ -192,5 +220,17 @@ class RegisterController extends Controller
         }
 
         return null;
+    }
+
+
+    private function getCoupon(mixed $couponName): ?Coupon
+    {
+        return Coupon::where('name', $couponName)->first();
+    }
+
+
+    private function getDiscount(Plan $plan, Coupon $coupon): mixed
+    {
+        return $plan->value - ($plan->value * ($coupon->percent / 100));
     }
 }

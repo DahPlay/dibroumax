@@ -2,10 +2,12 @@
 
 namespace App\Services\PaymentGateway\Connectors\Asaas;
 
+use App\Enums\StatusOrderAsaasEnum;
 use App\Jobs\BackOrderOldPlanJob;
 use App\Jobs\updateSubscriptionAfterProportionalPayJob;
 use App\Models\Order;
 use App\Models\Package;
+use App\Models\Plan;
 use App\Services\AppIntegration\PlanCancelService;
 use App\Services\AppIntegration\PlanCreateService;
 use App\Services\YouCast\Plan\PlanHistory;
@@ -24,6 +26,7 @@ class AsaasPaymentService
         $paymentDate = $data['payment']['paymentDate'];
 
         $order = Order::where('subscription_asaas_id', $subscriptionId)->first();
+        $plan = Plan::find($order->plan_id);
         Log::info('AsaasPaymentService acionado');
         if (!$order) {
             Log::warning("Ordem não encontrada para a assinatura $subscriptionId no evento $event.");
@@ -32,10 +35,11 @@ class AsaasPaymentService
 
         switch ($event) {
             case 'PAYMENT_RECEIVED':
-                if ($order->changed_plan) {
+                if ($order->changed_plan || $order->value != $plan->value) {
                     updateSubscriptionAfterProportionalPayJob::dispatch($order);
                 }
                 $order->update([
+                    'status' => StatusOrderAsaasEnum::ACTIVE,
                     'payment_asaas_id' => $paymentId,
                     'payment_status' => $paymentStatus,
                     'next_due_date' => $dueDate,
@@ -58,11 +62,13 @@ class AsaasPaymentService
                         $planExists = in_array($item['viewers_bouquets_products_id'], $packagesToCreate);
 
                         //verifica se o plano de suspensão está ativo e remove ele
-                        if ($item['viewers_bouquets_cancelled'] === 136 && $item['viewers_bouquets_cancelled'] === 0) {
-                            $planToCancel = [];
-                            $planToCancel[] = 136;
+                        $suspension = $this->getSuspension();
+
+                        if ($suspension && $item['viewers_bouquets_products_id'] == $suspension->cod && $item['viewers_bouquets_cancelled'] == 0) {
+                            $planToCancel = [$suspension->cod];
                             (new PlanCancelService($planToCancel, $order->customer->viewers_id))->cancelPlan();
                         }
+
                         //ativa novamente os planos cancelados que pertencem ao pedido pago
                         if (!$planExists || $item['viewers_bouquets_cancelled'] == 1) {
                             (new PlanCreateService($packagesToCreate, $order->customer->viewers_id))->createPlan();
@@ -81,7 +87,6 @@ class AsaasPaymentService
                 Log::info("Pagamento criado para a ordem {$order->id}.");
                 break;
 
-            // esta comentado para só criar a assinatura na youcast se o pagamento e recebido
             case 'PAYMENT_CONFIRMED':
                 $order->update([
                     'payment_status' => $paymentStatus,
@@ -95,7 +100,7 @@ class AsaasPaymentService
 
                 if ($order->changed_plan) {
                     BackOrderOldPlanJob::dispatch($order);
-                   break;
+                    break;
                 }
                 $order->update(
                     ['status' => 'INACTIVE'],
@@ -113,6 +118,13 @@ class AsaasPaymentService
                         $packagesToCancel[] = $pack->cod;
                     };
                     (new PlanCancelService($packagesToCancel, $order->customer->viewers_id))->cancelPlan();
+
+                    //adiciona o pacote de suspensão
+                    $suspension = $this->getSuspension();
+                    if ($suspension) {
+                        $packagesToCreate = [$suspension->cod];
+                        (new PlanCreateService($packagesToCreate, $order->customer->viewers_id))->createPlan();
+                    }
                 }
 
                 break;
@@ -130,5 +142,10 @@ class AsaasPaymentService
         }
 
         return true;
+    }
+
+    private function getSuspension(): ?Package
+    {
+        return (new Package())->getSuspensionPackage();
     }
 }

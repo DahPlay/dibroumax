@@ -30,10 +30,10 @@
                             <div class="swiper-wrapper pt-5">
                                 @foreach($plansByCycle[$cycleKey] as $plan)
                                     <div class="swiper-slide">
-                                        <div class="d-flex container-plan h-100">
+                                        <div class="d-flex container-plan h-100 mb-2">
                                             <a href="{{ route('register', ['planId' => $plan->id]) }}"
                                                class="m-2 w-100">
-                                                <div class="plan d-flex flex-column align-items-center h-100 {{ $plan->is_best_seller ? 'best-seller' : '' }}" style="border-color: {{ config('custom.mais_vendido') }};" >
+                                                <div class="plan border mt-auto d-flex flex-column align-items-center h-100 {{ $plan->is_best_seller ? 'best-seller' : '' }}" style="border-color: {{ config('custom.mais_vendido') }};" >
                                                     @if ($plan->is_best_seller)
                                                         <div class="box-best-seller position-absolute" style="background-color: {{ config('custom.mais_vendido') }}; color: {{ config('custom.text_mais_vendido') }};">
                                                             <span>Mais vendido</span>
@@ -53,7 +53,7 @@
                                                         </span>
                                                     </div>
 
-                                                    <div class="about-plan d-flex flex-column align-items-center w-100">
+                                                    <div class="about-plan d-flex flex-column align-items-center w-100 mb-5">
                                                         @foreach ($plan->benefits as $benefit)
                                                             <div class="about-plan-item d-flex justify-content-start w-100">
                                                                 <img src="{{ asset('Auth-Panel/dist/img/plans-icon.svg') }}"
@@ -63,9 +63,11 @@
                                                         @endforeach
                                                     </div>
 
-                                                    <button type="button" class="btn start-now-button" style="background-color: {{ config('custom.mais_vendido') }};">
-                                                        Começar agora
-                                                    </button>
+                                                    <div class="fixed-bottom pt-5 mb-4 w-100 d-flex justify-content-center mx-auto">
+                                                        <button type="button" class="btn start-now-button" style="background-color: {{ config('custom.mais_vendido') }};">
+                                                            Começar agora
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </a>
                                         </div>
