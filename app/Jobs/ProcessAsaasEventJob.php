@@ -28,6 +28,7 @@ class ProcessAsaasEventJob implements ShouldQueue
 
     public function handle(): void
     {
+        Log::info('fila rodou');
         if (str_starts_with($this->event, 'SUBSCRIPTION')) {
             $processed = app(AsaasSubscriptionService::class)->processEvent($this->event, $this->data);
         } elseif (str_starts_with($this->event, 'CUSTOMER')) {
