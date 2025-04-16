@@ -5,6 +5,7 @@ namespace App\Services\PaymentGateway\Connectors\Asaas;
 use App\Enums\StatusOrderAsaasEnum;
 use App\Jobs\BackOrderOldPlanJob;
 use App\Jobs\updateSubscriptionAfterProportionalPayJob;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Package;
 use App\Models\Plan;
@@ -48,9 +49,17 @@ class AsaasPaymentService
                 ]);
 
                 Log::info("Pagamento confirmado para a ordem {$order->id}.");
+                //este if impede que seja enviado cupom de desconto durante a troca de plano
+                // remova o if depois de implementar cupom na troca de plano
+                if (!$order->changed_plan) {
+                    $customer = \App\Models\Customer::find($order->customer_id);
+                    $packagesToCreate = [];
+                    if ($customer->coupon_id != null) {
+                        $coupon = Coupon::find($customer->coupon_id);
 
-                $packagesToCreate = [];
-
+                        $packagesToCreate[] = $coupon->cod;
+                    }
+                }
                 foreach ($order->plan->packagePlans as $packagePlan) {
                     $pack = Package::find($packagePlan->package_id);
                     $packagesToCreate[] = $pack->cod;
