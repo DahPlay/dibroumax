@@ -23,7 +23,7 @@
                                             <th>Cliente Asaas</th>
                                             <th>Assinatura</th>
                                             <th>Pagamento</th>
-                                            <th>Gratuidade</th>
+                                            <th>Vencimento</th>
                                             <th>Ciclo</th>
                                             <th>Criação</th>
                                             <th>Ações</th>
