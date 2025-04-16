@@ -3,20 +3,17 @@
 namespace App\Http\Controllers\Webhooks;
 
 use App\Http\Controllers\Controller;
-use App\Services\PaymentGateway\Connectors\Asaas\AsaasCustomerService;
-use App\Services\PaymentGateway\Connectors\Asaas\AsaasPaymentService;
-use App\Services\PaymentGateway\Connectors\Asaas\AsaasSubscriptionService;
+use App\Jobs\ProcessAsaasEventJob;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class AsaasWebhookController extends Controller
 {
     public function handle(Request $request)
     {
         $event = $request->input('event');
-        Log::info('Webhook acionado');
-
-        if (str_starts_with($event, 'SUBSCRIPTION')) {
+        $data = $request->all();
+        ProcessAsaasEventJob::dispatch($event, $data);
+       /* if (str_starts_with($event, 'SUBSCRIPTION')) {
             $processed = app(AsaasSubscriptionService::class)->processEvent($event, $request->all());
         } elseif (str_starts_with($event, 'CUSTOMER')) {
             $processed = app(AsaasCustomerService::class)->processEvent($event, $request->all());
@@ -31,6 +28,7 @@ class AsaasWebhookController extends Controller
             Log::error("Evento $event não pôde ser processado. Payload:", $request->all());
         }
 
-        return response()->json(['status' => $processed ? 'success' : 'error'], 200);
+        return response()->json(['status' => $processed ? 'success' : 'error'], 200);*/
+        return response()->json(['status' => 'success'], 200);
     }
 }
