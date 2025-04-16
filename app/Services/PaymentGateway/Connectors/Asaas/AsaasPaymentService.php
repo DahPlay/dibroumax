@@ -35,7 +35,8 @@ class AsaasPaymentService
 
         switch ($event) {
             case 'PAYMENT_RECEIVED':
-                if ($order->changed_plan || $order->value != $plan->value) {
+//para aplicar o cupom de desconto somente na primeira mensalidade, descomente abaixo
+                if ($order->changed_plan /*|| $order->value != $plan->value*/) {
                     updateSubscriptionAfterProportionalPayJob::dispatch($order);
                 }
                 $order->update([
