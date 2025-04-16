@@ -90,7 +90,7 @@
                     <li class="nav-item has-treeview {{ request()->is('plans') ? 'menu-open' : '' }}">
                         <a href="{{ route('panel.plans.index') }}"
                            class="nav-link {{ request()->is('plans') ? 'active' : '' }}">
-                            <i class="nav-icon fa fa-file-alt"></i>
+                            <i class="nav-icon far fa-list-alt"></i>
                             <p>
                                 Planos
                             </p>
@@ -114,7 +114,7 @@
                     <li class="nav-item has-treeview {{ request()->is('packages') ? 'menu-open' : '' }}">
                         <a href="{{ route('panel.packages.index') }}"
                            class="nav-link {{ request()->is('packages') ? 'active' : '' }}">
-                            <i class="nav-icon fa fa-layer-group"></i>
+                            <i class="nav-icon fas fa-archive"></i>
                             <p>
                                 Pacotes
                             </p>
@@ -125,7 +125,7 @@
                 <li class="nav-item has-treeview {{ request()->is('orders') ? 'menu-open' : '' }}">
                     <a href="{{ route('panel.orders.index') }}"
                        class="nav-link {{ request()->is('orders') ? 'active' : '' }}">
-                        <i class="nav-icon fa fa-file-contract"></i>
+                        <i class="nav-icon fa fa-file-alt"></i>
                         <p>
                             Pedidos
                         </p>

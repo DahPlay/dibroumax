@@ -61,7 +61,7 @@
 
                             <div class="row mt-3">
                                 <div class="col-lg-3 col-6">
-                                    <div class="small-box bg-gradient-cyan">
+                                    <div class="small-box bg-gray">
                                         <div class="inner">
                                             <h3>{{ $quantityUsers }}</h3>
                                             <p>Usuários</p>
@@ -76,7 +76,7 @@
                                 </div>
 
                                 <div class="col-lg-3 col-6">
-                                    <div class="small-box bg-warning">
+                                    <div class="small-box bg-gray">
                                         <div class="inner">
                                             <h3>{{ $quantityCustomers }}</h3>
                                             <p>Clientes</p>
@@ -93,7 +93,7 @@
 
 
                                 <div class="col-lg-3 col-6">
-                                    <div class="small-box bg-info">
+                                    <div class="small-box bg-gray">
                                         <div class="inner">
                                             <h3>{{ $quantityOrders }}</h3>
                                             <p>Pedidos</p>
@@ -109,7 +109,7 @@
                                 </div>
 
                                 <div class="col-lg-3 col-6">
-                                    <div class="small-box bg-danger">
+                                    <div class="small-box bg-gray">
                                         <div class="inner">
                                             <h3>R$&nbsp;{{ number_format($totalOrders, 2, ',', '.') }}</h3>
                                             <p>Total Pedidos</p>
