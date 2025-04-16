@@ -3,7 +3,6 @@
 namespace App\Services\AppIntegration;
 
 use App\Services\YouCast\Plan\PlanCreate;
-use Illuminate\Support\Facades\Log;
 
 class PlanCreateService
 {
@@ -17,15 +16,17 @@ class PlanCreateService
     public function createPlan(): void
     {
         foreach ($this->packageCodes as $code) {
+
             $response = (new PlanCreate())->handle($this->viewerId, $code);
-            if ($response['status'] === 404) {
+
+            /*if ($response['status'] === 404) {
                 Log::error(
                     "PlanCreateService - Erro ao criar Plano Código: {$code} no youcast para o Customer {$this->viewerId}."
                 );
             };
             Log::info(
                 "PlanCreateService - Plano Código: {$code} criado no youcast para o Customer {$this->viewerId}."
-            );
+            );*/
         }
     }
 }

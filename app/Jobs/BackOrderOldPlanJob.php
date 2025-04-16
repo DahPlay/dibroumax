@@ -54,8 +54,8 @@ class BackOrderOldPlanJob implements ShouldQueue
 
                     logger(
                         $paymentDeleted['deleted']
-                            ? "Pagamento removido no Asaas para atualização de plano. Pedido: $this->order->id"
-                            : "Erro ao remover pagamento no Asaas para atualização de plano. Pedido: $this->order->id"
+                            ? "Pagamento removido no Asaas para atualização de plano. Pedido: {$this->order->id}"
+                            : "Erro ao remover pagamento no Asaas para atualização de plano. Pedido: {$this->order->id}"
                     );
                 }
             }
@@ -64,7 +64,7 @@ class BackOrderOldPlanJob implements ShouldQueue
 
             $data = [
                 'id' => $this->order->subscription_asaas_id,
-                'value' => $this->order->original_plan_value,
+                'value' => $oldOrder->data['value'],
                 'nextDueDate' => now()->addDays($nextDueDate),
                 'description' => "Assinatura do plano  {$this->order->plan->name}",
                 'externalReference' => 'Pedido: ' . $this->order->id,
@@ -108,12 +108,6 @@ class BackOrderOldPlanJob implements ShouldQueue
                     };
                     (new PlanCreateService($packagesToCreate, $customer->viewers_id))->createPlan();
                 }
-                $paymentStatus = match ($oldOrder['data']['payment_status']) {
-                    'CONFIRMADO' => PaymentStatusOrderAsaasEnum::CONFIRMED,
-                    'PENDENTE' => PaymentStatusOrderAsaasEnum::PENDING,
-                    'VENCIDO' => PaymentStatusOrderAsaasEnum::OVERDUE,
-                    'RECEBIDO' => PaymentStatusOrderAsaasEnum::RECEIVED,
-                };
 
                 $this->order->update([
                     "cycle" => $response['cycle'],
@@ -126,10 +120,9 @@ class BackOrderOldPlanJob implements ShouldQueue
                     "changed_plan" => false,
                     "payment_date" => null,
                     "next_due_date" => $response['nextDueDate'],
-                    "payment_status" => $paymentStatus,
+                    "payment_status" => PaymentStatusOrderAsaasEnum::RECEIVED,
                     "original_plan_value" => null,
                 ]);
-                Log::info('assinatura atualizada no asaas para pedido: ' . $this->order->id);
             }
         }
     }
