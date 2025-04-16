@@ -8,7 +8,6 @@ use App\Jobs\updateSubscriptionAfterProportionalPayJob;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Package;
-use App\Models\Plan;
 use App\Services\AppIntegration\PlanCancelService;
 use App\Services\AppIntegration\PlanCreateService;
 use App\Services\YouCast\Plan\PlanHistory;
@@ -27,7 +26,7 @@ class AsaasPaymentService
         $paymentDate = $data['payment']['paymentDate'];
 
         $order = Order::where('subscription_asaas_id', $subscriptionId)->first();
-        $plan = Plan::find($order->plan_id);
+
         Log::info('AsaasPaymentService acionado');
         if (!$order) {
             Log::warning("Ordem não encontrada para a assinatura $subscriptionId no evento $event.");
