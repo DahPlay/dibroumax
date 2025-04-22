@@ -5,9 +5,9 @@ namespace App\Services\PaymentGateway\Connectors\Asaas;
 use App\Enums\StatusOrderAsaasEnum;
 use App\Jobs\BackOrderOldPlanJob;
 use App\Jobs\updateSubscriptionAfterProportionalPayJob;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Package;
-use App\Models\Plan;
 use App\Services\AppIntegration\PlanCancelService;
 use App\Services\AppIntegration\PlanCreateService;
 use App\Services\YouCast\Plan\PlanHistory;
@@ -26,7 +26,7 @@ class AsaasPaymentService
         $paymentDate = $data['payment']['paymentDate'];
 
         $order = Order::where('subscription_asaas_id', $subscriptionId)->first();
-        $plan = Plan::find($order->plan_id);
+
         Log::info('AsaasPaymentService acionado');
         if (!$order) {
             Log::warning("Ordem não encontrada para a assinatura $subscriptionId no evento $event.");
@@ -35,7 +35,8 @@ class AsaasPaymentService
 
         switch ($event) {
             case 'PAYMENT_RECEIVED':
-                if ($order->changed_plan || $order->value != $plan->value) {
+//para aplicar o cupom de desconto somente na primeira mensalidade, descomente abaixo
+                if ($order->changed_plan /*|| $order->value != $plan->value*/) {
                     updateSubscriptionAfterProportionalPayJob::dispatch($order);
                 }
                 $order->update([
@@ -47,9 +48,17 @@ class AsaasPaymentService
                 ]);
 
                 Log::info("Pagamento confirmado para a ordem {$order->id}.");
+                //este if impede que seja enviado cupom de desconto durante a troca de plano
+                // remova o if depois de implementar cupom na troca de plano
+                if (!$order->changed_plan) {
+                    $customer = \App\Models\Customer::find($order->customer_id);
+                    $packagesToCreate = [];
+                    if ($customer->coupon_id != null) {
+                        $coupon = Coupon::find($customer->coupon_id);
 
-                $packagesToCreate = [];
-
+                        $packagesToCreate[] = $coupon->cod;
+                    }
+                }
                 foreach ($order->plan->packagePlans as $packagePlan) {
                     $pack = Package::find($packagePlan->package_id);
                     $packagesToCreate[] = $pack->cod;

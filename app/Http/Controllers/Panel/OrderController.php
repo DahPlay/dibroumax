@@ -393,14 +393,14 @@ class OrderController extends Controller
             $invoiceValue = max(0, $newPlanValue - $credit);
 
 
-            logger('cálculos', [
+           /* logger('cálculos', [
                 'credito' => $credit,
                 'valor usado' => $dailyRate,
                 'valor do plano atual ' => (float)$actualPlanValue,
                 'ciclo' => (float)$cycleDays,
                 'valor do novo plano' => $newPlanValue,
                 'valor a ser cobrado' => $invoiceValue
-            ]);
+            ]);*/
         }
 
         // Define se a troca deve ser aplicada no próximo ciclo
