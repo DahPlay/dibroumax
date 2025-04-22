@@ -33,7 +33,7 @@
                                         <div class="d-flex container-plan h-100 mb-2">
                                             <a href="{{ route('register', ['planId' => $plan->id]) }}"
                                                class="m-2 w-100">
-                                                <div class="plan border mt-auto d-flex flex-column align-items-center h-100 {{ $plan->is_best_seller ? 'best-seller' : '' }}" style="border-color: {{ config('custom.mais_vendido') }};" >
+                                                <div class="plan  mt-auto d-flex flex-column align-items-center h-100 {{ $plan->is_best_seller ? 'best-seller' : '' }}" style="border-color: {{ config('custom.mais_vendido') }};" >
                                                     @if ($plan->is_best_seller)
                                                         <div class="box-best-seller position-absolute" style="background-color: {{ config('custom.mais_vendido') }}; color: {{ config('custom.text_mais_vendido') }};">
                                                             <span>Mais vendido</span>

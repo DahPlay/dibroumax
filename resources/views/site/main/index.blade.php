@@ -21,10 +21,10 @@
 </head>
 
 <body>
-    <header class="d-flex justify-content-center justify-content-lg-end position-relative"
-        style="background-image: url('{{ config('custom.background_home_image') }}'); background-repeat: no-repeat;">
+    <!--OCULTAR DAHPLAY <header class="d-flex justify-content-center justify-content-lg-end position-relative"
+        style="background-image: url('{{ config('custom.background_home_image') }}'); background-repeat: no-repeat;">OCULTAR DAHPLAY -->
         <!-- Escurece a imagem, mas fica por baixo de tudo -->
-        <div style="
+         <!--OCULTAR DAHPLAY <div style="
     background-color: {{ config('custom.background_home_image_blur') }};
     position: absolute;
     top: 0;
@@ -32,7 +32,7 @@
     width: 100%;
     height: 100%;
     z-index: 0;
-"></div>
+"></div>OCULTAR DAHPLAY -->
 
         <!-- Tudo que vem depois, com z-index: 1, fica acima -->
         <div style="z-index: 1;">
@@ -40,17 +40,17 @@
         </div>
 
         <div class="align-items-center container-nav d-flex justify-content-between position-absolute">
-            <img src="{{ config('custom.logo_1') }}">
+             <!--OCULTAR DAHPLAY <img src="{{ config('custom.logo_1') }}">
 
             <div class="d-flex flex-column d-lg-none menu" onclick="toggleMenu()">
                 <div class="menu-bar"></div>
                 <div class="menu-bar"></div>
                 <div class="menu-bar"></div>
-            </div>
+            </div>OCULTAR DAHPLAY -->
 
             <nav
                 class="justify-content-end justify-content-lg-center ml-0 mr-0 navbar navbar-expand col nav d-none d-lg-flex">
-                <ul class="d-lg-flex d-none justify-content-lg-center navbar-nav">
+                <!--OCULTAR DAHPLAY <ul class="d-lg-flex d-none justify-content-lg-center navbar-nav">
                     <li class="px-4" style="background-color: {{ config('custom.background_home_menu_color') }};"><a
                             href="#planos"
                             style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_menu_1') }}</a>
@@ -77,11 +77,11 @@
                             <img src="{{ config('custom.logo_1') }}" style="width: 100px; margin: 0px;" alt="">
                         </a>
                     </li>
-                </ul>
+                </ul>OCULTAR DAHPLAY -->
             </nav>
         </div>
 
-        <nav class="mobile-menu" id="mobileMenu">
+        <!--OCULTAR DAHPLAY <nav class="mobile-menu" id="mobileMenu">
             <ul>
                 <li><a href="#planos" onclick="toggleMenu()">{{ config('custom.text_menu_1') }}</a></li>
                 <li><a href="#sobre-a-plataforma" onclick="toggleMenu()">{{ config('custom.text_menu_2') }}</a></li>
@@ -108,11 +108,11 @@
                 style="background-color: {{ config('custom.background_button_home_menu_color_cadastre') }}; color: {{ config('custom.text_button_home_menu_color_cadastre') }};">{{ config('custom.text_button_home_menu_experimente') }}</a>
         </div>
 
-        </div>
+        </div>OCULTAR DAHPLAY -->
     </header>
 
 
-    <section id="sobre-a-plataforma" class="d-flex first-section flex-column flex-lg-row section-container text-center">
+    <!--OCULTAR DAHPLAY <section id="sobre-a-plataforma" class="d-flex first-section flex-column flex-lg-row section-container text-center">
         <div>
             <h3 style="color: {{ config('custom.text_home') }};">{{ config('custom.titulo_video') }}</h3>
             <p style="color: {{ config('custom.text_home') }};">{{ config('custom.text_video') }}</p>
@@ -250,8 +250,8 @@
             <h3 style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.title_people') }}</h3>
             <p style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_people') }}</p>
         </div>
-    </section>
-
+    </section> OCULTAR DAHPLAY -->
+    </br></br></br>
     @include('site.partials.plan-section')
 
     <footer class="section-container d-flex flex-column align-items-center" style="background-color: {{ config('custom.background_people') }};">
