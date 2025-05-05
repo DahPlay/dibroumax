@@ -20,7 +20,7 @@
 
         <div class="tab-content mt-5 pt-5" id="myTabContent">
             @foreach($cycles as $cycleKey => $cycleName)
-                <div class="tab-pane fade {{ $cycleKey === $activeCycle ? 'show active' : '' }}"
+                <div class="tab-pane fade {{ $cycleKey === "$activeCycle" ? 'show active' : '' }}"
                      id="{{$cycleKey}}"
                      role="tabpanel"
                      aria-labelledby="{{$cycleKey.'-tab'}}">
@@ -41,10 +41,20 @@
                                                     @endif
 
                                                     <div class="important-info-plan d-flex flex-column align-items-center" >
-                                                        <span class="title-plan" style="color: {{ config('custom.mais_vendido') }};">{{ $plan->name }}</span>
+                                                        <span class="title-plan" style="font-size: 17px; color: {{ config('custom.mais_vendido') }};">{{ $plan->name }}</span>
                                                         <span class="value-plan" style="color: {{ config('custom.mais_vendido') }};">R$
-                                                        <span class="value">{{ number_format($plan->value, 2, ',', '.') }}</span>
-                                                        </span>
+                                                        @if ($cycleName != "ANUAL")
+                                                            <span class="value"  style="font-size: 45px;">{{ number_format($plan->value, 2, ',', '.') }}</span>
+                                                            </span>
+                                                        @else
+                                                            <span class="value" style="font-size: 45px;">{{ number_format($plan->value/12, 2, ',', '.') }}</span><span class="value" style="font-size: 20px;">/mês</span>
+                                                            <br>
+                                                            <div style="text-align: center; margin-top: -24px;">
+                                                                <span class="value" style="font-size: 12px; font-weight: normal;">R$ {{ number_format($plan->value, 2, ',', '.') }} Pagamento Anual
+                                                                </span>
+                                                            </div>
+                                                            </span>
+                                                        @endif                                                       
                                                         <span class="text-dark">
                                                              {{ $plan->free_for_days > 0 ?? 'Renovação Automática' }}
                                                         </span>
