@@ -62,7 +62,7 @@
                 "orderable": false
             }]);
             tableManage.setOrder([
-                [2, 'desc']
+                [3, 'asc']
             ]);
             tableManage.setColumns([{
                     data: 'responsive',
@@ -83,11 +83,18 @@
                     className: 'align-middle'
                 },
                 {
+                    data: 'priority',
+                    orderable: true,
+                    searchable: true,
+                    className: 'name align-middle'
+                },
+                {
                     data: 'name',
                     orderable: true,
                     searchable: true,
                     className: 'name align-middle'
                 },
+                
                 {
                     data: 'value',
                     orderable: true,

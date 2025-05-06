@@ -1,5 +1,13 @@
 <div class="modal-body">
     <div class="row">
+        <div class="form-group col-12 col-md-2">
+            <label for="priority" class="col-form-label text-danger">Prioridade: *</label>
+            <div class="input-group">
+                <input type="number" id="priority" class="form-control" name="priority" placeholder="Prioridade *"
+                       value="{{ $plan->priority ?? old('priority') }}" required>
+            </div>
+        </div>
+
         <div class="form-group col-12 col-md-6">
             <label for="name" class="col-form-label text-danger">Nome: *</label>
             <div class="input-group">
@@ -8,7 +16,7 @@
             </div>
         </div>
 
-        <div class="form-group col-12 col-md-3 p-0">
+        <div class="form-group col-12 col-md-2 p-0 mt-5">
             <div class="custom-control custom-switch custom-switch-on-primary d-flex align-items-center"
                  style="width: 250px;">
                 <input type="checkbox" class="custom-control-input overdue" name="is_active" id="is_active"
@@ -17,7 +25,7 @@
             </div>
         </div>
 
-        <div class="form-group col-12 col-md-3 p-0">
+        <div class="form-group col-12 col-md-2 p-0 mt-5">
             <div class="custom-control custom-switch custom-switch-on-primary d-flex align-items-center"
                  style="width: 250px;">
                 <input type="checkbox" class="custom-control-input overdue" name="is_best_seller" id="is_best_seller"
@@ -136,6 +144,7 @@
         formData.append('is_active', $("#is_active").is(':checked') ? 1 : 0);
         formData.append('is_best_seller', $("#is_best_seller").is(':checked') ? 1 : 0);
         formData.append('free_for_days', $("#free_for_days").val());
+        formData.append('priority', $("#priority").val());
 
         $('#benefits-container input[name="benefits[]"]').each(function (index, element) {
             if ($(element).val()) {

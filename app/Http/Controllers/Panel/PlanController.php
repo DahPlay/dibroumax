@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Validation\Rule;
 
 class PlanController extends Controller
 {
@@ -43,6 +44,7 @@ class PlanController extends Controller
                 'plans.created_at',
                 'plans.is_active',
                 'plans.billing_type',
+                'plans.priority',
             ]);
 
         return DataTables::of($plans)
@@ -52,6 +54,7 @@ class PlanController extends Controller
             ->editColumn('id', function ($plan) {
                 return view('panel.plans.local.index.datatable.id', compact('plan'));
             })
+
             ->editColumn('cycle', function ($plan) {
                 return CycleAsaasEnum::from($plan->cycle)->getName();
             })
@@ -102,40 +105,110 @@ class PlanController extends Controller
     }
 
     public function store(PlanRequest $request): JsonResponse
-    {
-        $data = $request->validated();
+{
+    // 1) Obter os dados validados (exceto priority, que trataremos logo abaixo)
+    $data = $request->validated();
 
-        $data['is_active'] = isset($data['is_active']) ? 1 : 0;
-        $data['is_best_seller'] = isset($data['is_best_seller']) ? 1 : 0;
+    // 2) Capturar priority diretamente do request
+    $priority = $request->input('priority');
 
-        $plan = $this->model->create($data);
-
-        if ($plan) {
-            if ($this->request->filled('benefits') && $this->request->benefits[0] !== null) {
-                foreach ($this->request->benefits as $benefit) {
-                    $plan->benefits()->create(['description' => $benefit]);
-                }
-            }
-
-            if ($this->request->filled('packages')) {
-                foreach ($this->request->packages as $package) {
-                    $plan->packagePlans()->create([
-                        'package_id' => $package,
-                    ]);
-                }
-            }
-            return response()->json([
-                'status' => 200,
-                'message' => 'Ação executada com sucesso!'
-            ]);
-        }
+    // 3) Verificar se veio preenchido
+    if ($priority === null || $priority === '') {
         return response()->json([
             'status' => 400,
             'errors' => [
-                'message' => ['Erro executar a ação, tente novamente!']
-            ]
+                'priority' => ['O campo Prioridade é obrigatório.'],
+            ],
         ]);
     }
+
+    // 4) Verificar duplicidade
+    if ($this->model->where('priority', $priority)->exists()) {
+        return response()->json([
+            'status' => 400,
+            'errors' => [
+                'priority' => ['Já existe uma prioridade cadastrada com esse valor.'],
+            ],
+        ]);
+    }
+
+    // 5) Tratar booleanos
+    $data['is_active']      = $request->has('is_active') ? 1 : 0;
+    $data['is_best_seller'] = $request->has('is_best_seller') ? 1 : 0;
+
+    // 6) Injetar priority no array de dados
+    $data['priority'] = (int) $priority;
+
+    // 7) Criar o plano
+    $plan = $this->model->create($data);
+
+    if ($plan) {
+        // 8) Relacionar benefícios
+        if ($request->filled('benefits') && $request->benefits[0] !== null) {
+            foreach ($request->benefits as $benefit) {
+                $plan->benefits()->create(['description' => $benefit]);
+            }
+        }
+
+        // 9) Relacionar pacotes
+        if ($request->filled('packages')) {
+            foreach ($request->packages as $packageId) {
+                $plan->packagePlans()->create(['package_id' => $packageId]);
+            }
+        }
+
+        return response()->json([
+            'status'  => 200,
+            'message' => 'Ação executada com sucesso!',
+        ]);
+    }
+
+    // 10) Erro inesperado
+    return response()->json([
+        'status' => 400,
+        'errors' => [
+            'message' => ['Erro ao executar a ação, tente novamente!'],
+        ],
+    ]);
+}
+
+
+
+    // public function store(PlanRequest $request): JsonResponse
+    // {
+    //     $data = $request->validated();
+
+    //     $data['is_active'] = isset($data['is_active']) ? 1 : 0;
+    //     $data['is_best_seller'] = isset($data['is_best_seller']) ? 1 : 0;
+
+    //     $plan = $this->model->create($data);
+
+    //     if ($plan) {
+    //         if ($this->request->filled('benefits') && $this->request->benefits[0] !== null) {
+    //             foreach ($this->request->benefits as $benefit) {
+    //                 $plan->benefits()->create(['description' => $benefit]);
+    //             }
+    //         }
+
+    //         if ($this->request->filled('packages')) {
+    //             foreach ($this->request->packages as $package) {
+    //                 $plan->packagePlans()->create([
+    //                     'package_id' => $package,
+    //                 ]);
+    //             }
+    //         }
+    //         return response()->json([
+    //             'status' => 200,
+    //             'message' => 'Ação executada com sucesso!'
+    //         ]);
+    //     }
+    //     return response()->json([
+    //         'status' => 400,
+    //         'errors' => [
+    //             'message' => ['Erro executar a ação, tente novamente!']
+    //         ]
+    //     ]);
+    // }
 
     public function edit($id): View
     {
@@ -143,6 +216,7 @@ class PlanController extends Controller
         $packages = Package::where('name', '!=', 'Dahplay desativado')
             ->where('is_active', true)
             ->get();
+
         return view('panel.plans.local.index.modals.edit', compact("plan", 'packages'));
     }
 
@@ -155,87 +229,167 @@ class PlanController extends Controller
         return view('panel.plans.local.index.modals.duplicate', compact('plan', 'packages'));
     }
 
+   
     public function update($id): JsonResponse
     {
         $plan = $this->model->find($id);
 
-        if ($plan) {
-            $data = $this->request->only([
-                'name',
-                'value',
-                'description',
-                'cycle',
-                'is_active',
-                'is_best_seller',
-                'billing_type',
-                'free_for_days',
-            ]);
-
-            $validator = Validator::make($data, [
-                'name' => ['required', 'string', 'max:255'],
-                'value' => ['required', 'string', 'min:0'],
-                'description' => ['nullable', 'string'],
-                'name' => ['required', 'string'],
-                'is_active' => ['nullable', 'string'],
-                'is_best_seller' => ['nullable', 'string'],
-                'billing_type' => ['string'],
-                'free_for_days' => ['integer'],
-            ]);
-
-            if (count($validator->errors()) > 0) {
-                return response()->json([
-                    'status' => 400,
-                    'errors' => $validator->errors(),
-                ]);
-            }
-
-            $data['is_active'] = isset($data['is_active']) ? 1 : 0;
-            $data['is_best_seller'] = isset($data['is_best_seller']) ? 1 : 0;
-
-            $plan->update($data);
-
-            $plan->benefits()->delete();
-
-            $plan->packagePlans()->delete();
-
-            if ($this->request->filled('benefits') && count($this->request->input('benefits')) > 0 && !is_null(
-                    $this->request->input('benefits')[0]
-                )) {
-                foreach ($this->request->benefits as $benefit) {
-                    $plan->benefits()->create(['description' => $benefit]);
-                }
-            }
-
-            if ($this->request->filled('packages')) {
-                foreach ($this->request->packages as $package) {
-                    $plan->packagePlans()->create([
-                        'package_id' => $package,
-                    ]);
-                }
-            }
-
-            if ($plan) {
-                return response()->json([
-                    'status' => '200',
-                    'message' => 'Ação executada com sucesso!'
-                ]);
-            } else {
-                return response()->json([
-                    'status' => '400',
-                    'errors' => [
-                        'message' => ['Erro executar a ação, tente novamente!']
-                    ]
-                ]);
-            }
-        } else {
+        if (!$plan) {
             return response()->json([
-                'status' => '400',
+                'status' => 400,
                 'errors' => [
                     'message' => ['Os dados não foram encontrados!']
                 ]
             ]);
         }
+
+        $data = $this->request->only([
+            'name',
+            'value',
+            'description',
+            'cycle',
+            'is_active',
+            'is_best_seller',
+            'billing_type',
+            'free_for_days',
+            'priority',
+        ]);
+
+        $validator = Validator::make($data, [
+            'name' => ['required', 'string', 'max:255'],
+            'value' => ['required', 'string', 'min:0'],
+            'description' => ['nullable', 'string'],
+            'is_active' => ['nullable', 'string'],
+            'is_best_seller' => ['nullable', 'string'],
+            'billing_type' => ['string'],
+            'free_for_days' => ['integer'],
+            'priority' => [
+                'required',
+                'integer',
+                Rule::unique('plans', 'priority')->ignore($id),
+            ],
+        ], [
+            'priority.unique' => 'Prioridade já cadastrada.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'errors' => $validator->errors(),
+            ]);
+        }
+
+        $data['is_active'] = isset($data['is_active']) ? 1 : 0;
+        $data['is_best_seller'] = isset($data['is_best_seller']) ? 1 : 0;
+
+        $plan->update($data);
+
+        $plan->benefits()->delete();
+        $plan->packagePlans()->delete();
+
+        if ($this->request->filled('benefits') && count($this->request->input('benefits')) > 0 && !is_null($this->request->input('benefits')[0])) {
+            foreach ($this->request->benefits as $benefit) {
+                $plan->benefits()->create(['description' => $benefit]);
+            }
+        }
+
+        if ($this->request->filled('packages')) {
+            foreach ($this->request->packages as $package) {
+                $plan->packagePlans()->create([
+                    'package_id' => $package,
+                ]);
+            }
+        }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Ação executada com sucesso!'
+        ]);
     }
+
+    // public function update($id): JsonResponse
+    // {
+    //     $plan = $this->model->find($id);
+
+    //     if ($plan) {
+    //         $data = $this->request->only([
+    //             'name',
+    //             'value',
+    //             'description',
+    //             'cycle',
+    //             'is_active',
+    //             'is_best_seller',
+    //             'billing_type',
+    //             'free_for_days',
+    //             'priority',
+    //         ]);
+
+    //         $validator = Validator::make($data, [
+    //             'name' => ['required', 'string', 'max:255'],
+    //             'value' => ['required', 'string', 'min:0'],
+    //             'description' => ['nullable', 'string'],
+    //             'name' => ['required', 'string'],
+    //             'is_active' => ['nullable', 'string'],
+    //             'is_best_seller' => ['nullable', 'string'],
+    //             'billing_type' => ['string'],
+    //             'free_for_days' => ['integer'],
+    //             'priority' => ['required', 'integer'],
+    //         ]);
+
+    //         if (count($validator->errors()) > 0) {
+    //             return response()->json([
+    //                 'status' => 400,
+    //                 'errors' => $validator->errors(),
+    //             ]);
+    //         }
+
+    //         $data['is_active'] = isset($data['is_active']) ? 1 : 0;
+    //         $data['is_best_seller'] = isset($data['is_best_seller']) ? 1 : 0;
+
+    //         $plan->update($data);
+
+    //         $plan->benefits()->delete();
+
+    //         $plan->packagePlans()->delete();
+
+    //         if ($this->request->filled('benefits') && count($this->request->input('benefits')) > 0 && !is_null(
+    //                 $this->request->input('benefits')[0]
+    //             )) {
+    //             foreach ($this->request->benefits as $benefit) {
+    //                 $plan->benefits()->create(['description' => $benefit]);
+    //             }
+    //         }
+
+    //         if ($this->request->filled('packages')) {
+    //             foreach ($this->request->packages as $package) {
+    //                 $plan->packagePlans()->create([
+    //                     'package_id' => $package,
+    //                 ]);
+    //             }
+    //         }
+
+    //         if ($plan) {
+    //             return response()->json([
+    //                 'status' => '200',
+    //                 'message' => 'Ação executada com sucesso!'
+    //             ]);
+    //         } else {
+    //             return response()->json([
+    //                 'status' => '400',
+    //                 'errors' => [
+    //                     'message' => ['Erro executar a ação, tente novamente!']
+    //                 ]
+    //             ]);
+    //         }
+    //     } else {
+    //         return response()->json([
+    //             'status' => '400',
+    //             'errors' => [
+    //                 'message' => ['Os dados não foram encontrados!']
+    //             ]
+    //         ]);
+    //     }
+    // }
 
     public function delete($id): View
     {

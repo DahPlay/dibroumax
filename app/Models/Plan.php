@@ -21,6 +21,7 @@ class Plan extends Model
         'cycle',
         'billing_type',
         'free_for_days',
+        'priority',
     ];
 
     protected function value(): Attribute

@@ -16,6 +16,7 @@
                                             <th style="width: 1%"></th>
                                             <th><input type="checkbox" id="btn-marcar-todos"></th>
                                             <th>#</th>
+                                            <th>Prioridade</th>
                                             <th>Nome</th>
                                             <th>Valor</th>
                                             <th>Ativo</th>
