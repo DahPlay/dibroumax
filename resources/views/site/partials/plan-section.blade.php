@@ -31,8 +31,8 @@
                                             <div class="plan d-flex flex-column align-items-center h-100 {{ $plan->is_best_seller ? 'best-seller' : '' }}"
                                                 style="border-color: {{ config('custom.mais_vendido') }};">
                                                 @if ($plan->is_best_seller)
-                                                    <div class="box-best-seller position-absolute"
-                                                        style="background-color: {{ config('custom.mais_vendido') }}; color: {{ config('custom.text_mais_vendido') }};">
+                                                    <div class="box-best-seller position-relative "
+                                                        style="margin-top:-10%; margin-bottom:-15%; background-color: {{ config('custom.mais_vendido') }}; color: {{ config('custom.text_mais_vendido') }}; ">
                                                         <span>Mais vendido</span>
                                                     </div>
                                                 @endif
