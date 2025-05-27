@@ -64,7 +64,7 @@ Route::middleware('auth')->name('panel.')->group(function () {
             ->name('index')
             ->setWheres([
                 'titleBreadCrumb'   => 'Dashboard',
-                'title'   => 'Dashboard | Dahplay',
+                'title'   => 'Dashboard | ' . config('custom.project_name'),
             ])->middleware('can:admin');
     });
 
@@ -73,7 +73,7 @@ Route::middleware('auth')->name('panel.')->group(function () {
             ->name('index-user')
             ->setWheres([
                 'titleBreadCrumb'   => 'Dashboard',
-                'title'   => 'Dashboard | Dahplay',
+                'title'   => 'Dashboard | '. config('custom.project_name'),
             ])->middleware('can:user');
     });
 
@@ -82,7 +82,7 @@ Route::middleware('auth')->name('panel.')->group(function () {
             ->name('index')
             ->setWheres([
                 'titleBreadCrumb'   => 'Lista de Pedidos',
-                'title'   => 'Lista de Pedidos | Dahplay',
+                'title'   => 'Lista de Pedidos | '. config('custom.project_name'),
             ]);
 
         Route::get('/accesses/loadDatatable', [AccessController::class, 'loadDatatable'])->name('loadDatatable');
@@ -143,7 +143,7 @@ Route::middleware('auth')->name('panel.')->group(function () {
             ->name('index')
             ->setWheres([
                 'titleBreadCrumb'   => 'Lista de Usuários',
-                'title'   => 'Lista de Usuários | Dahplay',
+                'title'   => 'Lista de Usuários | '. config('custom.project_name'),
             ])->middleware('can:admin');
 
         Route::get('/users/loadDatatable', [UserController::class, 'loadDatatable'])->name('loadDatatable')->middleware('can:admin');;
@@ -183,7 +183,7 @@ Route::middleware('auth')->name('panel.')->group(function () {
             ->name('index')
             ->setWheres([
                 'titleBreadCrumb'   => 'Lista de Clientes',
-                'title'   => 'Lista de Pedidos | Dahplay',
+                'title'   => 'Lista de Pedidos | '. config('custom.project_name'),
             ]);
 
         Route::get('/customers/loadDatatable', [CustomerController::class, 'loadDatatable'])->name('loadDatatable');
@@ -226,7 +226,7 @@ Route::middleware('auth')->name('panel.')->group(function () {
             ->name('index')
             ->setWheres([
                 'titleBreadCrumb'   => 'Lista de Planos',
-                'title'   => 'Lista de Planos | Dahplay',
+                'title'   => 'Lista de Planos | '. config('custom.project_name'),
             ]);
 
         Route::get('/plans/loadDatatable', [PlanController::class, 'loadDatatable'])->name('loadDatatable');
@@ -336,7 +336,7 @@ Route::middleware('auth')->name('panel.')->group(function () {
             ->name('index')
             ->setWheres([
                 'titleBreadCrumb'   => 'Lista de Pedidos',
-                'title'   => 'Lista de Pedidos | Dahplay',
+                'title'   => 'Lista de Pedidos | '. config('custom.project_name'),
             ]);
 
         Route::get('/orders/loadDatatable', [OrderController::class, 'loadDatatable'])->name('loadDatatable');

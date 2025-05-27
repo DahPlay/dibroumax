@@ -19,6 +19,6 @@ class ResetPasswordNotification extends BaseResetPassword
             ->line('Este link de redefinição de senha expirará em 60 minutos.')
             ->line('Se você não solicitou uma redefinição de senha, nenhuma ação adicional será necessária.')
             ->salutation('Atenciosamente,')
-            ->line('© 2024 Agro Mercado. Todos os direitos reservados.');
+            ->line('© 2025 ' . config('custom.project_name') . '. Todos os direitos reservados.');
     }
 }
