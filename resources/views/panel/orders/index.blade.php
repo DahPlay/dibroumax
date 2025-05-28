@@ -21,7 +21,7 @@
                                             <th>Valor</th>
                                             <th>Assinatura</th>
                                             <th>Cliente Asaas</th>
-                                            <th>Assinatura</th>
+                                            <th>Assinatura Status</th>
                                             <th>Pagamento</th>
                                             <th>Vencimento</th>
                                             <th>Ciclo</th>

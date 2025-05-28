@@ -142,8 +142,8 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::get('/users', [UserController::class, 'index'])
             ->name('index')
             ->setWheres([
-                'titleBreadCrumb'   => 'Lista de Usuários',
-                'title'   => 'Lista de Usuários | '. config('custom.project_name'),
+                'titleBreadCrumb'   => 'Lista de Clientes',
+                'title'   => 'Lista de Clientes | '. config('custom.project_name'),
             ])->middleware('can:admin');
 
         Route::get('/users/loadDatatable', [UserController::class, 'loadDatatable'])->name('loadDatatable')->middleware('can:admin');;
@@ -182,8 +182,8 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::get('/customers', [CustomerController::class, 'index'])
             ->name('index')
             ->setWheres([
-                'titleBreadCrumb'   => 'Lista de Clientes',
-                'title'   => 'Lista de Clientes | '. config('custom.project_name'),
+                'titleBreadCrumb'   => 'Lista de Cobrança',
+                'title'   => 'Lista de Cobrança | '. config('custom.project_name'),
             ]);
 
         Route::get('/customers/loadDatatable', [CustomerController::class, 'loadDatatable'])->name('loadDatatable');

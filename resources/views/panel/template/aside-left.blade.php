@@ -54,9 +54,11 @@
                         <a href="{{ route('panel.users.index') }}"
                             class="nav-link {{ request()->is('users') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-user"></i>
-                            <p>
-                                Usuários
-                            </p>
+                             @if(auth()->user()->access && auth()->user()->access->name === 'User')
+                                    <p>Usuário</p>
+                                @else
+                                    <p>Clientes</p>
+                                @endif
                         </a>
                     </li>
                 @endcan
@@ -82,7 +84,7 @@
                                 @if(auth()->user()->access && auth()->user()->access->name === 'User')
                                     <p>Minha Conta</p>
                                 @else
-                                    <p>Clientes</p>
+                                    <p>Cobranças</p>
                                 @endif
                            
                         </a>
