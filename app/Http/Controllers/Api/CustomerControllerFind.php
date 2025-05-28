@@ -16,24 +16,39 @@ class CustomerControllerFind extends Controller
             return response()->json(['error' => 'CPF não informado.'], 400);
         }
 
-        $customer = Customer::where('document', $cpf)
+        //SOMENTE TELEMEDICINA
+        // $customer = Customer::where('document', $cpf)
+        //     ->whereHas('orders', function ($query) {
+        //         $query->where('status', 'ACTIVE')
+        //               ->whereHas('plan', function ($q) {
+        //                   $q->where('name', 'like', '%Telemedicina%');
+        //               });
+        //     })
+        //     ->with(['orders' => function ($query) {
+        //         $query->where('status', 'ACTIVE')
+        //               ->whereHas('plan', function ($q) {
+        //                   $q->where('name', 'like', '%Telemedicina%');
+        //               })
+        //               ->with('plan');
+        //     }])
+        //     ->first();
+
+        // if (!$customer) {
+        //     return response()->json(['error' => 'Cliente não encontrado ou sem plano Telemedicina ativo.'], 404);
+        // }
+
+        //TODOS OS PLANOS
+         $customer = Customer::where('document', $cpf)
             ->whereHas('orders', function ($query) {
-                $query->where('status', 'ACTIVE')
-                      ->whereHas('plan', function ($q) {
-                          $q->where('name', 'like', '%Telemedicina%');
-                      });
+                $query->where('status', 'ACTIVE');
             })
             ->with(['orders' => function ($query) {
-                $query->where('status', 'ACTIVE')
-                      ->whereHas('plan', function ($q) {
-                          $q->where('name', 'like', '%Telemedicina%');
-                      })
-                      ->with('plan');
+                $query->where('status', 'ACTIVE')->with('plan');
             }])
             ->first();
 
         if (!$customer) {
-            return response()->json(['error' => 'Cliente não encontrado ou sem plano Telemedicina ativo.'], 404);
+            return response()->json(['error' => 'Cliente não encontrado ou sem plano ativo.'], 404);
         }
 
         $order = $customer->orders->first();
