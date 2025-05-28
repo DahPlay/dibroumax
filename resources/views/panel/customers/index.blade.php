@@ -7,7 +7,7 @@
     <div class="content-wrapper">
         @include("$routeAmbient.$routeCrud.breadcrumb")
 
-        {{-- Título principal da página --}}
+        {{-- Título principal da página 
         <div class="p-3">
             <h4 class="mb-0">
                 @if(auth()->user()->access && auth()->user()->access->name === 'User')
@@ -16,7 +16,7 @@
                     {{$titleBreadCrumb}}
                 @endif
             </h4>
-        </div>
+        </div>--}}
 
         <div class="content">
             <div class="container-fluid">
