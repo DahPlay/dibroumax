@@ -1,7 +1,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="{{ route('panel.main.index') }}" class="brand-link">
         <img src="{{ config('custom.favicon') }}" alt="{{ config('custom.project_name') }}"
-             class="brand-image img-circle elevation-3" style="opacity: .8">
+            class="brand-image img-circle elevation-3" style="opacity: .8">
         <span class="brand-text font-weight-light">{{ config('custom.project_name') }}</span>
     </a>
 
@@ -9,9 +9,8 @@
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
                 <img src="{{file_exists(storage_path('app/public/' . auth()->user()->photo))
-            ? asset('storage/' . auth()->user()->photo)
-            : asset(auth()->user()->photo) }}" class="img-circle elevation-2"
-                     alt="User Image">
+    ? asset('storage/' . auth()->user()->photo)
+    : asset(auth()->user()->photo) }}" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
                 <a href="#" class="d-block">{{ auth()->user()->name ?? 'Desconhecido' }}</a>
@@ -26,7 +25,7 @@
                     @can('admin')
                         <li class="nav-item has-treeview {{ request()->is('painel-de-controle') ? 'menu-open' : '' }}">
                             <a href="{{ route('panel.main.index') }}"
-                               class="nav-link {{ request()->is('painel-de-controle') ? 'active' : '' }}">
+                                class="nav-link {{ request()->is('painel-de-controle') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>
                                     Dashboard
@@ -40,7 +39,7 @@
                     @can('user')
                         <li class="nav-item has-treeview {{ request()->is('painel-de-controle-user') ? 'menu-open' : '' }}">
                             <a href="{{ route('panel.main.index-user') }}"
-                               class="nav-link {{ request()->is('painel-de-controle-user') ? 'active' : '' }}">
+                                class="nav-link {{ request()->is('painel-de-controle-user') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>
                                     Dashboard
@@ -53,7 +52,7 @@
                 @can('admin')
                     <li class="nav-item has-treeview {{ request()->is('users') ? 'menu-open' : '' }}">
                         <a href="{{ route('panel.users.index') }}"
-                           class="nav-link {{ request()->is('users') ? 'active' : '' }}">
+                            class="nav-link {{ request()->is('users') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-user"></i>
                             <p>
                                 Usuários
@@ -65,7 +64,7 @@
                 @can('developer')
                     <li class="nav-item has-treeview" {{ request()->is('accesses') ? 'menu-open' : '' }}>
                         <a href="{{ route('panel.accesses.index') }}"
-                           class="nav-link {{ request()->is('accesses') ? 'active' : '' }}">
+                            class="nav-link {{ request()->is('accesses') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-key"></i>
                             <p>
                                 Perfis
@@ -77,11 +76,15 @@
                 @can('user')
                     <li class="nav-item has-treeview {{ request()->is('customers') ? 'menu-open' : '' }}">
                         <a href="{{ route('panel.customers.index') }}"
-                           class="nav-link {{ request()->is('customers') ? 'active' : '' }}">
+                            class="nav-link {{ request()->is('customers') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-users"></i>
-                            <p>
-                                Clientes
-                            </p>
+                            @auth
+                                @if(auth()->user()->access && auth()->user()->access->name === 'Minha Conta')
+                                    <p>Minha Conta</p>
+                                @else
+                                    <p>Clientes</p>
+                                @endif
+                            @endauth
                         </a>
                     </li>
                 @endcan
@@ -89,7 +92,7 @@
                 @can('admin')
                     <li class="nav-item has-treeview {{ request()->is('plans') ? 'menu-open' : '' }}">
                         <a href="{{ route('panel.plans.index') }}"
-                           class="nav-link {{ request()->is('plans') ? 'active' : '' }}">
+                            class="nav-link {{ request()->is('plans') ? 'active' : '' }}">
                             <i class="nav-icon far fa-list-alt"></i>
                             <p>
                                 Planos
@@ -101,7 +104,7 @@
                 @can('admin')
                     <li class="nav-item has-treeview {{ request()->is('coupons') ? 'menu-open' : '' }}">
                         <a href="{{ route('panel.coupons.index') }}"
-                           class="nav-link {{ request()->is('coupons') ? 'active' : '' }}">
+                            class="nav-link {{ request()->is('coupons') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-ticket-alt"></i>
                             <p>
                                 Cupons
@@ -113,7 +116,7 @@
                 @can('developer')
                     <li class="nav-item has-treeview {{ request()->is('packages') ? 'menu-open' : '' }}">
                         <a href="{{ route('panel.packages.index') }}"
-                           class="nav-link {{ request()->is('packages') ? 'active' : '' }}">
+                            class="nav-link {{ request()->is('packages') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-archive"></i>
                             <p>
                                 Pacotes
@@ -124,10 +127,10 @@
 
                 <li class="nav-item has-treeview {{ request()->is('orders') ? 'menu-open' : '' }}">
                     <a href="{{ route('panel.orders.index') }}"
-                       class="nav-link {{ request()->is('orders') ? 'active' : '' }}">
+                        class="nav-link {{ request()->is('orders') ? 'active' : '' }}">
                         <i class="nav-icon fa fa-file-alt"></i>
                         <p>
-                            Pedidos
+                            Assinaturas
                         </p>
                     </a>
                 </li>

@@ -79,7 +79,14 @@
                                     <div class="small-box bg-gray">
                                         <div class="inner">
                                             <h3>{{ $quantityCustomers }}</h3>
-                                            <p>Clientes</p>
+                                            @auth
+                                                @if(auth()->user()->access && auth()->user()->access->name === 'Minha Conta')
+                                                    <p>Minha Conta</p>
+                                                @else
+                                                    <p>Clientes</p>
+                                                @endif
+                                            @endauth
+
                                         </div>
 
                                         <div class="icon">
@@ -96,7 +103,7 @@
                                     <div class="small-box bg-gray">
                                         <div class="inner">
                                             <h3>{{ $quantityOrders }}</h3>
-                                            <p>Pedidos</p>
+                                            <p>Assinaturas</p>
                                         </div>
 
                                         <div class="icon">
@@ -112,7 +119,7 @@
                                     <div class="small-box bg-gray">
                                         <div class="inner">
                                             <h3>R$&nbsp;{{ number_format($totalOrders, 2, ',', '.') }}</h3>
-                                            <p>Total Pedidos</p>
+                                            <p>Total Assinaturas</p>
                                         </div>
 
                                         <div class="icon">

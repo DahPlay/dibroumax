@@ -81,8 +81,8 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::get('/accesses', [AccessController::class, 'index'])
             ->name('index')
             ->setWheres([
-                'titleBreadCrumb'   => 'Lista de Pedidos',
-                'title'   => 'Lista de Pedidos | '. config('custom.project_name'),
+                'titleBreadCrumb'   => 'Lista de Assinaturas',
+                'title'   => 'Lista de Assinaturas | '. config('custom.project_name'),
             ]);
 
         Route::get('/accesses/loadDatatable', [AccessController::class, 'loadDatatable'])->name('loadDatatable');
@@ -183,7 +183,7 @@ Route::middleware('auth')->name('panel.')->group(function () {
             ->name('index')
             ->setWheres([
                 'titleBreadCrumb'   => 'Lista de Clientes',
-                'title'   => 'Lista de Pedidos | '. config('custom.project_name'),
+                'title'   => 'Lista de Assinaturas | '. config('custom.project_name'),
             ]);
 
         Route::get('/customers/loadDatatable', [CustomerController::class, 'loadDatatable'])->name('loadDatatable');
@@ -335,8 +335,8 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::get('/orders', [OrderController::class, 'index'])
             ->name('index')
             ->setWheres([
-                'titleBreadCrumb'   => 'Lista de Pedidos',
-                'title'   => 'Lista de Pedidos | '. config('custom.project_name'),
+                'titleBreadCrumb'   => 'Lista de Assinaturas',
+                'title'   => 'Lista de Assinaturas | '. config('custom.project_name'),
             ]);
 
         Route::get('/orders/loadDatatable', [OrderController::class, 'loadDatatable'])->name('loadDatatable');
