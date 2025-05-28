@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Customer;
+use Illuminate\Http\Request;
+
+class CustomerControllerFind extends Controller
+{
+    public function activeCustomers(Request $request)
+    {
+        $cpf = $request->input('cpf');
+
+        if (!$cpf) {
+            return response()->json(['error' => 'CPF não informado.'], 400);
+        }
+
+        $customer = Customer::where('document', $cpf)
+            ->whereHas('orders', function ($query) {
+                $query->where('status', 'ACTIVE')
+                      ->whereHas('plan', function ($q) {
+                          $q->where('name', 'like', '%Telemedicina%');
+                      });
+            })
+            ->with(['orders' => function ($query) {
+                $query->where('status', 'ACTIVE')
+                      ->whereHas('plan', function ($q) {
+                          $q->where('name', 'like', '%Telemedicina%');
+                      })
+                      ->with('plan');
+            }])
+            ->first();
+
+        if (!$customer) {
+            return response()->json(['error' => 'Cliente não encontrado ou sem plano Telemedicina ativo.'], 404);
+        }
+
+        $order = $customer->orders->first();
+
+        return response()->json([
+            'nome' => $customer->name,
+            'cpf' => $customer->document,
+            'status_plano' => $order->status ?? 'N/A',
+            'nome_plano' => $order->plan->name ?? 'N/A',
+        ]);
+    }
+}
