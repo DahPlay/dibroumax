@@ -78,13 +78,13 @@
                         <a href="{{ route('panel.customers.index') }}"
                             class="nav-link {{ request()->is('customers') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-users"></i>
-                            @auth
-                                @if(auth()->user()->access && auth()->user()->access->name === 'Minha Conta')
+                           
+                                @if(auth()->user()->access->name === 'User')
                                     <p>Minha Conta</p>
                                 @else
                                     <p>Clientes</p>
                                 @endif
-                            @endauth
+                           
                         </a>
                     </li>
                 @endcan
