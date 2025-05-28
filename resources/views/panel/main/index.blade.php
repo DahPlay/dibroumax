@@ -8,15 +8,15 @@
             <div class="container-fluid">
                 <div class="row">
                     {{-- @can('developer')
-                        <div class="col-12">
-                            Desenvolvedor
-                        </div>
+                    <div class="col-12">
+                        Desenvolvedor
+                    </div>
                     @endcan
 
                     @can('user')
-                        <div class="col-12">
-                            Usuário
-                        </div>
+                    <div class="col-12">
+                        Usuário
+                    </div>
                     @endcan --}}
 
                     @can('admin')
@@ -79,13 +79,11 @@
                                     <div class="small-box bg-gray">
                                         <div class="inner">
                                             <h3>{{ $quantityCustomers }}</h3>
-                                            @auth
-                                                @if(auth()->user()->access && auth()->user()->access->name === 'Minha Conta')
+                                                @if(auth()->user()->access && auth()->user()->access->name === 'User')
                                                     <p>Minha Conta</p>
                                                 @else
                                                     <p>Clientes</p>
                                                 @endif
-                                            @endauth
 
                                         </div>
 
@@ -142,8 +140,8 @@
 
 @section('javascriptLocal')
     <script>
-        $(function() {
-            $(document).on('click', ".btn-edit", function(e) {
+        $(function () {
+            $(document).on('click', ".btn-edit", function (e) {
                 openModal(this, e, 'modal-lg');
             });
         });

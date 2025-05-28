@@ -79,7 +79,7 @@
                             class="nav-link {{ request()->is('customers') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-users"></i>
                            
-                                @if(auth()->user()->access->name === 'User')
+                                @if(auth()->user()->access && auth()->user()->access->name === 'User')
                                     <p>Minha Conta</p>
                                 @else
                                     <p>Clientes</p>

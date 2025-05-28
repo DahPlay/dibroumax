@@ -1,8 +1,22 @@
 @extends("$routeAmbient.template.index")
 
+@section('title', (auth()->user()->access && auth()->user()->access->name === 'User') ? 'Minha Conta' : ($title ?? config('custom.project_name')))
+ {{-- Título da aba do navegador --}}
+
 @section('content')
     <div class="content-wrapper">
         @include("$routeAmbient.$routeCrud.breadcrumb")
+
+        {{-- Título principal da página --}}
+        <div class="p-3">
+            <h4 class="mb-0">
+                @if(auth()->user()->access && auth()->user()->access->name === 'User')
+                    Minha Conta
+                @else
+                    {{$titleBreadCrumb}}
+                @endif
+            </h4>
+        </div>
 
         <div class="content">
             <div class="container-fluid">

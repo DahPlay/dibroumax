@@ -183,7 +183,7 @@ Route::middleware('auth')->name('panel.')->group(function () {
             ->name('index')
             ->setWheres([
                 'titleBreadCrumb'   => 'Lista de Clientes',
-                'title'   => 'Lista de Assinaturas | '. config('custom.project_name'),
+                'title'   => 'Lista de Clientes | '. config('custom.project_name'),
             ]);
 
         Route::get('/customers/loadDatatable', [CustomerController::class, 'loadDatatable'])->name('loadDatatable');
