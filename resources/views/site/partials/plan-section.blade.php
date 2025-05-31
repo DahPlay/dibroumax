@@ -88,7 +88,12 @@
                                         <div class="about-plan d-flex flex-column align-items-start w-100 my-3">
                                             @foreach ($plan->benefits as $benefit)
                                                 <div class="about-plan-item d-flex align-items-start mb-1">
-                                                    <img src="{{ asset('Auth-Panel/dist/img/plans-icon.svg') }}" alt="" class="me-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                        fill="{{ config('custom.mais_vendido') }}"
+                                                        class="me-2" viewBox="0 0 16 16"
+                                                        style="margin-top: 4px;">
+                                                        <path d="M13.485 1.929a1 1 0 0 1 1.414 1.414l-8.5 8.5a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L6 9.086l7.485-7.157z"/>
+                                                    </svg>
                                                     <span class="text-dark">{{ $benefit->description }}</span>
                                                 </div>
                                             @endforeach
