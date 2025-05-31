@@ -6,6 +6,11 @@
         {{ config('custom.text_plan_1') }}
     </p>
 
+    {{-- Campo de busca --}}
+    <div class="mb-3 w-100 px-3" style="max-width: 600px;">
+        <input type="text" id="planSearch" class="form-control" placeholder="Buscar plano por nome, descrição ou benefício...">
+    </div>
+
     <div class="container container-plans">
         <ul class="nav-tabs list-unstyled d-flex justify-content-center mx-auto" id="myTab" role="tablist">
             @foreach($cycles as $cycleKey => $cycleName)
@@ -29,34 +34,29 @@
                             @foreach(collect($plansByCycle[$cycleKey])->sortBy('priority') as $plan)
                                 <div class="col-12 col-md-6 col-lg-4 mb-4 d-flex">
                                     <div class="plan d-flex flex-column justify-content-between align-items-center w-100 h-100 {{ $plan->is_best_seller ? 'best-seller' : '' }}"
-                                        style="
-                                            padding: 60px 20px 20px;
-                                            border-radius: 8px;
+                                        data-name="{{ strtolower($plan->name) }}"
+                                        data-description="{{ strtolower($plan->description ?? '') }}"
+                                        data-benefits="{{ strtolower(collect($plan->benefits)->pluck('description')->implode(' ')) }}"
+                                        style="padding: 60px 20px 20px; border-radius: 8px;
                                             {{ $plan->is_best_seller ? 'border: 4px solid ' . config('custom.mais_vendido') . ';' : 'border: none;' }}
-                                            position: relative;
-                                        ">
+                                            position: relative;">
 
                                         @if ($plan->is_best_seller)
                                             <div class="box-best-seller position-absolute"
-                                                style="
-                                                    top: 10px;
-                                                    left: 50%;
-                                                    transform: translateX(-50%);
+                                                style="top: 10px; left: 50%; transform: translateX(-50%);
                                                     padding: 4px 10px;
                                                     background-color: {{ config('custom.mais_vendido') }};
                                                     color: {{ config('custom.text_mais_vendido') }};
                                                     font-weight: bold;
                                                     border-radius: 4px;
                                                     font-size: 13px;
-                                                    margin-top:-25px; 
-                                                ">
+                                                    margin-top: -25px;">
                                                 Mais vendido
                                             </div>
                                         @endif
 
                                         <div class="important-info-plan d-flex flex-column align-items-center">
-                                            <span class="title-plan"
-                                                style="font-size: 17px; color: {{ config('custom.mais_vendido') }};">
+                                            <span class="title-plan" style="font-size: 17px; color: {{ config('custom.mais_vendido') }};">
                                                 {{ $plan->name }}
                                             </span>
                                             <span class="value-plan" style="color: {{ config('custom.mais_vendido') }};">R$
@@ -123,3 +123,34 @@
         {{ config('custom.text_plan_2') }}
     </p>
 </section>
+
+{{-- Script para busca --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('planSearch');
+        searchInput.addEventListener('input', function () {
+            const query = this.value.toLowerCase().trim();
+            const activeTab = document.querySelector('.tab-pane.active');
+            if (!activeTab) return;
+
+            const planCards = activeTab.querySelectorAll('.plan');
+
+            planCards.forEach(card => {
+                const name = card.getAttribute('data-name') || '';
+                const description = card.getAttribute('data-description') || '';
+                const benefits = card.getAttribute('data-benefits') || '';
+                const parentCol = card.closest('.col-12, .col-md-6, .col-lg-4');
+
+                const matches = !query || name.includes(query) || description.includes(query) || benefits.includes(query);
+
+                if (matches) {
+                    parentCol?.classList.remove('d-none');
+                    parentCol?.classList.add('d-flex');
+                } else {
+                    parentCol?.classList.add('d-none');
+                    parentCol?.classList.remove('d-flex');
+                }
+            });
+        });
+    });
+</script>
