@@ -10,6 +10,8 @@ return [
     'favicon' => env('FAVICON', '/Auth-Panel/dist/img/favion32x32.png'),
     'project_name' => env('PROJECT_NAME', 'DahPlay'),
     'back_dash' => env('BACK_DASH', '/Auth-Panel/dist/img/background_home.jpg'),
+    'simple_home' => env('SIMPLE_HOME', 'NAO'),
+    'banner_overlay' => env('BANNER_OVERLAY', 'CLARO'),
 
     /*
     |--------------------------------------------------------------------------
