@@ -6,9 +6,24 @@
         {{ config('custom.text_plan_1') }}
     </p>
 
-    {{-- Campo de busca --}}
+    {{-- Campo de busca e filtro --}}
     <div class="mb-3 w-100 px-3" style="max-width: 600px;">
-        <input type="text" id="planSearch" class="form-control" placeholder="Buscar plano por nome, descrição ou benefício...">
+        <input type="text" id="planSearch" class="form-control mb-3" placeholder="Buscar plano por nome, descrição ou benefício...">
+
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="planType" id="filterAll" value="all" checked>
+                <label class="form-check-label" for="filterAll">Todos</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="planType" id="filterStreaming" value="streaming">
+                <label class="form-check-label" for="filterStreaming">Streaming</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="planType" id="filterTelemedicina" value="telemedicina">
+                <label class="form-check-label" for="filterTelemedicina">Telemedicina</label>
+            </div>
+        </div>
     </div>
 
     <div class="container container-plans">
@@ -124,12 +139,15 @@
     </p>
 </section>
 
-{{-- Script para busca --}}
+{{-- Script para busca e filtro --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const searchInput = document.getElementById('planSearch');
-        searchInput.addEventListener('input', function () {
-            const query = this.value.toLowerCase().trim();
+        const radios = document.querySelectorAll('input[name="planType"]');
+
+        function filterPlans() {
+            const query = searchInput.value.toLowerCase().trim();
+            const selectedFilter = document.querySelector('input[name="planType"]:checked')?.value || 'all';
             const activeTab = document.querySelector('.tab-pane.active');
             if (!activeTab) return;
 
@@ -141,9 +159,12 @@
                 const benefits = card.getAttribute('data-benefits') || '';
                 const parentCol = card.closest('.col-12, .col-md-6, .col-lg-4');
 
-                const matches = !query || name.includes(query) || description.includes(query) || benefits.includes(query);
+                let matchesSearch = !query || name.includes(query) || description.includes(query) || benefits.includes(query);
+                let matchesFilter = selectedFilter === 'all' || 
+                    (selectedFilter === 'streaming' && !description.includes('telemedicina')) ||
+                    (selectedFilter === 'telemedicina' && description.includes('telemedicina'));
 
-                if (matches) {
+                if (matchesSearch && matchesFilter) {
                     parentCol?.classList.remove('d-none');
                     parentCol?.classList.add('d-flex');
                 } else {
@@ -151,6 +172,9 @@
                     parentCol?.classList.remove('d-flex');
                 }
             });
-        });
+        }
+
+        searchInput.addEventListener('input', filterPlans);
+        radios.forEach(r => r.addEventListener('change', filterPlans));
     });
 </script>
