@@ -30,14 +30,14 @@
             <!-- Escurece a imagem, mas fica por baixo de tudo -->
 
             <div style="
-                        background-color: {{ config('custom.background_home_image_blur') }};
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        z-index: 0;
-                    "></div>
+                            background-color: {{ config('custom.background_home_image_blur') }};
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            z-index: 0;
+                        "></div>
 
             <!-- Tudo que vem depois, com z-index: 1, fica acima -->
             <div style="z-index: 1;">
@@ -77,10 +77,13 @@
                         <li class="active px-4"
                             style="background-color: {{ config('custom.background_button_home_menu_color_cadastre') }};"><a
                                 href="#planos">{{ config('custom.text_menu_5') }}</a></li>
-                        <li class="active px-4"
-                            style="background-color: {{ config('custom.background_home_menu_color') }}; color: {{ config('custom.text_home_menu_color') }};">
-                            <a href="{{ config('custom.portal_link') }}" target="_blank">
-                                <img src="{{ config('custom.logo_1') }}" style="width: 50px; margin: 0px;" alt="">
+                        <li class="active px-4 d-flex align-items-center"
+                            style="background-color: {{ config('custom.background_home_menu_color') }}; border-radius: 10px;">
+                            <a href="{{ config('custom.portal_link') }}" target="_blank" class="d-flex align-items-center"
+                                style="color: {{ config('custom.text_home_menu_color') }}; font-weight: bold;">
+                                Acessar <img src="{{ config('custom.logo_1') }}" style="width: 30px; margin-right: 8px;"
+                                    alt="Logo">
+
                             </a>
                         </li>
                     </ul>
@@ -274,7 +277,7 @@
             <img src="https://www.bitmag.com.br/wp-content/uploads/2024/07/tv-paga.jpg" alt="Imagem de fundo"
                 class="banner-background">
             <div class="banner-overlay 
-          {{ config('custom.banner_overlay') === 'CLARO' ? 'banner-overlay-white' : 'banner-overlay-black' }}">
+              {{ config('custom.banner_overlay') === 'CLARO' ? 'banner-overlay-white' : 'banner-overlay-black' }}">
             </div>
             <div class="banner-logo-center">
                 <img src="{{ config('custom.logo_1') }}" alt="Logo">
