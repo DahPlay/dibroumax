@@ -128,65 +128,56 @@ class RegisterController extends Controller
     }
 
     public function register(Request $request, CustomerService $customerService)
-{
-    $this->validator($request->all())->validate();
+    {
+        $this->validator($request->all())->validate();
 
-    $data = $request->only(['login', 'name', 'document', 'mobile', 'birthdate', 'email']);
+        $data = $request->only(['login', 'name', 'document', 'mobile', 'birthdate', 'email']);
 
-    if (!session()->has('customerData')) {
-        $externalCustomer = $this->verifyCustomerInYouCast($customerService);
+        if (!session()->has('customerData')) {
+            $externalCustomer = $this->verifyCustomerInYouCast($customerService);
 
-        if ($externalCustomer instanceof RedirectResponse) {
-            return $externalCustomer;
-        }
-    }
-
-    $coupon = $this->getCoupon($request->coupon);
-    $data['coupon_id'] = $coupon->id ?? null;
-
-    try {
-        $customer = Customer::updateOrCreate(
-            ['login' => $data['login']],
-            $data
-        );
-    } catch (\Illuminate\Database\QueryException $e) {
-        if ($e->getCode() === '23000') {
-            $errorMessage = $e->getMessage();
-
-            if (strpos($errorMessage, 'customers_document_unique') !== false) {
-                return back()
-                    ->withInput()
-                    ->withErrors(['document' => 'O CPF/CNPJ informado já está cadastrado.']);
-            }
-
-            if (strpos($errorMessage, 'customers_login_unique') !== false) {
-                return back()
-                    ->withInput()
-                    ->withErrors(['login' => 'O login informado já está em uso.']);
+            if ($externalCustomer instanceof RedirectResponse) {
+                return $externalCustomer;
             }
         }
+        $data['coupon_id'] = $this->getCoupon($request->coupon)->id ?? null;
 
-        Log::error("RegisterController - linha - 138: {$e->getMessage()}");
+        try {
+            $customer = Customer::updateOrCreate(
+                ['login' => $data['login']],
+                $data
+            );
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() === '23000') {
+                $errorMessage = $e->getMessage();
 
-        return back()
-            ->withInput()
-            ->withErrors(['error' => 'Ocorreu um erro ao processar o registro. Tente novamente mais tarde.']);
+                if (strpos($errorMessage, 'customers_document_unique') !== false) {
+                    return back()
+                        ->withInput()
+                        ->withErrors(['document' => 'O CPF/CNPJ informado já está cadastrado.']);
+                }
+
+                if (strpos($errorMessage, 'customers_login_unique') !== false) {
+                    return back()
+                        ->withInput()
+                        ->withErrors(['login' => 'O login informado já está em uso.']);
+                }
+            }
+
+            Log::error("RegisterController - linha - 138: {$e->getMessage()}");
+
+            return back()
+                ->withInput()
+                ->withErrors(['error' => 'Ocorreu um erro ao processar o registro. Tente novamente mais tarde.']);
+        }
+
+        toastr()->success('Criado com sucesso, faça o login!');
+
+        session()->forget('customerData');
+
+        return $this->registered($request, $customer)
+            ?: redirect($this->redirectPath());
     }
-
-    toastr()->success('Criado com sucesso, faça o login!');
-
-    session()->forget('customerData');
-
-    // ✅ Verifica se o plano é pago antes de definir a flag
-    $plan = Plan::find($request->plan_id);
-    if ($plan && $plan->value > 0) {
-        session()->flash('openAsaas', true);
-    }
-
-    return $this->registered($request, $customer)
-        ?: redirect($this->redirectPath());
-}
-
 
     private function verifyCustomerInYouCast(CustomerService $customerService): mixed
     {
