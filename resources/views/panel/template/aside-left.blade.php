@@ -136,6 +136,31 @@
                         </p>
                     </a>
                 </li>
+                 <li class="nav-item">
+                    <a href="{{ config('custom.portal_link') }}" target="_blank" class="nav-link text-white"
+                        style="background-color: {{ config('custom.background_home_color') }}; border-radius: 10px; margin: 10px; display: flex; align-items: center; padding: 10px;">
+                        <img src="{{ config('custom.logo_2') }}" alt="Portal"
+                            style="width: 45px; height: 45px; object-fit: contain; margin-right: 15px;">
+                        <p style="margin: 0; font-weight: bold; font-size: 16px;">Acessar
+                            {{ config('custom.project_name') }}
+                        </p>
+                    </a>
+                </li>
+
+                @php
+                    $baseUrl = config('app.url');
+                    if (app()->environment('local')) {
+                        $baseUrl .= ':8000';
+                    }
+                @endphp
+
+                <li class="nav-item">
+                    <a href="{{ $baseUrl }}" class="nav-link text-white"
+                        style="background-color: {{ config('custom.background_home_color') }}; border-radius: 10px; margin: 10px; display: flex; align-items: center; padding: 10px;">
+                        <i class="nav-icon fas fa-home" style="margin-right: 10px;"></i>
+                        <p style="margin: 0; font-weight: bold; font-size: 16px;">Voltar para Home</p>
+                    </a>
+                </li>
             </ul>
         </nav>
     </div>
