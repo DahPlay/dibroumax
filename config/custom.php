@@ -174,6 +174,7 @@ return [
     'link_social_media_2' => env('LINK_SOCIAL_MEDIA_2', 'https://www.facebook.com/'),
     'link_social_media_3' => env('LINK_SOCIAL_MEDIA_3', 'https://youtube.com/'),
     'background_social_media' => env('BACKGROUND_SOCIAL_MEDIA', 'rgb(3,6,61)'),
+    'background_baseboard' => env('BACKGROUND_BASEBOARD', 'rgb(80, 88, 218)'),
     'logo_baseboard' => env('LOGO_BASEBOARD', '/Auth-Panel/dist/img/logo.png'),
     'flut' => env('FLUT', 'https://'),
 
