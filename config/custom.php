@@ -12,6 +12,7 @@ return [
     'back_dash' => env('BACK_DASH', '/Auth-Panel/dist/img/background_home.jpg'),
     'simple_home' => env('SIMPLE_HOME', 'NAO'),
     'banner_overlay' => env('BANNER_OVERLAY', 'CLARO'),
+    'telemedicina' => env('TELEMEDICINA', 'NAO'),
 
 
     /*

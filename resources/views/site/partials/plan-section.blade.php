@@ -10,7 +10,7 @@
     <div class="mb-3 w-100 px-3" style="max-width: 600px;">
         <input type="text" id="planSearch" class="form-control mb-3" placeholder="Buscar plano por nome, descrição ou benefício...">
 
-        @if (config('custom.simple_home') == "SIM")
+        @if (config('custom.telemedicina') == "SIM")
         <div class="d-flex justify-content-center gap-3 flex-wrap">
             <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="planType" id="filterAll" value="all" checked>
