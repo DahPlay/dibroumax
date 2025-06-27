@@ -13,6 +13,7 @@ return [
     'simple_home' => env('SIMPLE_HOME', 'NAO'),
     'banner_overlay' => env('BANNER_OVERLAY', 'CLARO'),
 
+
     /*
     |--------------------------------------------------------------------------
     | Login Password Home
@@ -80,6 +81,7 @@ return [
     'text_button_home_menu_experimente' => env('TEXT_BUTTON_HOME_MENU_EXPERIMENTE', 'Grátis por 7 dias'),
     'text_home' => env('TEXT_HOME', 'rgb(48, 101, 207)'),
     'number_home' => env('NUMBER_HOME', 'rgba(19, 66, 160, 0.47)'),
+    'icone_menu_mobile' => env('ICONE_MENU_MOBILE', 'rgb(255, 255, 255)'),
 
     'text_menu_1' => env('TEXT_MENU_1', 'Planos'),
     'text_menu_2' => env('TEXT_MENU_2', 'Sobre a Plataforma'),

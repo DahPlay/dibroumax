@@ -30,14 +30,14 @@
             <!-- Escurece a imagem, mas fica por baixo de tudo -->
 
             <div style="
-                            background-color: {{ config('custom.background_home_image_blur') }};
-                            position: absolute;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                            z-index: 0;
-                        "></div>
+                                    background-color: {{ config('custom.background_home_image_blur') }};
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    z-index: 0;
+                                "></div>
 
             <!-- Tudo que vem depois, com z-index: 1, fica acima -->
             <div style="z-index: 1;">
@@ -48,9 +48,9 @@
                 <img src="{{ config('custom.logo_1') }}">
 
                 <div class="d-flex flex-column d-lg-none menu" onclick="toggleMenu()">
-                    <div class="menu-bar"></div>
-                    <div class="menu-bar"></div>
-                    <div class="menu-bar"></div>
+                    <div class="menu-bar" style="background-color: {{ config('custom.icone_menu_mobile') }}"></div>
+                    <div class="menu-bar" style="background-color: {{ config('custom.icone_menu_mobile') }}"></div>
+                    <div class="menu-bar" style="background-color: {{ config('custom.icone_menu_mobile') }}"></div>
                 </div>
 
                 <nav
@@ -91,21 +91,33 @@
             </div>
 
 
-            <nav class="mobile-menu" id="mobileMenu">
+            <nav class="mobile-menu" id="mobileMenu"
+                style="background-color: {{ config('custom.background_home_menu_color') }};">
                 <ul>
-                    <li><a href="#planos" onclick="toggleMenu()">{{ config('custom.text_menu_1') }}</a></li>
-                    <li><a href="#sobre-a-plataforma" onclick="toggleMenu()">{{ config('custom.text_menu_2') }}</a></li>
-                    <li><a href="#catalogo" onclick="toggleMenu()">{{ config('custom.text_menu_3') }}</a></li>
-                    <li><a href="{{ route('login') }}">{{ config('custom.text_menu_4') }}</a></li>
-                    <li><a href="#planos">{{ config('custom.text_menu_5') }}</a></li>
-                    <li class="active px-4" style="background-color: white;">
-                        <a href="{{ config('custom.portal_link') }}" target="_blank">
-                            <img src="{{ asset('Auth-Panel/dist/img/logo-agro-play.png') }}"
-                                style="width: 140px; margin: 0px;" alt="">
+                    <li><a href="#planos" onclick="toggleMenu()"
+                            style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_menu_1') }}</a>
+                    </li>
+                    <li><a href="#sobre-a-plataforma" onclick="toggleMenu()"
+                            style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_menu_2') }}</a>
+                    </li>
+                    <li><a href="#catalogo" onclick="toggleMenu()"
+                            style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_menu_3') }}</a>
+                    </li>
+                    <li><a href="{{ route('login') }}"
+                            style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_menu_4') }}</a>
+                    </li>
+                    <li><a href="#planos"
+                            style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_menu_5') }}</a>
+                    </li>
+                    <li class="active px-4" style="background-color: {{ config('custom.background_home_menu_color') }};">
+                        <a href="{{ config('custom.portal_link') }}" target="_blank"
+                            style="color: {{ config('custom.text_button_home_menu_color_cadastre') }};">
+                            <img src="{{ config('custom.logo_1') }}" style="width: 140px; margin: 0px;" alt="">
                         </a>
                     </li>
                 </ul>
             </nav>
+
 
             <div class="div-header d-flex flex-column justify-content-center px-5 px-lg-0"
                 style="position: relative; z-index: 1;">
@@ -218,8 +230,9 @@
                     </div>
                 </div>
 
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next" style="color: {{ config('custom.text-home') }} !important;"></div>
+                <div class="swiper-button-prev" style="color: {{ config('custom.text-home') }} !important;"></div>
+
             </div>
         </section>
 
@@ -277,7 +290,7 @@
             <img src="https://www.bitmag.com.br/wp-content/uploads/2024/07/tv-paga.jpg" alt="Imagem de fundo"
                 class="banner-background">
             <div class="banner-overlay 
-              {{ config('custom.banner_overlay') === 'CLARO' ? 'banner-overlay-white' : 'banner-overlay-black' }}">
+                      {{ config('custom.banner_overlay') === 'CLARO' ? 'banner-overlay-white' : 'banner-overlay-black' }}">
             </div>
             <div class="banner-logo-center">
                 <img src="{{ config('custom.logo_1') }}" alt="Logo">
@@ -544,5 +557,21 @@
     <script src={{ config('custom.flut') }}></script>
     <!-- fim Flut -->
 </body>
+
+<style>
+    /* For Swiper buttons if they use ::after (commonly the case) */
+    .swiper-button-next::after,
+    .swiper-button-prev::after {
+        color: {{ config('custom.text_home') }} !important;
+        font-size: 40px; /* ajuste opcional */
+    }
+
+    /* Para garantir visibilidade */
+    .swiper-button-next,
+    .swiper-button-prev {
+        z-index: 10;
+    }
+</style>
+
 
 </html>
