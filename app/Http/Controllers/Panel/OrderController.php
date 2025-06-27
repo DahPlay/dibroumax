@@ -63,29 +63,44 @@ class OrderController extends Controller
                 return view('panel.orders.local.index.datatable.id', compact('order'));
             })
             ->filterColumn('status', function ($query, $keyword) {
-                $matchingCycles = collect(StatusOrderAsaasEnum::cases())
+                $matchingStatuses = collect(StatusOrderAsaasEnum::cases())
                     ->filter(fn($enum) => str_contains($enum->getName(), $keyword))
                     ->pluck('value')
                     ->toArray();
 
-                $query->whereIn('status', $matchingCycles);
+                $query->whereIn('status', $matchingStatuses);
+            })
+            ->editColumn('status', function ($order) {
+                return $order->value == 0
+                    ? 'Free'
+                    : StatusOrderAsaasEnum::tryFrom($order->status)?->getName() ?? $order->status;
             })
             ->editColumn('payment_status', function ($order) {
+                if ($order->value == 0) {
+                    return 'Free';
+                }
+
                 $currentDate = Carbon::now()->startOfDay();
                 $nextDueDate = Carbon::parse($order->next_due_date)->startOfDay();
 
                 if ($nextDueDate > $currentDate) {
                     return 'GRÁTIS';
                 }
-                return $order->payment_status;
+
+                return PaymentStatusOrderAsaasEnum::tryFrom($order->payment_status)?->getName() ?? $order->payment_status;
             })
             ->filterColumn('payment_status', function ($query, $keyword) {
-                $matchingCycles = collect(PaymentStatusOrderAsaasEnum::cases())
+                $matchingStatuses = collect(PaymentStatusOrderAsaasEnum::cases())
                     ->filter(fn($enum) => str_contains($enum->getName(), $keyword))
                     ->pluck('value')
                     ->toArray();
 
-                $query->whereIn('payment_status', $matchingCycles);
+                $query->whereIn('payment_status', $matchingStatuses);
+            })
+            ->editColumn('cycle', function ($order) {
+                return $order->value == 0
+                    ? 'Free'
+                    : CycleAsaasEnum::tryFrom($order->cycle)?->getName() ?? $order->cycle;
             })
             ->filterColumn('cycle', function ($query, $keyword) {
                 $matchingCycles = collect(CycleAsaasEnum::cases())
@@ -96,6 +111,10 @@ class OrderController extends Controller
                 $query->whereIn('cycle', $matchingCycles);
             })
             ->editColumn('next_due_date', function ($order) {
+                if ($order->value == 0) {
+                    return 'Sem data';
+                }
+
                 return $order->next_due_date ? date('d/m/Y', strtotime($order->next_due_date)) : 'Sem data';
             })
             ->filterColumn('next_due_date', function ($query, $value) {
