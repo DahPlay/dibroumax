@@ -45,7 +45,8 @@ class PlanController extends Controller
                 'plans.is_active',
                 'plans.billing_type',
                 'plans.priority',
-            ]);
+            ])
+            ->where('hidden', '!=', 'Sim');  // <-- adiciona esse filtro aqui
 
         return DataTables::of($plans)
             ->addColumn('checkbox', function ($plan) {
@@ -54,7 +55,6 @@ class PlanController extends Controller
             ->editColumn('id', function ($plan) {
                 return view('panel.plans.local.index.datatable.id', compact('plan'));
             })
-
             ->editColumn('cycle', function ($plan) {
                 return CycleAsaasEnum::from($plan->cycle)->getName();
             })
@@ -93,6 +93,7 @@ class PlanController extends Controller
             })
             ->toJson();
     }
+
 
     public function create(): View
     {
