@@ -403,23 +403,13 @@ class PlanController extends Controller
         $plan = $this->model->find($this->request->id);
 
         if ($plan) {
-            try {
-                $plan->delete();
+            $plan->hidden = 'Sim';
+            $plan->save();
 
-                return response()->json([
-                    'status' => '200',
-                    'message' => 'Ação executada com sucesso!'
-                ]);
-            } catch (\Throwable $e) {
-                // Plano está em uso, oculta
-                $plan->hidden = 'Sim';
-                $plan->save();
-
-                return response()->json([
-                    'status' => '200',
-                    'message' => 'O plano está em uso e não pode ser excluído. Ele foi ocultado do sistema.'
-                ]);
-            }
+            return response()->json([
+                'status' => '200',
+                'message' => 'O plano foi ocultado com sucesso.'
+            ]);
         }
 
         return response()->json([
@@ -429,6 +419,7 @@ class PlanController extends Controller
             ],
         ]);
     }
+
 
 
     public function deleteAll(): View
@@ -446,18 +437,13 @@ class PlanController extends Controller
             $item = $this->model->find($itemData["id"]);
 
             if ($item) {
-                try {
-                    $item->delete();
-                } catch (\Throwable $e) {
-                    // Oculta se não puder deletar
-                    $item->hidden = 'Sim';
-                    $item->save();
-                }
+                $item->hidden = 'Sim';
+                $item->save();
             } else {
                 return response()->json([
                     'status' => '400',
                     'errors' => [
-                        'message' => ['Os dados não foram encontrados!']
+                        'message' => ['Um ou mais dados não foram encontrados!']
                     ],
                 ]);
             }
@@ -465,8 +451,9 @@ class PlanController extends Controller
 
         return response()->json([
             'status' => '200',
-            'message' => 'Ação executada com sucesso! (Itens não deletáveis foram ocultados)'
+            'message' => 'Planos ocultados com sucesso.'
         ]);
     }
+
 
 }
