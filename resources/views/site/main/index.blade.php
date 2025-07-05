@@ -30,14 +30,14 @@
             <!-- Escurece a imagem, mas fica por baixo de tudo -->
 
             <div style="
-                                    background-color: {{ config('custom.background_home_image_blur') }};
-                                    position: absolute;
-                                    top: 0;
-                                    left: 0;
-                                    width: 100%;
-                                    height: 100%;
-                                    z-index: 0;
-                                "></div>
+                                                background-color: {{ config('custom.background_home_image_blur') }};
+                                                position: absolute;
+                                                top: 0;
+                                                left: 0;
+                                                width: 100%;
+                                                height: 100%;
+                                                z-index: 0;
+                                            "></div>
 
             <!-- Tudo que vem depois, com z-index: 1, fica acima -->
             <div style="z-index: 1;">
@@ -289,14 +289,28 @@
         <div class="banner-container">
             <img src="https://www.bitmag.com.br/wp-content/uploads/2024/07/tv-paga.jpg" alt="Imagem de fundo"
                 class="banner-background">
+
             <div class="banner-overlay 
-                      {{ config('custom.banner_overlay') === 'CLARO' ? 'banner-overlay-white' : 'banner-overlay-black' }}">
+            {{ config('custom.banner_overlay') === 'CLARO' ? 'banner-overlay-white' : 'banner-overlay-black' }}">
             </div>
+
+            <!-- Botões no canto superior direito -->
+            <div class="banner-button-top-right">
+                <a href="{{ route('login') }}" target="_blank" rel="noopener noreferrer" class="banner-login-button">
+                    {{ config('custom.text_menu_4') }}
+                </a>
+
+                <a href="{{ config('custom.portal_link') }}" target="_blank" rel="noopener noreferrer"
+                    class="banner-access-link d-flex align-items-center">
+                    <span style="margin-right: 8px;">Acessar</span>
+                    <img src="{{ config('custom.logo_1') }}" style="width: 30px;" alt="Logo">
+                </a>
+            </div>
+
             <div class="banner-logo-center">
                 <img src="{{ config('custom.logo_1') }}" alt="Logo">
             </div>
         </div>
-
 
         <style>
             html,
@@ -308,9 +322,7 @@
             .banner-container {
                 position: relative;
                 width: 100vw;
-                /* 100% da largura da viewport */
                 height: 200px;
-                /* altura do banner */
                 overflow: hidden;
                 border-radius: 0 0 20px 20px;
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
@@ -327,12 +339,8 @@
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                /* cobre toda área */
                 border-radius: 0 0 20px 20px;
                 z-index: 0;
-                -webkit-backface-visibility: hidden;
-                backface-visibility: hidden;
-                image-rendering: auto;
             }
 
             .banner-overlay {
@@ -343,7 +351,6 @@
                 z-index: 1;
             }
 
-            /* Versão clara */
             .banner-overlay-white {
                 background: linear-gradient(to right,
                         rgba(255, 255, 255, 0) 0%,
@@ -353,7 +360,6 @@
                         rgba(255, 255, 255, 0) 100%);
             }
 
-            /* Versão escura */
             .banner-overlay-black {
                 background: linear-gradient(to right,
                         rgba(0, 0, 0, 0) 0%,
@@ -362,7 +368,6 @@
                         rgba(0, 0, 0, 0.4) 60%,
                         rgba(0, 0, 0, 0) 100%);
             }
-
 
             .banner-logo-center {
                 position: relative;
@@ -378,13 +383,43 @@
                 object-fit: contain;
                 border-radius: 24px;
                 display: block;
-                position: relative;
-                z-index: 3;
                 background: transparent;
                 padding: 0;
+                z-index: 3;
             }
 
-            /* Responsivo */
+            .banner-button-top-right {
+                position: absolute;
+                top: 20px;
+                right: 25px;
+                z-index: 3;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .banner-login-button,
+            .banner-access-link {
+                padding: 10px 20px;
+                background-color:
+                    {{ config('custom.background_home_menu_color') }}
+                ;
+                color:
+                    {{ config('custom.text_home_menu_color') }}
+                ;
+                border: none;
+                border-radius: 8px;
+                text-decoration: none;
+                font-weight: bold;
+                font-size: 16px;
+                display: flex;
+                align-items: center;
+            }
+
+            .banner-access-link img {
+                margin-left: 5px;
+            }
+
             @media (max-width: 768px) {
                 .banner-container {
                     height: 140px;
@@ -394,8 +429,23 @@
                     width: 120px;
                     height: 120px;
                 }
+
+                .banner-button-top-right {
+                    top: 15px;
+                    right: 15px;
+                    flex-direction: column;
+                    align-items: flex-end;
+                    gap: 8px;
+                }
+
+                .banner-login-button,
+                .banner-access-link {
+                    padding: 8px 14px;
+                    font-size: 14px;
+                }
             }
         </style>
+
 
 
     @endif
@@ -562,8 +612,11 @@
     /* For Swiper buttons if they use ::after (commonly the case) */
     .swiper-button-next::after,
     .swiper-button-prev::after {
-        color: {{ config('custom.text_home') }} !important;
-        font-size: 40px; /* ajuste opcional */
+        color: {{ config('custom.text_home') }}
+
+        !important;
+        font-size: 40px;
+        /* ajuste opcional */
     }
 
     /* Para garantir visibilidade */

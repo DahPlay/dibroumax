@@ -155,7 +155,7 @@
                 @endphp
 
                 <li class="nav-item">
-                    <a href="{{ $baseUrl }}" class="nav-link text-white"
+                    <a href="{{ $baseUrl }}" target="_blank" class="nav-link text-white"
                         style="background-color: {{ config('custom.background_home_color') }}; border-radius: 10px; margin: 10px; display: flex; align-items: center; padding: 10px;">
                         <i class="nav-icon fas fa-home" style="margin-right: 10px;"></i>
                         <p style="margin: 0; font-weight: bold; font-size: 16px;">Voltar para Home</p>

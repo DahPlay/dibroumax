@@ -22,6 +22,7 @@ class Plan extends Model
         'billing_type',
         'free_for_days',
         'priority',
+        'hidden',
     ];
 
     protected function value(): Attribute

@@ -105,72 +105,72 @@ class PlanController extends Controller
     }
 
     public function store(PlanRequest $request): JsonResponse
-{
-    // 1) Obter os dados validados (exceto priority, que trataremos logo abaixo)
-    $data = $request->validated();
+    {
+        // 1) Obter os dados validados (exceto priority, que trataremos logo abaixo)
+        $data = $request->validated();
 
-    // 2) Capturar priority diretamente do request
-    $priority = $request->input('priority');
+        // 2) Capturar priority diretamente do request
+        $priority = $request->input('priority');
 
-    // 3) Verificar se veio preenchido
-    if ($priority === null || $priority === '') {
+        // 3) Verificar se veio preenchido
+        if ($priority === null || $priority === '') {
+            return response()->json([
+                'status' => 400,
+                'errors' => [
+                    'priority' => ['O campo Prioridade é obrigatório.'],
+                ],
+            ]);
+        }
+
+        // 4) Verificar duplicidade
+        if ($this->model->where('priority', $priority)->exists()) {
+            return response()->json([
+                'status' => 400,
+                'errors' => [
+                    'priority' => ['Já existe uma prioridade cadastrada com esse valor.'],
+                ],
+            ]);
+        }
+
+        // 5) Tratar booleanos
+        $data['is_active'] = $request->has('is_active') ? 1 : 0;
+        $data['is_best_seller'] = $request->has('is_best_seller') ? 1 : 0;
+
+        // 6) Injetar priority no array de dados
+        $data['priority'] = (int) $priority;
+
+        // 7) Criar o plano
+        $plan = $this->model->create($data);
+
+        if ($plan) {
+            // 8) Relacionar benefícios
+            if ($request->filled('benefits') && $request->benefits[0] !== null) {
+                foreach ($request->benefits as $benefit) {
+                    $plan->benefits()->create(['description' => $benefit]);
+                }
+            }
+
+            // 9) Relacionar pacotes
+            if ($request->filled('packages')) {
+                foreach ($request->packages as $packageId) {
+                    $plan->packagePlans()->create(['package_id' => $packageId]);
+                }
+            }
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Ação executada com sucesso!',
+            ]);
+        }
+
+        // 10) Erro inesperado
         return response()->json([
             'status' => 400,
             'errors' => [
-                'priority' => ['O campo Prioridade é obrigatório.'],
+                'message' => ['Erro ao executar a ação, tente novamente!'],
             ],
         ]);
     }
-
-    // 4) Verificar duplicidade
-    if ($this->model->where('priority', $priority)->exists()) {
-        return response()->json([
-            'status' => 400,
-            'errors' => [
-                'priority' => ['Já existe uma prioridade cadastrada com esse valor.'],
-            ],
-        ]);
-    }
-
-    // 5) Tratar booleanos
-    $data['is_active']      = $request->has('is_active') ? 1 : 0;
-    $data['is_best_seller'] = $request->has('is_best_seller') ? 1 : 0;
-
-    // 6) Injetar priority no array de dados
-    $data['priority'] = (int) $priority;
-
-    // 7) Criar o plano
-    $plan = $this->model->create($data);
-
-    if ($plan) {
-        // 8) Relacionar benefícios
-        if ($request->filled('benefits') && $request->benefits[0] !== null) {
-            foreach ($request->benefits as $benefit) {
-                $plan->benefits()->create(['description' => $benefit]);
-            }
-        }
-
-        // 9) Relacionar pacotes
-        if ($request->filled('packages')) {
-            foreach ($request->packages as $packageId) {
-                $plan->packagePlans()->create(['package_id' => $packageId]);
-            }
-        }
-
-        return response()->json([
-            'status'  => 200,
-            'message' => 'Ação executada com sucesso!',
-        ]);
-    }
-
-    // 10) Erro inesperado
-    return response()->json([
-        'status' => 400,
-        'errors' => [
-            'message' => ['Erro ao executar a ação, tente novamente!'],
-        ],
-    ]);
-}
 
 
 
@@ -229,7 +229,7 @@ class PlanController extends Controller
         return view('panel.plans.local.index.modals.duplicate', compact('plan', 'packages'));
     }
 
-   
+
     public function update($id): JsonResponse
     {
         $plan = $this->model->find($id);
@@ -403,30 +403,33 @@ class PlanController extends Controller
         $plan = $this->model->find($this->request->id);
 
         if ($plan) {
-            $delete = $plan->delete();
+            try {
+                $plan->delete();
 
-            if ($delete) {
                 return response()->json([
                     'status' => '200',
                     'message' => 'Ação executada com sucesso!'
                 ]);
-            } else {
+            } catch (\Throwable $e) {
+                // Plano está em uso, oculta
+                $plan->hidden = 'Sim';
+                $plan->save();
+
                 return response()->json([
-                    'status' => '400',
-                    'errors' => [
-                        'message' => ['Erro executar a ação, tente novamente!']
-                    ],
+                    'status' => '200',
+                    'message' => 'O plano está em uso e não pode ser excluído. Ele foi ocultado do sistema.'
                 ]);
             }
-        } else {
-            return response()->json([
-                'status' => '400',
-                'errors' => [
-                    'message' => ['Os dados não foram encontrados!']
-                ],
-            ]);
         }
+
+        return response()->json([
+            'status' => '400',
+            'errors' => [
+                'message' => ['Os dados não foram encontrados!']
+            ],
+        ]);
     }
+
 
     public function deleteAll(): View
     {
@@ -439,19 +442,16 @@ class PlanController extends Controller
 
     public function destroyAll(): JsonResponse
     {
-        foreach (session()->get('ids') as $item) {
-            $item = $this->model->find($item["id"]);
+        foreach (session()->get('ids') as $itemData) {
+            $item = $this->model->find($itemData["id"]);
 
             if ($item) {
-                $item->delete();
-
-                if (!$item) {
-                    return response()->json([
-                        'status' => '400',
-                        'errors' => [
-                            'message' => ['Erro executar a ação, tente novamente!']
-                        ],
-                    ]);
+                try {
+                    $item->delete();
+                } catch (\Throwable $e) {
+                    // Oculta se não puder deletar
+                    $item->hidden = 'Sim';
+                    $item->save();
                 }
             } else {
                 return response()->json([
@@ -465,7 +465,8 @@ class PlanController extends Controller
 
         return response()->json([
             'status' => '200',
-            'message' => 'Ação executada com sucesso!'
+            'message' => 'Ação executada com sucesso! (Itens não deletáveis foram ocultados)'
         ]);
     }
+
 }
