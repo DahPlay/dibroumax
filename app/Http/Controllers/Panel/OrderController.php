@@ -134,6 +134,7 @@ class OrderController extends Controller
             ->toJson();
     }
 
+
     public function create(): View
     {
         $order = $this->model;
@@ -361,8 +362,26 @@ class OrderController extends Controller
         $plan = Plan::find($planId);
         $order = $this->model->find($validator->validated()['orderId']);
 
-        if ($order->next_due_date < now()
-            && $order->payment_status !== PaymentStatusOrderAsaasEnum::RECEIVED->getName()) {
+
+        // Lógica caso o plano for grátis ou zero
+        if ($plan->value <= 0) {
+            // Atualiza localmente sem criar assinatura Asaas
+            $order->update([
+                'plan_id' => $plan->id,
+                'value' => 0,
+                'description' => $plan->description,
+                'changed_plan' => true,
+                'original_plan_value' => 0,
+            ]);
+
+            toastr('Plano gratuito selecionado, assinatura Asaas não criada.', 'info');
+            return redirect()->route('panel.orders.index');
+        }
+
+        if (
+            $order->next_due_date < now()
+            && $order->payment_status !== PaymentStatusOrderAsaasEnum::RECEIVED->getName()
+        ) {
             toastr(
                 'Se já fez o pagamento, por favor, aguarde a efetivação pelo sistema.',
                 'info',
@@ -400,26 +419,27 @@ class OrderController extends Controller
                     $paymentDeleted = $gateway->payment()->delete($subscriptionPayment['id']);
                     logger(
                         $paymentDeleted['deleted']
-                            ? "Pagamento removido no Asaas para atualização de plano. Pedido: $order->id"
-                            : "Erro ao remover pagamento no Asaas para atualização de plano. Pedido: $order->id"
+                        ? "Pagamento removido no Asaas para atualização de plano. Pedido: $order->id"
+                        : "Erro ao remover pagamento no Asaas para atualização de plano. Pedido: $order->id"
                     );
                 }
-            };
+            }
+            ;
 
-            $dailyRate = (float)$actualPlanValue / (float)$cycleDays;
+            $dailyRate = (float) $actualPlanValue / (float) $cycleDays;
             $dailyRate = floor($dailyRate * 100) / 100;
             $credit = $dailyRate * ($cycleDays - $daysUsed);
             $invoiceValue = max(0, $newPlanValue - $credit);
 
 
-           /* logger('cálculos', [
-                'credito' => $credit,
-                'valor usado' => $dailyRate,
-                'valor do plano atual ' => (float)$actualPlanValue,
-                'ciclo' => (float)$cycleDays,
-                'valor do novo plano' => $newPlanValue,
-                'valor a ser cobrado' => $invoiceValue
-            ]);*/
+            /* logger('cálculos', [
+                 'credito' => $credit,
+                 'valor usado' => $dailyRate,
+                 'valor do plano atual ' => (float)$actualPlanValue,
+                 'ciclo' => (float)$cycleDays,
+                 'valor do novo plano' => $newPlanValue,
+                 'valor a ser cobrado' => $invoiceValue
+             ]);*/
         }
 
         // Define se a troca deve ser aplicada no próximo ciclo
