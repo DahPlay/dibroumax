@@ -10,9 +10,13 @@
                     @endif
                 </h1>
                 @can('admin')
+                    <a href="#" class="btn btn-success btn-add" data-token="{{ csrf_token() }}" data-url="/{{ $routeCrud }}/create">
+                        <i class="fa fa-plus"></i>
+                    </a>
+
                     <span class="mx-2">-</span>
                     <a href="#" id="btn-remover" data-token="{{ csrf_token() }}" data-url="/{{ $routeCrud }}/deleteAll"
-                        class="btn btn-danger btn-sm">
+                        class="btn btn-danger">
                         <i class="fa fa-trash-restore-alt"></i>
                     </a>
                 @endcan

@@ -81,6 +81,7 @@ class UserController extends Controller
         $data = $this->request->only([
             'photo',
             'name',
+            'login',
             'email',
             'password',
             'password_confirmation',
@@ -140,6 +141,7 @@ class UserController extends Controller
             $data = $this->request->only([
                 'photo',
                 'name',
+                'login',
                 'email',
                 'password',
                 'password_confirmation',

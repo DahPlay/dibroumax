@@ -38,8 +38,15 @@
                     value="{{ $user->name ?? old('name') }}" required>
             </div>
         </div>
+        <div class="form-group col-3">
+            <label for="login" class="col-form-label text-danger">Usuário: *</label>
+            <div class="input-group">
+                <input type="text" id="login" class="form-control" name="login" placeholder="Usuário *"
+                    value="{{ $user->login ?? old('login') }}" required>
+            </div>
+        </div>
 
-        <div class="form-group col-6">
+        <div class="form-group col-3">
             <label for="access_id" class="col-form-label text-danger">Perfil: *</label>
             <select id="access_id" class="form-control" name="access_id" required>
                 @foreach ($accesses as $access)
@@ -84,6 +91,7 @@
 
         formData.append('id', $("#id").val());
         formData.append('name', $("#name").val());
+        formData.append('login', $("#login").val());
         formData.append('access_id', $("#access_id").val());
         formData.append('email', $("#email").val());
         formData.append('password', $("#password").val());

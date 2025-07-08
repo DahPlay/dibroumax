@@ -9,10 +9,9 @@
                         {{ $titleBreadCrumb ?? 'Sem título de BreadCrumb' }}
                     @endif
 
-                    {{-- -
                     <a href="#" class="btn btn-success btn-add" data-url="/{{ $routeCrud }}/create">
                         <i class="fa fa-plus"></i>
-                    </a> --}}
+                    </a>
                     -
                     <a href="#" id="btn-remover" data-token={{ csrf_token() }} data-url="/{{ $routeCrud }}/deleteAll"
                         class="btn btn-danger">
