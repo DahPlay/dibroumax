@@ -211,7 +211,7 @@
         </div>
     </div>
     <footer class="section-container d-flex flex-column align-items-center footer-register"
-            style="background-color: {{ config('custom.background_people') }};">
+            style="background-color: {{ config('custom.background_baseboard') }};">
         <p>{{ config('custom.text_baseboard') }}</p>
 
         <div

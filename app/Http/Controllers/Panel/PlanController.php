@@ -405,6 +405,8 @@ class PlanController extends Controller
 
         if ($plan) {
             $plan->hidden = 'Sim';
+            $plan->is_active = 0;
+            $plan->priority = 0;
             $plan->save();
 
             return response()->json([
@@ -439,6 +441,8 @@ class PlanController extends Controller
 
             if ($item) {
                 $item->hidden = 'Sim';
+                $item->is_active = 0;
+                $item->priority = 0;
                 $item->save();
             } else {
                 return response()->json([
