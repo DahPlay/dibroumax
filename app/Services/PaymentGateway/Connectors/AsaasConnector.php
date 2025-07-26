@@ -21,7 +21,7 @@ class AsaasConnector implements AdapterInterface
                 ->throw()
                 ->json();
         } catch (\Exception) {
-            return ['error' => json_decode($request->body(), true)];
+            // return ['error' => json_decode($request->body(), true)];
         }
     }
 
@@ -34,7 +34,7 @@ class AsaasConnector implements AdapterInterface
                 ->throw()
                 ->json();
         } catch (\Exception) {
-            return ['error' => json_decode($request->body(), true)];
+            // return ['error' => json_decode($request->body(), true)];
         }
     }
 
