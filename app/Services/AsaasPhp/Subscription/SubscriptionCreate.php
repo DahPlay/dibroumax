@@ -17,7 +17,7 @@ class SubscriptionCreate
                 ->throw()
                 ->json();
         } catch (\Exception $e) {
-            return ['teste' ];
+            return ['error' => $e->getMessage()];
         }
     }
 }
