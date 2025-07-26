@@ -365,20 +365,18 @@ class OrderController extends Controller
 
         // Lógica caso o plano for grátis ou zero
         if ($plan->value <= 0 || $plan->original_plan_value <= 0) {
+            // Atualiza localmente sem criar assinatura Asaas
             $order->update([
                 'plan_id' => $plan->id,
                 'value' => 0,
-                'description' => $plan->description ?? 'Plano gratuito',
+                'description' => $plan->description,
                 'changed_plan' => true,
                 'original_plan_value' => 0,
-                'payment_status' => PaymentStatusOrderAsaasEnum::RECEIVED->value,
-                'subscription_asaas_id' => null, // Opcional
             ]);
 
-            toastr('Plano gratuito aplicado. Assinatura não criada no Asaas.', 'info');
+            toastr('Plano gratuito selecionado, assinatura Asaas não criada.', 'info');
             return redirect()->route('panel.orders.index');
         }
-
 
         if (
             $order->next_due_date < now()
@@ -405,7 +403,7 @@ class OrderController extends Controller
         $adapter = app(AsaasConnector::class);
         $gateway = new Gateway($adapter);
 
-        if ($plan->value > 0 || $plan->original_plan_value> 0) {
+        if ($plan->value > 0 || $plan->original_plan_value > 0) {
             $subscription = $gateway->subscription()->get($order->subscription_asaas_id);
         }
         $daysUsed = $cycleDays - now()->diffInDays($subscription['nextDueDate']);
