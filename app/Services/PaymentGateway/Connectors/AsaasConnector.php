@@ -16,22 +16,13 @@ class AsaasConnector implements AdapterInterface
         $request = $this->http
             ->get($url);
 
-        try {
-            return $request
-                ->throw()
-                ->json();
-        }
+
     }
 
     public function post(string $url, array $params)
     {
         $request = $this->http->post($url, $params);
 
-        try {
-            return $request
-                ->throw()
-                ->json();
-        }
     }
 
     public function delete(string $url)
