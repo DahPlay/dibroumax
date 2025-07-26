@@ -23,7 +23,7 @@ class Customer implements CustomerInterface
 
     public function create(array $data): array
     {
-        return $this->http->post('/customers', $data);
+        return dump("teste");
     }
 
     public function update(int|string $id, array $data): array
