@@ -361,10 +361,10 @@ class OrderController extends Controller
 
         $plan = Plan::find($planId);
         $order = $this->model->find($validator->validated()['orderId']);
-dd("teste");
+
 
         // Lógica caso o plano for grátis ou zero
-        if ($plan->value <= 0 || $plan->original_plan_value <= 0) {
+         if ($plan->value <= 0 || $plan->original_plan_value <= 0) {
             // Atualiza localmente sem criar assinatura Asaas
             $order->update([
                 'plan_id' => $plan->id,
@@ -403,9 +403,7 @@ dd("teste");
         $adapter = app(AsaasConnector::class);
         $gateway = new Gateway($adapter);
 
-        if ($plan->value > 0 || $plan->original_plan_value > 0) {
-            $subscription = $gateway->subscription()->get($order->subscription_asaas_id);
-        }
+        $subscription = $gateway->subscription()->get($order->subscription_asaas_id);
         $daysUsed = $cycleDays - now()->diffInDays($subscription['nextDueDate']);
         $actualPlanValue = $order->value;
         $newPlanValue = $plan->value;
