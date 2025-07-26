@@ -20,8 +20,6 @@ class AsaasConnector implements AdapterInterface
             return $request
                 ->throw()
                 ->json();
-        } catch (\Exception) {
-            return ['error' => "teste4"];
         }
     }
 
@@ -33,8 +31,6 @@ class AsaasConnector implements AdapterInterface
             return $request
                 ->throw()
                 ->json();
-        } catch (\Exception) {
-            return ['error' => "teste4"];
         }
     }
 
