@@ -361,7 +361,7 @@ class OrderController extends Controller
 
         $plan = Plan::find($planId);
         $order = $this->model->find($validator->validated()['orderId']);
-
+dd("teste");
 
         // Lógica caso o plano for grátis ou zero
         if ($plan->value <= 0 || $plan->original_plan_value <= 0) {
