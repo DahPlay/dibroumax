@@ -364,7 +364,7 @@ class OrderController extends Controller
 
 
         // Lógica caso o plano for grátis ou zero
-        if ($plan->value <= 0) {
+        if ($plan->value <= 0 || $plan->original_plan_value <= 0) {
             $order->update([
                 'plan_id' => $plan->id,
                 'value' => 0,
