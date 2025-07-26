@@ -34,9 +34,7 @@ class Subscription implements SubscriptionInterface
 
     public function create(array $data): array
     {
-        // return $this->http->post('/subscriptions', $data);
-        return dump("teste");
-        
+        return $this->http->post('/subscriptions', $data);
     }
 
     public function update(int|string $id, array $data): array
