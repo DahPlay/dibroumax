@@ -365,18 +365,20 @@ class OrderController extends Controller
 
         // Lógica caso o plano for grátis ou zero
         if ($plan->value <= 0) {
-            // Atualiza localmente sem criar assinatura Asaas
             $order->update([
                 'plan_id' => $plan->id,
                 'value' => 0,
-                'description' => $plan->description,
+                'description' => $plan->description ?? 'Plano gratuito',
                 'changed_plan' => true,
                 'original_plan_value' => 0,
+                'payment_status' => PaymentStatusOrderAsaasEnum::RECEIVED->value,
+                'subscription_asaas_id' => null, // Opcional
             ]);
 
-            toastr('Plano gratuito selecionado, assinatura Asaas não criada.', 'info');
+            toastr('Plano gratuito aplicado. Assinatura não criada no Asaas.', 'info');
             return redirect()->route('panel.orders.index');
         }
+
 
         if (
             $order->next_due_date < now()
