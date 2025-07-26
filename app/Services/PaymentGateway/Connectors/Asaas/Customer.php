@@ -21,10 +21,11 @@ class Customer implements CustomerInterface
         return $this->http->get('/customers' . $this->filter($filters));
     }
 
-    public function create(array $data): array
-    {
-        return dump("teste");
-    }
+   public function create(array $data): array
+{
+    return ['teste'];
+}
+
 
     public function update(int|string $id, array $data): array
     {
