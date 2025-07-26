@@ -405,7 +405,9 @@ class OrderController extends Controller
         $adapter = app(AsaasConnector::class);
         $gateway = new Gateway($adapter);
 
-        $subscription = $gateway->subscription()->get($order->subscription_asaas_id);
+        if ($plan->value > 0 || $plan->original_plan_value> 0) {
+            $subscription = $gateway->subscription()->get($order->subscription_asaas_id);
+        }
         $daysUsed = $cycleDays - now()->diffInDays($subscription['nextDueDate']);
         $actualPlanValue = $order->value;
         $newPlanValue = $plan->value;
