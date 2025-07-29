@@ -174,9 +174,20 @@ class RegisterController extends Controller
         session()->forget('customerData');
 
         // 🔁 Redirecionar para o Google só para teste
-        session()->flash('redirect_boleto_url', 'https://www.google.com'); // ou $order->boleto_url
+        $paymentId = $order->payment_asaas_id ?? null;
+
+        if ($paymentId) {
+            $idSemPrefixo = str_replace('pay_', '', $paymentId);
+            $environment = app()->isLocal() ? 'sandbox' : 'production';
+            $urlBase = config("asaas.{$environment}.fatura_url");
+            $boletoUrl = $urlBase . '/i/' . $idSemPrefixo;
+
+            // Coloca na sessão para ser usado no login.blade
+            session()->flash('redirect_boleto_url', $boletoUrl);
+        }
 
         return redirect('/login');
+
 
     }
 
