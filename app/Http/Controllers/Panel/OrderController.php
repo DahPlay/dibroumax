@@ -171,15 +171,43 @@ class OrderController extends Controller
             $data["photo"] = $this->request->file('photo')->store('avatars');
         }
 
+        // Criação do pedido (order)
         $order = $this->model->create($data);
-        $order->update([
-            'boleto_url' => $payments['data'][0]['invoiceUrl'] ?? null,
-        ]);
+
+        // === INÍCIO: chamada à API do Asaas para obter o boleto ===
+        try {
+            $asaasToken = config('services.asaas.token'); // ou insira diretamente a string do token aqui
+            $subscriptionId = 'sub_gp8bhg873bqfepjq'; // Troque aqui se tiver ID dinâmico
+            $url = "https://www.asaas.com/api/v3/payments?subscription={$subscriptionId}";
+
+            $client = new \GuzzleHttp\Client();
+            $response = $client->get($url, [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                    'access_token' => $asaasToken,
+                ],
+            ]);
+
+            $payments = json_decode($response->getBody(), true);
+            $boletoUrl = $payments['data'][0]['invoiceUrl'] ?? null;
+
+            // Atualiza o pedido com o link do boleto
+            $order->update([
+                'boleto_url' => $boletoUrl,
+            ]);
+
+        } catch (\Exception $e) {
+            // Se quiser logar erros:
+            \Log::error('Erro ao buscar boleto Asaas: ' . $e->getMessage());
+        }
+        // === FIM ===
 
         if ($order) {
             return response()->json([
                 'status' => '200',
-                'message' => 'Ação executada com sucesso!'
+                'message' => 'Ação executada com sucesso!',
+                'redirect_url' => $order->boleto_url, // <- se quiser abrir o link após salvar
             ]);
         } else {
             return response()->json([
@@ -189,8 +217,8 @@ class OrderController extends Controller
                 ]
             ]);
         }
-
     }
+
 
     public function edit($id): View
     {
