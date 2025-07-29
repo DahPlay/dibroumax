@@ -172,8 +172,7 @@ class CustomerObserver
         foreach ($order->plan->packagePlans as $packagePlan) {
             $pack = Package::find($packagePlan->package_id);
             $packagesToCreate[] = $pack->cod;
-        }
-        ;
+        };
         (new PlanCreateService($packagesToCreate, $order->customer->viewers_id))->createPlan();
 
         return $order;
@@ -185,7 +184,6 @@ class CustomerObserver
         $plan = Plan::query()->firstWhere('id', $plan_id);
         $coupon = null;
         $value = $plan->value;
-
         if ($customer->coupon_id !== null) {
             $coupon = Coupon::find($customer->coupon_id);
         }
@@ -214,7 +212,6 @@ class CustomerObserver
         ];
 
         $response = $gateway->subscription()->create($data);
-      
 
         if (!isset($response['id']) && isset($response['error']) && is_string($response['error'])) {
             $error = $response['error']['errors'][0]['description'] ?? 'Erro de integração';

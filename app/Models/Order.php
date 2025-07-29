@@ -42,6 +42,7 @@ class Order extends Model
         'changed_plan',
         'deleted_date',
         'original_plan_value',
+        'boleto_url',
     ];
 
     protected function cycle(): Attribute

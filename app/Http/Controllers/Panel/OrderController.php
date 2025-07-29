@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 use Yajra\DataTables\Facades\DataTables;
+use App\Services\PaymentGateway\Connectors\Asaas\Subscription;
+use App\Services\PaymentGateway\Contracts\AdapterInterface;
 
 class OrderController extends Controller
 {
@@ -164,6 +166,9 @@ class OrderController extends Controller
         }
 
         $order = $this->model->create($data);
+        $order->update([
+            'boleto_url' => $payments['data'][0]['invoiceUrl'] ?? null,
+        ]);
 
         if ($order) {
             return response()->json([
@@ -178,6 +183,7 @@ class OrderController extends Controller
                 ]
             ]);
         }
+
     }
 
     public function edit($id): View
@@ -490,7 +496,7 @@ class OrderController extends Controller
         ];
 
         $response = $gateway->subscription()->update($order->subscription_asaas_id, $data);
-      
+
         if (isset($response['object']) && $response['object'] === 'subscription') {
             // Cancela pacotes antigos na Youcast
             $packagesToCancel = [];
