@@ -171,7 +171,7 @@ class RegisterController extends Controller
                 ->withErrors(['error' => 'Ocorreu um erro ao processar o registro. Tente novamente mais tarde.']);
         }
 
-        toastr()->success('Criado com sucesso, faça o login!');
+        toastr()->success('Criado com sucesso, Acesse seu email ou faça o login para visualizar sua Assinatura!');
 
         session()->forget('customerData');
 

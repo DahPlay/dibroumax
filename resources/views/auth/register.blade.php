@@ -366,5 +366,29 @@
                 });
         });
 
+        $.ajax({
+    url: '/sua-rota/store',
+    method: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function(response) {
+        if (response.status === '200') {
+            // Abre o link do boleto
+            if (response.invoice_url) {
+                window.open(response.invoice_url, '_blank');
+            }
+
+            // Exibe mensagem de sucesso, fecha modal, etc.
+            alert(response.message);
+        }
+    },
+    error: function(xhr) {
+        console.error(xhr.responseJSON.errors);
+        alert('Erro ao criar a assinatura.');
+    }
+});
+
+
     </script>
 @endsection
