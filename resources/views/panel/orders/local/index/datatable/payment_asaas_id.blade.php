@@ -13,5 +13,5 @@
     @endphp
 
     <a href="{{ $url }}" target="_blank" class="btn btn-sm btn-primary">
-        <i class="far fa-eye"></i> Ver</a>
+        <i class="far fa-eye"></i> Ver Fatura</a>
 @endif
