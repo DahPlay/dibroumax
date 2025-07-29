@@ -140,6 +140,7 @@ class RegisterController extends Controller
                 return $externalCustomer;
             }
         }
+
         $data['coupon_id'] = $this->getCoupon($request->coupon)->id ?? null;
 
         try {
@@ -171,13 +172,20 @@ class RegisterController extends Controller
                 ->withErrors(['error' => 'Ocorreu um erro ao processar o registro. Tente novamente mais tarde.']);
         }
 
-        toastr()->success('Criado com sucesso, Acesse seu email ou faça o login para visualizar sua Assinatura!');
+        // ✅ Aqui você pode gerar o boleto e salvar a URL no cliente
+        $boleto = $customerService->generatePayment($customer); // ou como você já faz isso
+        $customer->update([
+            'boleto_url' => $boleto['invoiceUrl'] ?? null,
+        ]);
 
         session()->forget('customerData');
 
-        return $this->registered($request, $customer)
-            ?: redirect($this->redirectPath());
+        toastr()->success('Criado com sucesso! Redirecionando para o pagamento...');
+
+        // ✅ Redireciona diretamente para o link
+        return redirect()->away($customer->boleto_url ?? route('login'));
     }
+
 
     private function verifyCustomerInYouCast(CustomerService $customerService): mixed
     {

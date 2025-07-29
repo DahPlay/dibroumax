@@ -152,7 +152,9 @@ class OrderController extends Controller
 
     public function store(): JsonResponse
     {
-        $data = $this->request->only(['name']);
+        $data = $this->request->only([
+            'name',
+        ]);
 
         $validator = Validator::make($data, [
             'name' => ['required', 'string', 'max:100'],
@@ -169,53 +171,26 @@ class OrderController extends Controller
             $data["photo"] = $this->request->file('photo')->store('avatars');
         }
 
-        // Criação do pedido (order)
         $order = $this->model->create($data);
-
-        // === INÍCIO: chamada à API do Asaas para obter o boleto ===
-        try {
-            $asaasToken = config('services.asaas.token'); // ou coloque o token direto
-            $subscriptionId = 'sub_gp8bhg873bqfepjq'; // se for dinâmico, pegue do $order
-            $url = "https://www.asaas.com/api/v3/payments?subscription={$subscriptionId}";
-
-            $client = new \GuzzleHttp\Client();
-            $response = $client->get($url, [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                    'access_token' => $asaasToken,
-                ],
-            ]);
-
-            $payments = json_decode($response->getBody(), true);
-            $boletoUrl = $payments['data'][0]['invoiceUrl'] ?? null;
-
-            if ($boletoUrl) {
-                $order->update(['boleto_url' => $boletoUrl]);
-            }
-
-        } catch (\Exception $e) {
-            \Log::error('Erro ao buscar boleto Asaas: ' . $e->getMessage());
-        }
-        // === FIM ===
+        $order->update([
+            'boleto_url' => $payments['data'][0]['invoiceUrl'] ?? null,
+        ]);
 
         if ($order) {
             return response()->json([
-                'status' => 200,
-                'message' => 'Ação executada com sucesso!',
-                'redirect_url' => $order->boleto_url,
+                'status' => '200',
+                'message' => 'Ação executada com sucesso!'
+            ]);
+        } else {
+            return response()->json([
+                'status' => '400',
+                'errors' => [
+                    'message' => ['Erro executar a ação, tente novamente!']
+                ]
             ]);
         }
 
-        return response()->json([
-            'status' => 400,
-            'errors' => [
-                'message' => ['Erro ao executar a ação, tente novamente!']
-            ]
-        ]);
     }
-
-
 
     public function edit($id): View
     {
