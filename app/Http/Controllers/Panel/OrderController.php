@@ -489,10 +489,8 @@ class OrderController extends Controller
             'externalReference' => 'Pedido: ' . $order->id,
         ];
 
-        // $response = $gateway->subscription()->update($order->subscription_asaas_id, $data);
-        $response = dump("teste2");
-        
-
+        $response = $gateway->subscription()->update($order->subscription_asaas_id, $data);
+      
         if (isset($response['object']) && $response['object'] === 'subscription') {
             // Cancela pacotes antigos na Youcast
             $packagesToCancel = [];

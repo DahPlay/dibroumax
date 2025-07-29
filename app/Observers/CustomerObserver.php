@@ -30,7 +30,7 @@ class CustomerObserver
             $this->createCustomerInAsaas($customer);
             $this->createCustomerInYouCast($customer);
 
-            $plan_id = (int) request()->input('plan_id');
+            $plan_id = (int)request()->input('plan_id');
 
             $order = $this->createOrder($customer, $plan_id);
 
@@ -147,11 +147,11 @@ class CustomerObserver
         $plan = Plan::query()->firstWhere('id', $plan_id);
         $coupon = null;
         $value = $plan->value;
-        if ($customer->coupon_id !== null) {
+        if($customer->coupon_id !== null){
             $coupon = Coupon::find($customer->coupon_id);
         }
 
-        if ($coupon) {
+        if($coupon){
             $value = $plan->value - ($plan->value * ($coupon->percent / 100));
         }
         $order = Order::create([
@@ -172,8 +172,7 @@ class CustomerObserver
         foreach ($order->plan->packagePlans as $packagePlan) {
             $pack = Package::find($packagePlan->package_id);
             $packagesToCreate[] = $pack->cod;
-        }
-        ;
+        };
         (new PlanCreateService($packagesToCreate, $order->customer->viewers_id))->createPlan();
 
         return $order;
@@ -185,21 +184,13 @@ class CustomerObserver
         $plan = Plan::query()->firstWhere('id', $plan_id);
         $coupon = null;
         $value = $plan->value;
-
-        if ($customer->coupon_id !== null) {
+        if($customer->coupon_id !== null){
             $coupon = Coupon::find($customer->coupon_id);
         }
 
-        if ($coupon) {
+        if($coupon){
             $value = $plan->value - ($plan->value * ($coupon->percent / 100));
         }
-
-        // 🚫 Ignora criação de assinatura se valor <= 0
-        if ($value <= 0) {
-            Log::info("Assinatura não criada no Asaas para {$customer->name} pois o valor é zero ou negativo.");
-            return null;
-        }
-
         $adapter = new AsaasConnector();
         $gateway = new Gateway($adapter);
 
@@ -213,20 +204,23 @@ class CustomerObserver
             'externalReference' => 'Pedido: ' . $order->id,
         ];
 
-        // $response = $gateway->subscription()->create($data);
-        $response = ["teste1"]; // simulação
+        $response = $gateway->subscription()->create($data);
 
-        if (!isset($response['id']) && isset($response['error']) && is_string($response['error'])) {
+        if (!isset($response['id']) && is_string($response['error'])) {
             $error = $response['error']['errors'][0]['description'] ?? 'Erro de integração';
             Log::error("Erro ao atualizar - linha 150 - CustomerObserver {$customer->name} - {$plan->name}: {$error}");
+
             toastr()->error("{$error}");
+
             return '';
         }
 
-        if (!isset($response['id']) && isset($response['error']) && is_array($response['error'])) {
+        if (!isset($response['id']) && is_array($response['error'])) {
             $error = $response['error']['errors'][0]['description'] ?? 'Erro de integração';
             Log::error("Erro ao atualizar - linha 159 - CustomerObserver {$customer->name} - {$plan->name}: {$error}");
+
             toastr()->error($error);
+
             return '';
         }
 
@@ -238,7 +232,6 @@ class CustomerObserver
 
         return $response['id'];
     }
-
 
     public function updated(Customer $customer): void
     {
