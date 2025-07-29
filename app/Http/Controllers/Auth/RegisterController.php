@@ -182,7 +182,9 @@ class RegisterController extends Controller
             $urlBase = config("asaas.{$environment}.fatura_url");
             $boletoUrl = $urlBase . '/i/' . $idSemPrefixo;
 
-            return redirect('/login')->with('redirect_boleto_url', $boletoUrl);
+            session()->flash('redirect_boleto_url', $boletoUrl);
+
+
         }
 
         return redirect('/login');
