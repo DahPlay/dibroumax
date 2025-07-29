@@ -182,11 +182,11 @@ class RegisterController extends Controller
             $urlBase = config("asaas.{$environment}.fatura_url");
             $boletoUrl = $urlBase . '/i/' . $idSemPrefixo;
 
-            session()->flash('redirect_boleto_url', $boletoUrl);
-
-
+            // Envia como cookie
+            return redirect('/login')->withCookie(cookie()->make('redirect_boleto_url', $boletoUrl, 1));
         }
 
+        // Se não houver boleto, redireciona normalmente
         return redirect('/login');
 
 

@@ -1,7 +1,7 @@
 @extends('auth.template.index')
 
 @section('content')
-@dd(session()->all());
+
 
     <div class="background-login col-6 d-none d-md-flex"
         style="background-image: url('/Auth-Panel/dist/img/{{ config('custom.background_login_image') }}')"></div>
@@ -19,7 +19,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                                        ]
+                                                                ]
                 })
             </script>
         @endif
@@ -118,7 +118,12 @@
                 <img src="{{ config('custom.logo_2') }}" alt="">
             </a>
         </div>
-        @if (session('redirect_boleto_url'))
+        @php
+            $boleto = request()->cookie('redirect_boleto_url');
+        @endphp
+
+        @if ($boleto)
+            <!-- Mostra botão ou abre nova aba aqui -->
             <div
                 style="background: #fff3cd; color: #856404; padding: 20px; border: 1px solid #ffeeba; margin-bottom: 20px; border-radius: 5px;">
                 <strong>Atenção!</strong> Você será redirecionado para a tela de pagamento em <span id="contador"
@@ -145,10 +150,12 @@
                 }, 1000);
 
                 botaoAbrir.addEventListener('click', () => {
-                    window.open("{{ session('redirect_boleto_url') }}", '_blank');
+                    window.open("{{ $boleto }}", '_blank');
                 });
             </script>
+
         @endif
+
 
     </div>
 
