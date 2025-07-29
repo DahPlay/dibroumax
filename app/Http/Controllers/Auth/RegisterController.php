@@ -173,6 +173,7 @@ class RegisterController extends Controller
 
         session()->forget('customerData');
 
+        dd($request->all);
         // 🔁 Redirecionar para o Google só para teste
         session()->flash('redirect_boleto_url', 'https://www.boletoficticio.com.br/exemplo-boleto'); // boleto fictício de teste
         return redirect('/login');
