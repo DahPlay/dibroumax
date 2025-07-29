@@ -13,6 +13,5 @@
     @endphp
 
     <a href="{{ $url }}" target="_blank" class="btn btn-sm btn-primary">
-        <i class="fas fa-file-invoice-dollar me-1"></i> Ver Fatura
-    </a>
+        <i class="far fa-eye"></i> Ver</a>
 @endif
