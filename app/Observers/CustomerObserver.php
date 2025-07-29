@@ -238,7 +238,12 @@ class CustomerObserver
             $order->save();
 
             return $response['id'];
+        } else {
+            Log::error("Assinatura não foi criada corretamente para {$customer->name}. Resposta sem ID: " . json_encode($response));
+            toastr()->error("Não foi possível criar a assinatura. Verifique o log.");
+            return null;
         }
+
     }
 
 
