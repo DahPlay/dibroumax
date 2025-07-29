@@ -1,6 +1,8 @@
 @extends('auth.template.index')
 
 @section('content')
+@dd(session()->all());
+
     <div class="background-login col-6 d-none d-md-flex"
         style="background-image: url('/Auth-Panel/dist/img/{{ config('custom.background_login_image') }}')"></div>
     <div class="login-box login-page col-12 col-md-6 p-0"
