@@ -118,21 +118,22 @@
                 <img src="{{ config('custom.logo_2') }}" alt="">
             </a>
         </div>
-        @php
-            $boleto = request()->cookie('redirect_boleto_url');
-        @endphp
-
-        @if ($boleto)
-            <script>
-                setTimeout(() => {
-                    window.open("{{ $boleto }}", "_blank");
-                }, 5000); // abre nova aba após 5 segundos
-            </script>
-
-            <div class="alert alert-info">
-                Você será redirecionado para continuar o pagamento. Caso não ocorra, <a href="{{ $boleto }}"
-                    target="_blank">clique aqui</a>.
+        @if (session('redirect_boleto_url'))
+            <div style="background: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
+                Você será redirecionado para a tela de pagamento em alguns segundos...
             </div>
+
+            <script>
+                setTimeout(function () {
+                    let a = document.createElement('a');
+                    a.href = "{{ session('redirect_boleto_url') }}";
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                }, 5000);
+            </script>
         @endif
 
 
