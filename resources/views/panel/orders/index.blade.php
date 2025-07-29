@@ -20,6 +20,7 @@
                                             <th>Plano</th>
                                             <th>Valor</th>
                                             <th>Assinatura</th>
+                                            <th>Fatura</th>
                                             <th>Cliente Asaas</th>
                                             <th>Assinatura Status</th>
                                             <th>Pagamento</th>

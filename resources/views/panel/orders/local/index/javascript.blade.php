@@ -118,6 +118,12 @@
                     className: 'name align-middle'
                 },
                 {
+                    data: 'payment_asaas_id',
+                    orderable: true,
+                    searchable: true,
+                    className: 'name align-middle'
+                },
+                {
                     data: 'customer_asaas_id',
                     orderable: true,
                     searchable: true,

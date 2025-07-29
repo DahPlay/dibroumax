@@ -55,6 +55,7 @@ class OrderController extends Controller
                 'orders.next_due_date',
                 'orders.payment_status',
                 'orders.created_at',
+                'orders.payment_asaas_id',
             ]);
 
         return DataTables::of($orders)
@@ -90,6 +91,11 @@ class OrderController extends Controller
                 }
 
                 return PaymentStatusOrderAsaasEnum::tryFrom($order->payment_status)?->getName() ?? $order->payment_status;
+            })
+            ->editColumn('payment_asaas_id', function ($order) {
+                return $order->payment_asaas_id == NULL
+                    ? 'SEM FATURA'
+                    : StatusOrderAsaasEnum::tryFrom(value: $order->payment_asaas_id)?->getName() ?? $order->payment_asaas_id;
             })
             ->filterColumn('payment_status', function ($query, $keyword) {
                 $matchingStatuses = collect(PaymentStatusOrderAsaasEnum::cases())
