@@ -117,28 +117,32 @@
             </a>
         </div>
         @if (session('redirect_boleto_url'))
-            <div style="background: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
-                Você será redirecionado para a tela de pagamento em <span id="contador">5</span> segundos...
-                <br>
-                <button id="abrirBoleto" style="margin-top: 10px;" class="btn btn-warning d-none">
-                    👉 Abrir boleto agora
-                </button>
+            <div
+                style="background: #fff3cd; color: #856404; padding: 20px; border: 1px solid #ffeeba; margin-bottom: 20px; border-radius: 5px;">
+                <strong>Atenção!</strong> Você será redirecionado para a tela de pagamento em <span id="contador"
+                    style="font-weight: bold;">5</span> segundos...
+                <div style="margin-top: 15px;">
+                    <button id="abrirBoleto" class="btn btn-warning d-none">
+                        👉 Abrir boleto manualmente
+                    </button>
+                </div>
             </div>
 
             <script>
-                let contador = 5;
-                let span = document.getElementById('contador');
-                let btn = document.getElementById('abrirBoleto');
-                let intervalo = setInterval(function () {
-                    contador--;
-                    span.textContent = contador;
-                    if (contador <= 0) {
+                let segundos = 5;
+                const spanContador = document.getElementById('contador');
+                const botaoAbrir = document.getElementById('abrirBoleto');
+
+                const intervalo = setInterval(() => {
+                    segundos--;
+                    spanContador.textContent = segundos;
+                    if (segundos <= 0) {
                         clearInterval(intervalo);
-                        btn.classList.remove('d-none');
+                        botaoAbrir.classList.remove('d-none');
                     }
                 }, 1000);
 
-                btn.addEventListener('click', function () {
+                botaoAbrir.addEventListener('click', () => {
                     window.open("{{ session('redirect_boleto_url') }}", '_blank');
                 });
             </script>
