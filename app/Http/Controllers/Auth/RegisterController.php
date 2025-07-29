@@ -174,18 +174,9 @@ class RegisterController extends Controller
         session()->forget('customerData');
 
         // 🔁 Redirecionar para o Google só para teste
-        $paymentId = $order->payment_asaas_id ?? null;
-
-        if ($paymentId) {
-            $idSemPrefixo = str_replace('pay_', '', $paymentId);
-            $environment = app()->isLocal() ? 'sandbox' : 'production';
-            $urlBase = config("asaas.{$environment}.fatura_url");
-            $boletoUrl = $urlBase . '/i/' . $idSemPrefixo;
-
-            session()->flash('redirect_boleto_url', $boletoUrl);
-        }
-
+        session()->flash('redirect_boleto_url', 'https://www.boletoficticio.com.br/exemplo-boleto'); // boleto fictício de teste
         return redirect('/login');
+
 
 
 

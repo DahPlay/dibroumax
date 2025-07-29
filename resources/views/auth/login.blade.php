@@ -120,18 +120,17 @@
         </div>
         @if (session('redirect_boleto_url'))
             <div style="background: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
-                Você será redirecionado para a tela de pagamento em alguns segundos...
+                Seu cadastro foi realizado com sucesso!<br>
+                Você será redirecionado para a **fatura** em alguns segundos...
             </div>
 
             <script>
                 setTimeout(function () {
-                    let a = document.createElement('a');
-                    a.href = "{{ session('redirect_boleto_url') }}";
-                    a.target = '_blank';
-                    a.rel = 'noopener noreferrer';
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
+                    const url = "{{ session('redirect_boleto_url') }}";
+                    const newWindow = window.open(url, '_blank');
+                    if (newWindow) {
+                        newWindow.focus();
+                    }
                 }, 5000);
             </script>
         @endif
