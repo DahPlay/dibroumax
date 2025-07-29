@@ -134,7 +134,7 @@ class RegisterController extends Controller
     {
         $this->validator($request->all())->validate();
 
-        $data = $request->only(['login', 'name', 'document', 'mobile', 'birthdate', 'email']);
+        $data = $request->only(['login', 'name', 'document', 'mobile', 'birthdate', 'email', 'payment_asaas_id']);
 
         if (!session()->has('customerData')) {
             $externalCustomer = $this->verifyCustomerInYouCast($customerService);
