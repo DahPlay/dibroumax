@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use GuzzleHttp\Client;
 
 class RegisterController extends Controller
 {
@@ -127,6 +128,8 @@ class RegisterController extends Controller
         ]);
     }
 
+
+
     public function register(Request $request, CustomerService $customerService)
     {
         $this->validator($request->all())->validate();
@@ -172,19 +175,39 @@ class RegisterController extends Controller
                 ->withErrors(['error' => 'Ocorreu um erro ao processar o registro. Tente novamente mais tarde.']);
         }
 
-        // ✅ Aqui você pode gerar o boleto e salvar a URL no cliente
-        $boleto = "https://www.google.com/"; // ou como você já faz isso
-        $customer->update([
-            'boleto_url' => $boleto['invoiceUrl'] ?? null,
-        ]);
+        // ✅ Gerar boleto após salvar o cliente
+        try {
+            $asaasToken = config('services.asaas.token');
+            $subscriptionId = 'sub_gp8bhg873bqfepjq'; // ou dinâmico se tiver
+            $url = "https://www.asaas.com/api/v3/payments?subscription={$subscriptionId}";
+
+            $client = new Client();
+            $response = $client->get($url, [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                    'access_token' => $asaasToken,
+                ],
+            ]);
+
+            $payments = json_decode($response->getBody(), true);
+            $boletoUrl = $payments['data'][0]['invoiceUrl'] ?? null;
+
+            $customer->update([
+                'boleto_url' => $boletoUrl,
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Erro ao gerar boleto do Asaas: " . $e->getMessage());
+        }
+
+        toastr()->success('Criado com sucesso, acesse seu email ou faça o login para visualizar sua Assinatura!');
 
         session()->forget('customerData');
 
-        toastr()->success('Criado com sucesso! Redirecionando para o pagamento...');
-
-        // ✅ Redireciona diretamente para o link
-        return redirect()->away($customer->boleto_url ?? route('login'));
+        return $this->registered($request, $customer)
+            ?: redirect($this->redirectPath());
     }
+
 
 
     private function verifyCustomerInYouCast(CustomerService $customerService): mixed
