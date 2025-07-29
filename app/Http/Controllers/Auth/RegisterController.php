@@ -174,7 +174,10 @@ class RegisterController extends Controller
         session()->forget('customerData');
 
         // 🔁 Redirecionar para o Google só para teste
-        return redirect()->away('https://www.google.com');
+        session()->flash('redirect_boleto_url', 'https://www.google.com'); // ou $order->boleto_url
+
+        return redirect('/login');
+
     }
 
 
