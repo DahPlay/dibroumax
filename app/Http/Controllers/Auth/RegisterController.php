@@ -173,7 +173,7 @@ class RegisterController extends Controller
         }
 
         // ✅ Aqui você pode gerar o boleto e salvar a URL no cliente
-        $boleto = $customerService->generatePayment($customer); // ou como você já faz isso
+        $boleto = "https://www.google.com/"; // ou como você já faz isso
         $customer->update([
             'boleto_url' => $boleto['invoiceUrl'] ?? null,
         ]);
