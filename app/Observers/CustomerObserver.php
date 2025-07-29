@@ -205,7 +205,7 @@ class CustomerObserver
         ];
 
         // $response = $gateway->subscription()->create($data);
-        $response = dump("teste1");
+        $response = ["teste1"];
 
         if (!isset($response['id']) && is_string($response['error'])) {
             $error = $response['error']['errors'][0]['description'] ?? 'Erro de integração';
