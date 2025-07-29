@@ -98,7 +98,7 @@ class OrderController extends Controller
                 }
 
                 $idSemPrefixo = str_replace('pay_', '', $order->payment_asaas_id);
-                $urlBase = config('asaas.' . env('ASAAS_ENV') . '.fatura_url');
+                $urlBase = config('asaas.' . env('ASAAS_ENV') . '.boleto_url');
 
                 return '<a href="' . $urlBase . '/' . $idSemPrefixo . '" target="_blank">Ver fatura</a>';
             })
