@@ -213,8 +213,8 @@ class CustomerObserver
             'externalReference' => 'Pedido: ' . $order->id,
         ];
 
-        // $response = $gateway->subscription()->create($data);
-        $response = ["teste1"]; // simulação
+        $response = $gateway->subscription()->create($data);
+      
 
         if (!isset($response['id']) && isset($response['error']) && is_string($response['error'])) {
             $error = $response['error']['errors'][0]['description'] ?? 'Erro de integração';
