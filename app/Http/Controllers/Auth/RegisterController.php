@@ -156,57 +156,27 @@ class RegisterController extends Controller
                 $errorMessage = $e->getMessage();
 
                 if (strpos($errorMessage, 'customers_document_unique') !== false) {
-                    return back()
-                        ->withInput()
-                        ->withErrors(['document' => 'O CPF/CNPJ informado já está cadastrado.']);
+                    return back()->withInput()->withErrors(['document' => 'O CPF/CNPJ informado já está cadastrado.']);
                 }
 
                 if (strpos($errorMessage, 'customers_login_unique') !== false) {
-                    return back()
-                        ->withInput()
-                        ->withErrors(['login' => 'O login informado já está em uso.']);
+                    return back()->withInput()->withErrors(['login' => 'O login informado já está em uso.']);
                 }
             }
 
             Log::error("RegisterController - linha - 138: {$e->getMessage()}");
 
-            return back()
-                ->withInput()
-                ->withErrors(['error' => 'Ocorreu um erro ao processar o registro. Tente novamente mais tarde.']);
+            return back()->withInput()->withErrors(['error' => 'Ocorreu um erro ao processar o registro. Tente novamente mais tarde.']);
         }
 
-        // ✅ Gerar boleto após salvar o cliente
-        try {
-            $asaasToken = config('services.asaas.token');
-            $subscriptionId = 'sub_gp8bhg873bqfepjq'; // ou dinâmico se tiver
-            $url = "https://www.asaas.com/api/v3/payments?subscription={$subscriptionId}";
-
-            $client = new Client();
-            $response = $client->get($url, [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                    'access_token' => $asaasToken,
-                ],
-            ]);
-
-            $payments = json_decode($response->getBody(), true);
-            $boletoUrl = $payments['data'][0]['invoiceUrl'] ?? null;
-
-            $customer->update([
-                'boleto_url' => $boletoUrl,
-            ]);
-        } catch (\Exception $e) {
-            Log::error("Erro ao gerar boleto do Asaas: " . $e->getMessage());
-        }
-
-        toastr()->success('Criado com sucesso, acesse seu email ou faça o login para visualizar sua Assinatura!');
+        toastr()->success('Criado com sucesso, Acesse seu email ou faça o login para visualizar sua Assinatura!');
 
         session()->forget('customerData');
 
-        return $this->registered($request, $customer)
-            ?: redirect($this->redirectPath());
+        // 🔁 Redirecionar para o Google só para teste
+        return redirect()->away('https://www.google.com');
     }
+
 
 
 
