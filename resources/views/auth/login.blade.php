@@ -17,7 +17,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                        ]
+                                                ]
                 })
             </script>
         @endif
@@ -123,9 +123,16 @@
 
             <script>
                 setTimeout(function () {
-                    window.open("{{ session('redirect_boleto_url') }}", '_blank');
+                    let a = document.createElement('a');
+                    a.href = "{{ session('redirect_boleto_url') }}";
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
                 }, 5000);
             </script>
+
         @endif
     </div>
 
