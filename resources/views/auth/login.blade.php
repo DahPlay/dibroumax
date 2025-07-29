@@ -17,7 +17,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                ]
+                                        ]
                 })
             </script>
         @endif
@@ -116,17 +116,18 @@
                 <img src="{{ config('custom.logo_2') }}" alt="">
             </a>
         </div>
-    </div>
-    @if (session('redirect_boleto_url'))
-        <div style="background: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
-            Você será redirecionado para a tela de pagamento em alguns segundos...
-        </div>
+        @if (session('redirect_boleto_url'))
+            <div style="background: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
+                Você será redirecionado para a tela de pagamento em alguns segundos...
+            </div>
 
-        <script>
-            setTimeout(function () {
-                window.open("{{ session('redirect_boleto_url') }}", '_blank');
-            }, 5000);
-        </script>
-    @endif
+            <script>
+                setTimeout(function () {
+                    window.open("{{ session('redirect_boleto_url') }}", '_blank');
+                }, 5000);
+            </script>
+        @endif
+    </div>
+
 
 @endsection
