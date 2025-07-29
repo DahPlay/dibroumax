@@ -93,10 +93,16 @@ class OrderController extends Controller
                 return PaymentStatusOrderAsaasEnum::tryFrom($order->payment_status)?->getName() ?? $order->payment_status;
             })
             ->editColumn('payment_asaas_id', function ($order) {
-                return $order->payment_asaas_id == NULL
-                    ? 'SEM FATURA'
-                    : StatusOrderAsaasEnum::tryFrom(value: $order->payment_asaas_id)?->getName() ?? $order->payment_asaas_id;
+                if ($order->payment_asaas_id == null) {
+                    return 'SEM FATURA';
+                }
+
+                $idSemPrefixo = str_replace('pay_', '', $order->payment_asaas_id);
+                $urlBase = config('asaas.' . env('ASAAS_ENV') . '.fatura_url');
+
+                return '<a href="' . $urlBase . '/' . $idSemPrefixo . '" target="_blank">Ver fatura</a>';
             })
+
             ->filterColumn('payment_status', function ($query, $keyword) {
                 $matchingStatuses = collect(PaymentStatusOrderAsaasEnum::cases())
                     ->filter(fn($enum) => str_contains($enum->getName(), $keyword))
