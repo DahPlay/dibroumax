@@ -19,7 +19,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                                                ]
+                                                                        ]
                 })
             </script>
         @endif
@@ -123,38 +123,18 @@
         @endphp
 
         @if ($boleto)
-            <!-- Mostra botão ou abre nova aba aqui -->
-            <div
-                style="background: #fff3cd; color: #856404; padding: 20px; border: 1px solid #ffeeba; margin-bottom: 20px; border-radius: 5px;">
-                <strong>Atenção!</strong> Você será redirecionado para a tela de pagamento em <span id="contador"
-                    style="font-weight: bold;">5</span> segundos...
-                <div style="margin-top: 15px;">
-                    <button id="abrirBoleto" class="btn btn-warning d-none">
-                        👉 Abrir boleto manualmente
-                    </button>
-                </div>
-            </div>
-
             <script>
-                let segundos = 5;
-                const spanContador = document.getElementById('contador');
-                const botaoAbrir = document.getElementById('abrirBoleto');
-
-                const intervalo = setInterval(() => {
-                    segundos--;
-                    spanContador.textContent = segundos;
-                    if (segundos <= 0) {
-                        clearInterval(intervalo);
-                        botaoAbrir.classList.remove('d-none');
-                    }
-                }, 1000);
-
-                botaoAbrir.addEventListener('click', () => {
-                    window.open("{{ $boleto }}", '_blank');
-                });
+                setTimeout(() => {
+                    window.open("{{ $boleto }}", "_blank");
+                }, 5000); // abre nova aba após 5 segundos
             </script>
 
+            <div class="alert alert-info">
+                Você será redirecionado para continuar o pagamento. Caso não ocorra, <a href="{{ $boleto }}"
+                    target="_blank">clique aqui</a>.
+            </div>
         @endif
+
 
 
     </div>
