@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\Plan;
+use App\Models\Order;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use App\Services\AppIntegration\CustomerService;
@@ -172,8 +173,8 @@ class RegisterController extends Controller
         toastr()->success('Criado com sucesso, Acesse seu email ou faça o login para visualizar sua Assinatura!');
 
         session()->forget('customerData');
-
-        dd($data);
+        $customer = Customer::where('document',  $data['document'])->first();
+        dd($customer->payment_asaas_id);
         // 🔁 Redirecionar para o Google só para teste
         session()->flash('redirect_boleto_url', 'https://www.boletoficticio.com.br/exemplo-boleto'); // boleto fictício de teste
         return redirect('/login');
