@@ -92,16 +92,8 @@ class OrderController extends Controller
 
                 return PaymentStatusOrderAsaasEnum::tryFrom($order->payment_status)?->getName() ?? $order->payment_status;
             })
-            ->editColumn('payment_asaas_id', function ($order) {
-                if ($order->payment_asaas_id == null) {
-                    return '<span class="badge bg-secondary">SEM FATURA</span>';
-                }
-
-                $idSemPrefixo = str_replace('pay_', '', $order->payment_asaas_id);
-                $environment = app()->isLocal() ? 'sandbox' : 'production';
-                $urlBase = config("asaas.{$environment}.fatura_url");
-
-                return '<a href="' . $urlBase . '/i/' . $idSemPrefixo . '" target="_blank" class="btn btn-sm btn-primary">Ver fatura</a>';
+            ->editColumn('payment_asaas_id', function ($item) {
+                return view('panel.orders.local.index.datatable.payment_asaas_id', compact('item'));
             })
 
 
