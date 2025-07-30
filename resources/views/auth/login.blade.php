@@ -19,7 +19,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                                                                        ]
+                                                                                                ]
                 })
             </script>
         @endif
@@ -137,15 +137,25 @@
         @endif
 
         @php
-        
             use App\Models\Customer;
             use App\Models\Order;
+
             $login = session('login');
-            $customer = customer::where('login', $login)->first();
-            $order = Order::where('customer_id', $customer->id)->first();
-            dd($order);
-            // 🔁 Redirecionar para o Google só para teste
-            //session()->flash('redirect_boleto_url', 'https://www.boletoficticio.com.br/exemplo-boleto'); // boleto fictício de teste
+            $customer = Customer::where('login', $login)->first();
+
+            if ($customer) {
+                $order = Order::where('customer_id', $customer->id)->first();
+
+                if ($order && $order->payment_asaas_id) {
+                    // Executa somente quando payment_asaas_id tiver valor
+                    session()->flash('redirect_boleto_url', 'https://www.boletoficticio.com.br/exemplo-boleto'); // ou $order->boleto_url
+                } else {
+                    // Opcional: mensagem de aguarde ou debug
+                    echo "Aguardando geração do payment_asaas_id...";
+                }
+            } else {
+                echo "Cliente não encontrado.";
+            }
         @endphp
 
 
