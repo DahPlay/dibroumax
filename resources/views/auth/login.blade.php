@@ -19,7 +19,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                                                                                        ]
+                                                                                                                ]
                 })
             </script>
         @endif
@@ -140,16 +140,15 @@
         @php
             use App\Models\Customer;
             use App\Models\Order;
+
             $login = session('login');
-             dd($login); // <-- TESTE: Isso mostrará se o login está vazio.
+            $verFatura = request('ver_fatura');
         @endphp
 
-        {{-- Lógica de exibição da fatura --}}
-        @if (request('ver_fatura'))
+        @if ($verFatura && $login)
             @php
-                $login = session('login');
                 $customer = Customer::where('login', $login)->first();
-  
+
                 if ($customer) {
                     $order = Order::where('customer_id', $customer->id)->first();
 
@@ -170,13 +169,24 @@
             @endphp
         @endif
 
-        {{-- Botão para buscar a fatura --}}
-        <form method="GET">
-            <button type="submit" name="ver_fatura" value="1"
-                style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px;">
-                Ver Fatura
-            </button>
-        </form>
+        @if ($login)
+            <form method="GET" onsubmit="mostrarSpinner()">
+                <button id="btn-fatura" type="submit" name="ver_fatura" value="1"
+                    style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px;">
+                    <span id="btn-texto">Ver Fatura</span>
+                    <span id="btn-spinner" style="display: none;">
+                        🔄 Carregando...
+                    </span>
+                </button>
+            </form>
+
+            <script>
+                function mostrarSpinner() {
+                    document.getElementById('btn-texto').style.display = 'none';
+                    document.getElementById('btn-spinner').style.display = 'inline';
+                }
+            </script>
+        @endif
 
 
 
