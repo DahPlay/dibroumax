@@ -145,17 +145,13 @@
             $verFatura = request('ver_fatura');
         @endphp
 
-        {{-- VER FATURA MANUALMENTE --}}
-        @if (request('ver_fatura'))
+        @if ($verFatura)
             @php
+                echo "<div style='color: yellow;'>Iniciando verificação de fatura...</div>";
+                if ($login) {
+                    echo "<div style='color: lightblue;'>Login detectado: $login</div>";
 
-
-                $loginDigitado = request('login_fatura'); // <- valor do campo digitado
-
-                echo "<div style='margin-bottom: 20px; color: yellow;'>Buscando fatura para login: <strong>$loginDigitado</strong></div>";
-
-                if ($loginDigitado) {
-                    $customer = Customer::where('login', $loginDigitado)->first();
+                    $customer = Customer::where('login', $login)->first();
 
                     if ($customer) {
                         echo "<div style='color: lightblue;'>Cliente encontrado: ID $customer->id</div>";
@@ -169,45 +165,51 @@
                                 $boletoUrl = 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id;
                                 echo "<div style='color: green;'>Pagamento encontrado! Abrindo sua fatura...</div>";
                                 echo "
-                                        <script>
-                                            window.open('$boletoUrl', '_blank');
-                                        </script>
-                                    ";
-                                echo "<a href='$boletoUrl' target='_blank' style='display: inline-block; margin-top: 10px; color: #007bff; text-decoration: underline;'>Abrir Fatura Manualmente</a>";
+                                                                <script>
+                                                                    window.open('$boletoUrl', '_blank');
+                                                                </script>
+                                                            ";
                             } else {
-                                echo "<div style='color: orange;'>⚠️ Este pedido ainda não possui um boleto gerado.</div>";
+                                echo "<div style='color: orange;'>payment_asaas_id ainda não gerado.</div>";
                             }
                         } else {
-                            echo "<div style='color: orange;'>⚠️ Nenhum pedido foi encontrado para esse cliente.</div>";
+                            echo "<div style='color: orange;'>Pedido não encontrado para este cliente.</div>";
                         }
                     } else {
-                        echo "<div style='color: red;'>❌ Cliente não encontrado com o login informado.</div>";
+                        echo "<div style='color: red;'>Cliente não encontrado.</div>";
                     }
                 } else {
-                    echo "<div style='color: red;'>⚠️ Por favor, preencha o campo de login abaixo para buscar a fatura.</div>";
+                    echo "<div style='color: red;'>Login ausente na sessão.</div>";
                 }
+                //echo "<a href='$boletoUrl' target='_blank'>Abrir Fatura Manualmente</a>";
+
             @endphp
         @endif
 
-        {{-- FORMULÁRIO DE BUSCA DE FATURA --}}
-        <form method="GET" onsubmit="mostrarSpinner()" style="margin-bottom: 30px;">
-            <input type="text" name="login_fatura" placeholder="Digite seu login" required
-                style="padding: 6px; border-radius: 5px; margin-right: 10px; border: 1px solid #ccc;">
+       
 
-            <button id="btn-fatura" type="submit" name="ver_fatura" value="1"
-                style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px;">
-                <span id="btn-texto">Ver Fatura</span>
-                <span id="btn-spinner" style="display: none;">🔄 Carregando...</span>
-            </button>
-        </form>
+        @if ($login)
+            <form method="GET" onsubmit="mostrarSpinner()">
+                <button id="btn-fatura" type="submit" name="ver_fatura" value="1"
+                    style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px;">
+                    <span id="btn-texto">Ver Fatura</span>
+                    <span id="btn-spinner" style="display: none;">
+                        🔄 Carregando...
+                    </span>
+                </button>
+            </form>
+            <div style="margin-bottom: 20px; color: green;">
+                Sua fatura foi aberta em uma nova guia. Caso não abra automaticamente,
+                <a href="{{ $boletoUrl  }}" target="_blank">clique aqui</a>.
+            </div>
 
-        <script>
-            function mostrarSpinner() {
-                document.getElementById('btn-texto').style.display = 'none';
-                document.getElementById('btn-spinner').style.display = 'inline';
-            }
-        </script>
-
+            <script>
+                function mostrarSpinner() {
+                    document.getElementById('btn-texto').style.display = 'none';
+                    document.getElementById('btn-spinner').style.display = 'inline';
+                }
+            </script>
+        @endif
 
 
 
