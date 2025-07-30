@@ -181,7 +181,7 @@
                 } else {
                     echo "<div style='color: red;'>Login ausente na sessão.</div>";
                 }
-                echo "<a href='$boletoUrl' target='_blank'>Abrir Fatura Manualmente</a>";
+                //echo "<a href='$boletoUrl' target='_blank'>Abrir Fatura Manualmente</a>";
 
             @endphp
         @endif
