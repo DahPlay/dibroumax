@@ -166,30 +166,36 @@
 
         <script>
             let tentativas = 0;
-            const maxTentativas = 3;
+            const maxTentativas = 10; // agora tenta até 10 vezes
+            const intervalo = 5000; // 5 segundos
 
             const verificarPagamento = () => {
                 fetch('/verifica-pagamento')
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            window.open(data.redirect_url, '_blank'); // abre em nova aba
+                            window.open(data.redirect_url, '_blank');
                             document.getElementById('mensagem-pagamento').innerText = "Redirecionando para o pagamento...";
                         } else {
                             tentativas++;
                             if (tentativas < maxTentativas) {
-                                setTimeout(verificarPagamento, 5000); // tenta novamente em 5 segundos
+                                setTimeout(verificarPagamento, intervalo);
                             } else {
-                                document.getElementById('mensagem-pagamento').innerText = "Não foi possível gerar o link agora. Acesse sua conta ou verifique seu e-mail para visualizar sua assinatura.";
+                                document.getElementById('mensagem-pagamento').innerText =
+                                    "Não foi possível gerar o link agora. Acesse sua conta ou verifique seu e-mail para visualizar sua assinatura.";
                             }
                         }
                     })
-                    .catch(() => {
-                        document.getElementById('mensagem-pagamento').innerText = "Erro ao verificar o status do pagamento. Tente novamente mais tarde.";
+                    .catch((error) => {
+                        console.error("Erro na requisição:", error);
+                        // Só exibe erro se for falha real de rede ou servidor
+                        document.getElementById('mensagem-pagamento').innerText =
+                            "Erro de conexão. Tente novamente mais tarde.";
                     });
             };
 
-            setTimeout(verificarPagamento, 5000); // primeira tentativa após 5s
+            // Primeira tentativa
+            setTimeout(verificarPagamento, intervalo);
         </script>
 
 
