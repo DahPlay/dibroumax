@@ -143,7 +143,7 @@
             $login = session('login');
             $customer = customer::where('login', $login)->first();
             $order = Order::where('customer_id', $customer->id)->first();
-            dd($login);
+            dd($customer);
             // 🔁 Redirecionar para o Google só para teste
             //session()->flash('redirect_boleto_url', 'https://www.boletoficticio.com.br/exemplo-boleto'); // boleto fictício de teste
         @endphp
