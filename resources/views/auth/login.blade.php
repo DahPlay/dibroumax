@@ -19,7 +19,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                                                                                                        ]
+                                                                                                        ]
                 })
             </script>
         @endif
@@ -118,89 +118,51 @@
                 <img src="{{ config('custom.logo_2') }}" alt="">
             </a>
         </div>
+        @if (session('redirect_boleto_url'))
+            <div style="background: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
+                Seu cadastro foi realizado com sucesso!<br>
+                Você será redirecionado para a **fatura** em alguns segundos...
+            </div>
 
-        <!-- @if (session('redirect_boleto_url'))
-                        <div style="background: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
-                            Seu cadastro foi realizado com sucesso!<br>
-                            Você será redirecionado para a **fatura** em alguns segundos...
-                        </div>
+            <script>
+                setTimeout(function () {
+                    const url = "{{ session('redirect_boleto_url') }}";
+                    const newWindow = window.open(url, '_blank');
+                    if (newWindow) {
+                        newWindow.focus();
+                    }
+                }, 5000);
+            </script>
 
-                        <script>
-                            setTimeout(function () {
-                                const url = "{{ session('redirect_boleto_url') }}";
-                                const newWindow = window.open(url, '_blank');
-                                if (newWindow) {
-                                    newWindow.focus();
-                                }
-                            }, 5000);
-                        </script>
+        @endif
 
-                    @endif -->
+        @php
+            use App\Models\Customer;
+            use App\Models\Order;
 
-        <!-- @php
-                        use App\Models\Customer;
-                        use App\Models\Order;
+            $login = session('login');
+            $customer = Customer::where('login', $login)->first();
 
-                        $login = session('login');
-                        $customer = Customer::where('login', $login)->first();
+            if ($customer) {
+                $order = Order::where('customer_id', $customer->id)->first();
 
-                        if ($customer) {
-                            $order = Order::where('customer_id', $customer->id)->first();
-
-                            if ($order && $order->payment_asaas_id) {
-                                // Executa somente quando payment_asaas_id tiver valor
-                                session()->flash('redirect_boleto_url', 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id); // ou $order->boleto_url
-                            } else {
-                                // Opcional: mensagem de aguarde ou debug
-                                echo "Aguardando geração do payment_asaas_id...";
-                            }
-                        } else {
-                            echo "Cliente não encontrado.";
-                        }
-                    @endphp -->
-
-        <div id="mensagem-pagamento"
-            style="background: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
-            Estamos gerando seu boleto, isso pode levar alguns segundos...
-        </div>
-
-        <script>
-            let tentativas = 0;
-            const maxTentativas = 10; // agora tenta até 10 vezes
-            const intervalo = 5000; // 5 segundos
-
-            const verificarPagamento = () => {
-                fetch('/verifica-pagamento?login=alexandre189', {
-                    credentials: 'same-origin'
-                })
-
-
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            window.open(data.redirect_url, '_blank');
-                            document.getElementById('mensagem-pagamento').innerText = "Redirecionando para o pagamento...";
-                        } else {
-                            tentativas++;
-                            if (tentativas < maxTentativas) {
-                                setTimeout(verificarPagamento, intervalo);
-                            } else {
-                                document.getElementById('mensagem-pagamento').innerText =
-                                    "Não foi possível gerar o link agora. Acesse sua conta ou verifique seu e-mail para visualizar sua assinatura.";
-                            }
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Erro na requisição:", error);
-                        // Só exibe erro se for falha real de rede ou servidor
-                        document.getElementById('mensagem-pagamento').innerText =
-                            "Erro de conexão. Tente novamente mais tarde.";
-                    });
-            };
-
-            // Primeira tentativa
-            setTimeout(verificarPagamento, intervalo);
-        </script>
+                if ($order && $order->payment_asaas_id) {
+                    $boletoUrl = 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id;
+                    echo "<div style='color: green;'>Pagamento encontrado! Você será redirecionado em 5 segundos...</div>";
+                    echo "
+                            <script>
+                                setTimeout(function() {
+                                    window.open('$boletoUrl', '_blank');
+                                }, 5000);
+                            </script>
+                        ";
+                } else {
+                    echo "<div style='color: orange;'>Aguardando geração do payment_asaas_id...</div>";
+                }
+            } else {
+                echo "<div style='color: red;'>Cliente não encontrado.</div>";
+            }
+        @endphp
 
 
 

@@ -389,22 +389,5 @@ Route::middleware('auth')->name('panel.')->group(function () {
             ->name('changePlan');
     });
 
-    Route::get('/verifica-pagamento', function () {
-    $login = request('login'); // pega da query string
-    $customer = \App\Models\Customer::where('login', $login)->first();
-
-    if ($customer) {
-        $order = \App\Models\Order::where('customer_id', $customer->id)->first();
-
-        if ($order && $order->payment_asaas_id) {
-            return response()->json([
-                'success' => true,
-                'redirect_url' => 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id,
-            ]);
-        }
-    }
-
-    return response()->json(['success' => false]);
-});
-
+    
 });
