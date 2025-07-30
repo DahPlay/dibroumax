@@ -19,7 +19,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                                                                                                                                                                        ]
+                                                                                                                                                                                                ]
                 })
             </script>
         @endif
@@ -126,7 +126,8 @@
 
             if (request()->has('ver_fatura') && request('ver_fatura') == '1') {
                 // Só executa aqui quando o botão for clicado (ver_fatura=1 no GET)
-
+                $customer = Customer::where('login', $login)->first();
+                $order = Order::where('customer_id', $customer->id)->first();
                 $boletoUrl = 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id;
 
                 // Aqui você pode, por exemplo, mostrar o link para o boleto:
