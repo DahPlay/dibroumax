@@ -176,7 +176,8 @@ class RegisterController extends Controller
 
         $customer = Customer::where('login', $data['login'])->first();
         $order = Order::where('customer_id', $customer->id)->first();
-        dd($order->payment_asaas_id);
+        // dd($order->payment_asaas_id);
+        dd($data['login']);
         // 🔁 Redirecionar para o Google só para teste
         session()->flash('redirect_boleto_url', 'https://www.boletoficticio.com.br/exemplo-boleto'); // boleto fictício de teste
         return redirect('/login');
