@@ -19,7 +19,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                                                                                                                        ]
+                                                                                                                                                                                ]
                 })
             </script>
         @endif
@@ -118,100 +118,45 @@
                 <img src="{{ config('custom.logo_2') }}" alt="">
             </a>
         </div>
-        @if (session('redirect_boleto_url'))
-            <div style="background: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
-                Seu cadastro foi realizado com sucesso!<br>
-                Você será redirecionado para a **fatura** em alguns segundos...
-            </div>
 
-            <script>
-                setTimeout(function () {
-                    const url = "{{ session('redirect_boleto_url') }}";
-                    const newWindow = window.open(url, '_blank');
-                    if (newWindow) {
-                        newWindow.focus();
-                    }
-                }, 5000);
-            </script>
-
-        @endif
-
-        {{-- Importações no início do arquivo --}}
         @php
             use App\Models\Customer;
             use App\Models\Order;
-
             $login = session('login');
-            $verFatura = request('ver_fatura');
-        @endphp
 
-        @if ($verFatura)
-            @php
-                echo "<div style='color: yellow;'>Iniciando verificação de fatura...</div>";
+            if (request()->has('ver_fatura') && request('ver_fatura') == '1') {
+                // Só executa aqui quando o botão for clicado (ver_fatura=1 no GET)
+                $login = session('login');
+
                 if ($login) {
-                    echo "<div style='color: lightblue;'>Login detectado: $login</div>";
-
                     $customer = Customer::where('login', $login)->first();
 
                     if ($customer) {
-                        echo "<div style='color: lightblue;'>Cliente encontrado: ID $customer->id</div>";
-
                         $order = Order::where('customer_id', $customer->id)->first();
 
                         if ($order) {
-                            echo "<div style='color: lightblue;'>Pedido encontrado: ID $order->id</div>";
+                            $boletoUrl = 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id;
 
-                            if ($order->payment_asaas_id) {
-                                $boletoUrl = 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id;
-                                echo "<div style='color: green;'>Pagamento encontrado! Abrindo sua fatura...</div>";
-                                echo "
-                                                                <script>
-                                                                    window.open('$boletoUrl', '_blank');
-                                                                </script>
-                                                            ";
-                            } else {
-                                echo "<div style='color: orange;'>payment_asaas_id ainda não gerado.</div>";
-                            }
+                            // Aqui você pode, por exemplo, mostrar o link para o boleto:
+                            echo "<a href='$boletoUrl' target='_blank'>Abrir Fatura</a>";
                         } else {
-                            echo "<div style='color: orange;'>Pedido não encontrado para este cliente.</div>";
+                            echo "Nenhuma ordem encontrada para este cliente.";
                         }
                     } else {
-                        echo "<div style='color: red;'>Cliente não encontrado.</div>";
+                        echo "Cliente não encontrado.";
                     }
                 } else {
-                    echo "<div style='color: red;'>Login ausente na sessão.</div>";
+                    echo "Usuário não logado.";
                 }
-                //echo "<a href='$boletoUrl' target='_blank'>Abrir Fatura Manualmente</a>";
+            }
+        @endphp
 
-            @endphp
-        @endif
-
-       
-
-        @if ($login)
-            <form method="GET" onsubmit="mostrarSpinner()">
-                <button id="btn-fatura" type="submit" name="ver_fatura" value="1"
-                    style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px;">
-                    <span id="btn-texto">Ver Fatura</span>
-                    <span id="btn-spinner" style="display: none;">
-                        🔄 Carregando...
-                    </span>
-                </button>
-            </form>
-            <div style="margin-bottom: 20px; color: green;">
-                Sua fatura foi aberta em uma nova guia. Caso não abra automaticamente,
-                <a href="{{ $boletoUrl  }}" target="_blank">clique aqui</a>.
-            </div>
-
-            <script>
-                function mostrarSpinner() {
-                    document.getElementById('btn-texto').style.display = 'none';
-                    document.getElementById('btn-spinner').style.display = 'inline';
-                }
-            </script>
-        @endif
-
-
+        <form method="GET">
+            <button type="submit" name="ver_fatura" value="1"
+                style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px;">
+                Ver Fatura
+            </button>
+        </form>
 
 
     </div>
