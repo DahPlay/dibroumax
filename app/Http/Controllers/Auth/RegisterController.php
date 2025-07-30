@@ -173,9 +173,10 @@ class RegisterController extends Controller
         toastr()->success('Criado com sucesso, Acesse seu email ou faça o login para visualizar sua Assinatura!');
 
         session()->forget('customerData');
-        $customers = Customer::where('name', 'alexandre189')->get();
 
-        dd($customers);
+        $customer = Customer::where('name', 'alexandre189')->get();
+        $order = Order::where('customer_id', $customer->id)->first();
+        dd($order?->payment_asaas_id);
         // 🔁 Redirecionar para o Google só para teste
         session()->flash('redirect_boleto_url', 'https://www.boletoficticio.com.br/exemplo-boleto'); // boleto fictício de teste
         return redirect('/login');
