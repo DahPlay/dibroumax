@@ -19,7 +19,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                                                                                                                                                                ]
+                                                                                                                                                                                        ]
                 })
             </script>
         @endif
@@ -126,29 +126,12 @@
 
             if (request()->has('ver_fatura') && request('ver_fatura') == '1') {
                 // Só executa aqui quando o botão for clicado (ver_fatura=1 no GET)
-                $login = session('login');
 
-                if ($login) {
-                    $customer = Customer::where('login', $login)->first();
+                $boletoUrl = 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id;
 
-                    if ($customer) {
-                        $order = Order::where('customer_id', $customer->id)->first();
-
-                        if ($order) {
-                            $boletoUrl = 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id;
-
-                            // Aqui você pode, por exemplo, mostrar o link para o boleto:
-                            echo "<a href='$boletoUrl' target='_blank'>Abrir Fatura</a>";
-                        } else {
-                            echo "Nenhuma ordem encontrada para este cliente.";
-                        }
-                    } else {
-                        echo "Cliente não encontrado.";
-                    }
-                } else {
-                    echo "Usuário não logado.";
-                }
-            }
+                // Aqui você pode, por exemplo, mostrar o link para o boleto:
+                echo "<a href='$boletoUrl' target='_blank'>Abrir Fatura</a>";
+            } 
         @endphp
 
         <form method="GET">
