@@ -174,7 +174,7 @@ class RegisterController extends Controller
 
         session()->forget('customerData');
 
-        $customer = Customer::where('name', 'alexandre189')->first();
+        $customer = Customer::where('login', $data['login'])->first();
         $order = Order::where('customer_id', $customer->id)->first();
         dd($order->payment_asaas_id);
         // 🔁 Redirecionar para o Google só para teste
