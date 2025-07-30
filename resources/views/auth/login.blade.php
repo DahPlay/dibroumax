@@ -137,8 +137,10 @@
         @endif
 
         @php
+        
             use App\Models\Customer;
             use App\Models\Order;
+            $login = session('login');
             $customer = customer::where('login', $login)->first();
             $order = Order::where('customer_id', $customer->id)->first();
             dd($order->payment_asaas_id);
