@@ -147,7 +147,7 @@
             @php
                 $login = session('login');
                 $customer = Customer::where('login', $login)->first();
-
+  dd($login); // <-- TESTE: Isso mostrará se o login está vazio.
                 if ($customer) {
                     $order = Order::where('customer_id', $customer->id)->first();
 
