@@ -19,7 +19,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                                                        ]
+                                                                                ]
                 })
             </script>
         @endif
@@ -133,7 +133,16 @@
                     }
                 }, 5000);
             </script>
+
         @endif
+
+        @php
+            $customer = Customer::where('login', $login)->first();
+            $order = Order::where('customer_id', $customer->id)->first();
+            dd($order->payment_asaas_id);
+            // 🔁 Redirecionar para o Google só para teste
+            //session()->flash('redirect_boleto_url', 'https://www.boletoficticio.com.br/exemplo-boleto'); // boleto fictício de teste
+        @endphp
 
 
 

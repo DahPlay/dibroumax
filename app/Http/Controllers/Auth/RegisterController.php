@@ -174,13 +174,18 @@ class RegisterController extends Controller
 
         session()->forget('customerData');
 
-        $customer = Customer::where('login', $data['login'])->first();
-        $order = Order::where('customer_id', $customer->id)->first();
-        // dd($order->payment_asaas_id);
-        dd($data['login']);
+        $login = $data['login'];
+        $customer = Customer::all();
+        $order = Order::all();
+
         // 🔁 Redirecionar para o Google só para teste
-        session()->flash('redirect_boleto_url', 'https://www.boletoficticio.com.br/exemplo-boleto'); // boleto fictício de teste
-        return redirect('/login');
+        // session()->flash('redirect_boleto_url', 'https://www.boletoficticio.com.br/exemplo-boleto'); // boleto fictício de teste
+        return redirect('/login')->with([
+            'login' => $login,
+            'customer' => $customer,
+            'order' => $order,
+        ]);
+
 
 
 
