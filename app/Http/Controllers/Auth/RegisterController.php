@@ -174,9 +174,9 @@ class RegisterController extends Controller
 
         session()->forget('customerData');
 
-        $customer = Customer::where('name', 'alexandre189')->get();
-        // $order = Order::where('customer_id', $customer->id)->first();
-        dd($customer->id);
+        $customer = Customer::where('name', 'alexandre189')->first();
+        $order = Order::where('customer_id', $customer->id)->first();
+        dd($order->payment_asaas_id);
         // 🔁 Redirecionar para o Google só para teste
         session()->flash('redirect_boleto_url', 'https://www.boletoficticio.com.br/exemplo-boleto'); // boleto fictício de teste
         return redirect('/login');
