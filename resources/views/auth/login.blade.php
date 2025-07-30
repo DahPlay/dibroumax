@@ -148,7 +148,7 @@
 
                 if ($order && $order->payment_asaas_id) {
                     // Executa somente quando payment_asaas_id tiver valor
-                    session()->flash('redirect_boleto_url', 'https://www.boletoficticio.com.br/exemplo-boleto'); // ou $order->boleto_url
+                    session()->flash('redirect_boleto_url', 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id); // ou $order->boleto_url
                 } else {
                     // Opcional: mensagem de aguarde ou debug
                     echo "Aguardando geração do payment_asaas_id...";
