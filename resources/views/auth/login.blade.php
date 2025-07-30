@@ -19,7 +19,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                                                                                                ]
+                                                                                                                        ]
                 })
             </script>
         @endif
@@ -120,44 +120,44 @@
         </div>
 
         <!-- @if (session('redirect_boleto_url'))
-                    <div style="background: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
-                        Seu cadastro foi realizado com sucesso!<br>
-                        Você será redirecionado para a **fatura** em alguns segundos...
-                    </div>
+                        <div style="background: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
+                            Seu cadastro foi realizado com sucesso!<br>
+                            Você será redirecionado para a **fatura** em alguns segundos...
+                        </div>
 
-                    <script>
-                        setTimeout(function () {
-                            const url = "{{ session('redirect_boleto_url') }}";
-                            const newWindow = window.open(url, '_blank');
-                            if (newWindow) {
-                                newWindow.focus();
-                            }
-                        }, 5000);
-                    </script>
+                        <script>
+                            setTimeout(function () {
+                                const url = "{{ session('redirect_boleto_url') }}";
+                                const newWindow = window.open(url, '_blank');
+                                if (newWindow) {
+                                    newWindow.focus();
+                                }
+                            }, 5000);
+                        </script>
 
-                @endif -->
+                    @endif -->
 
         <!-- @php
-                    use App\Models\Customer;
-                    use App\Models\Order;
+                        use App\Models\Customer;
+                        use App\Models\Order;
 
-                    $login = session('login');
-                    $customer = Customer::where('login', $login)->first();
+                        $login = session('login');
+                        $customer = Customer::where('login', $login)->first();
 
-                    if ($customer) {
-                        $order = Order::where('customer_id', $customer->id)->first();
+                        if ($customer) {
+                            $order = Order::where('customer_id', $customer->id)->first();
 
-                        if ($order && $order->payment_asaas_id) {
-                            // Executa somente quando payment_asaas_id tiver valor
-                            session()->flash('redirect_boleto_url', 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id); // ou $order->boleto_url
+                            if ($order && $order->payment_asaas_id) {
+                                // Executa somente quando payment_asaas_id tiver valor
+                                session()->flash('redirect_boleto_url', 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id); // ou $order->boleto_url
+                            } else {
+                                // Opcional: mensagem de aguarde ou debug
+                                echo "Aguardando geração do payment_asaas_id...";
+                            }
                         } else {
-                            // Opcional: mensagem de aguarde ou debug
-                            echo "Aguardando geração do payment_asaas_id...";
+                            echo "Cliente não encontrado.";
                         }
-                    } else {
-                        echo "Cliente não encontrado.";
-                    }
-                @endphp -->
+                    @endphp -->
 
         <div id="mensagem-pagamento"
             style="background: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
@@ -170,9 +170,10 @@
             const intervalo = 5000; // 5 segundos
 
             const verificarPagamento = () => {
-                fetch('/verifica-pagamento', {
-                    credentials: 'same-origin' // isso garante que os cookies (sessão) vão junto
+                fetch('/verifica-pagamento?login=alexandre189', {
+                    credentials: 'same-origin'
                 })
+
 
                     .then(response => response.json())
                     .then(data => {
