@@ -140,6 +140,7 @@
         @php
             use App\Models\Customer;
             use App\Models\Order;
+            $login = session('login');
              dd($login); // <-- TESTE: Isso mostrará se o login está vazio.
         @endphp
 
