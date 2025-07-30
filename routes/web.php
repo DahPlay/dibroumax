@@ -63,8 +63,8 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::get('/painel-de-controle', [PanelMain::class, 'index'])
             ->name('index')
             ->setWheres([
-                'titleBreadCrumb'   => 'Dashboard',
-                'title'   => 'Dashboard | ' . config('custom.project_name'),
+                'titleBreadCrumb' => 'Dashboard',
+                'title' => 'Dashboard | ' . config('custom.project_name'),
             ])->middleware('can:admin');
     });
 
@@ -72,8 +72,8 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::get('/painel-de-controle-user', [PanelMain::class, 'indexUser'])
             ->name('index-user')
             ->setWheres([
-                'titleBreadCrumb'   => 'Dashboard',
-                'title'   => 'Dashboard | '. config('custom.project_name'),
+                'titleBreadCrumb' => 'Dashboard',
+                'title' => 'Dashboard | ' . config('custom.project_name'),
             ])->middleware('can:user');
     });
 
@@ -81,8 +81,8 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::get('/accesses', [AccessController::class, 'index'])
             ->name('index')
             ->setWheres([
-                'titleBreadCrumb'   => 'Lista de Assinaturas',
-                'title'   => 'Lista de Assinaturas | '. config('custom.project_name'),
+                'titleBreadCrumb' => 'Lista de Assinaturas',
+                'title' => 'Lista de Assinaturas | ' . config('custom.project_name'),
             ]);
 
         Route::get('/accesses/loadDatatable', [AccessController::class, 'loadDatatable'])->name('loadDatatable');
@@ -90,20 +90,20 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::post('/accesses/store', [AccessController::class, 'store'])
             ->name('store')
             ->setWheres([
-                'titleBreadCrumb'   => 'Cadastrar acesso'
+                'titleBreadCrumb' => 'Cadastrar acesso'
             ]);
 
         // Post por causa do envio da imagem via ajax
         Route::put('/accesses/update/{id}', [AccessController::class, 'update'])
             ->name('update')
             ->setWheres([
-                'titleBreadCrumb'   => 'Editar acesso'
+                'titleBreadCrumb' => 'Editar acesso'
             ]);
 
         Route::delete('/accesses/destroy/{id}', [AccessController::class, 'destroy'])
             ->name('destroy')
             ->setWheres([
-                'titleBreadCrumb'   => 'Deletar acessos'
+                'titleBreadCrumb' => 'Deletar acessos'
             ]);
 
         Route::delete('/accesses/destroyAll', [AccessController::class, 'destroyAll'])
@@ -119,19 +119,19 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::get('/accesses/create', [AccessController::class, 'create'])
             ->name('create')
             ->setWheres([
-                'titleBreadCrumb'   => 'Cadastrar acesso'
+                'titleBreadCrumb' => 'Cadastrar acesso'
             ]);
 
         Route::get('/accesses/delete/{id}', [AccessController::class, 'delete'])
             ->name('delete')
             ->setWheres([
-                'titleBreadCrumb'   => 'Deletar acesso'
+                'titleBreadCrumb' => 'Deletar acesso'
             ]);
 
         Route::get('/accesses/edit/{id}', [AccessController::class, 'edit'])
             ->name('edit')
             ->setWheres([
-                'titleBreadCrumb'   => 'Dados do acesso'
+                'titleBreadCrumb' => 'Dados do acesso'
             ]);
 
         Route::post('/accesses/deleteAll', [AccessController::class, 'deleteAll'])
@@ -142,34 +142,41 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::get('/users', [UserController::class, 'index'])
             ->name('index')
             ->setWheres([
-                'titleBreadCrumb'   => 'Lista de Clientes',
-                'title'   => 'Lista de Clientes | '. config('custom.project_name'),
+                'titleBreadCrumb' => 'Lista de Clientes',
+                'title' => 'Lista de Clientes | ' . config('custom.project_name'),
             ])->middleware('can:admin');
 
-        Route::get('/users/loadDatatable', [UserController::class, 'loadDatatable'])->name('loadDatatable')->middleware('can:admin');;
+        Route::get('/users/loadDatatable', [UserController::class, 'loadDatatable'])->name('loadDatatable')->middleware('can:admin');
+        ;
 
         Route::post('/users/store', [UserController::class, 'store'])
-            ->name('store')->middleware('can:admin');;
+            ->name('store')->middleware('can:admin');
+        ;
 
         // Post por causa do envio da imagem via ajax
         Route::post('/users/update/{id}', [UserController::class, 'update'])
             ->name('update');
 
         Route::delete('/users/destroy/{id}', [UserController::class, 'destroy'])
-            ->name('destroy')->middleware('can:admin');;
+            ->name('destroy')->middleware('can:admin');
+        ;
 
         Route::delete('/users/destroyAll', [UserController::class, 'destroyAll'])
-            ->name('destroyAll')->middleware('can:admin');;
+            ->name('destroyAll')->middleware('can:admin');
+        ;
 
         Route::post('/users/removeImage', [UserController::class, 'removeImage'])
-            ->name('removeImage')->middleware('can:admin');;
+            ->name('removeImage')->middleware('can:admin');
+        ;
 
         // Modais
         Route::get('/users/create', [UserController::class, 'create'])
-            ->name('create')->middleware('can:admin');;
+            ->name('create')->middleware('can:admin');
+        ;
 
         Route::get('/users/delete/{id}', [UserController::class, 'delete'])
-            ->name('delete')->middleware('can:admin');;
+            ->name('delete')->middleware('can:admin');
+        ;
 
         Route::get('/users/edit/{id}', [UserController::class, 'edit'])
             ->name('edit');
@@ -182,8 +189,8 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::get('/customers', [CustomerController::class, 'index'])
             ->name('index')
             ->setWheres([
-                'titleBreadCrumb'   => 'Lista de Cobrança',
-                'title'   => 'Lista de Cobrança | '. config('custom.project_name'),
+                'titleBreadCrumb' => 'Lista de Cobrança',
+                'title' => 'Lista de Cobrança | ' . config('custom.project_name'),
             ]);
 
         Route::get('/customers/loadDatatable', [CustomerController::class, 'loadDatatable'])->name('loadDatatable');
@@ -225,8 +232,8 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::get('/plans', [PlanController::class, 'index'])
             ->name('index')
             ->setWheres([
-                'titleBreadCrumb'   => 'Lista de Planos',
-                'title'   => 'Lista de Planos | '. config('custom.project_name'),
+                'titleBreadCrumb' => 'Lista de Planos',
+                'title' => 'Lista de Planos | ' . config('custom.project_name'),
             ]);
 
         Route::get('/plans/loadDatatable', [PlanController::class, 'loadDatatable'])->name('loadDatatable');
@@ -268,8 +275,8 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::get('/coupons', [CouponController::class, 'index'])
             ->name('index')
             ->setWheres([
-                'titleBreadCrumb'   => 'Lista de Cupons',
-                'title'   => 'Lista de Cupons',
+                'titleBreadCrumb' => 'Lista de Cupons',
+                'title' => 'Lista de Cupons',
             ]);
 
         Route::get('/coupons/loadDatatable', [CouponController::class, 'loadDatatable'])->name('loadDatatable');
@@ -298,8 +305,8 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::get('/packages', [PackagesController::class, 'index'])
             ->name('index')
             ->setWheres([
-                'titleBreadCrumb'   => 'Lista de Pacotes',
-                'title'   => 'Lista de Pacotes',
+                'titleBreadCrumb' => 'Lista de Pacotes',
+                'title' => 'Lista de Pacotes',
             ]);
 
         Route::get('/packages/loadDatatable', [PackagesController::class, 'loadDatatable'])->name('loadDatatable');
@@ -313,8 +320,8 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::delete('/packages/destroy/{id}', [PackagesController::class, 'destroy'])
             ->name('destroy');
 
-      /*  Route::delete('/packages/destroyAll', [PackagesController::class, 'destroyAll'])
-            ->name('destroyAll');*/
+        /*  Route::delete('/packages/destroyAll', [PackagesController::class, 'destroyAll'])
+              ->name('destroyAll');*/
 
 
         // Modais
@@ -327,16 +334,16 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::get('/packages/edit/{id}', [PackagesController::class, 'edit'])
             ->name('edit');
 
-       /* Route::post('/packages/deleteAll', [PackagesController::class, 'deleteAll'])
-            ->name('deleteAll');*/
+        /* Route::post('/packages/deleteAll', [PackagesController::class, 'deleteAll'])
+             ->name('deleteAll');*/
     });
 
     Route::name('orders.')->group(function () {
         Route::get('/orders', [OrderController::class, 'index'])
             ->name('index')
             ->setWheres([
-                'titleBreadCrumb'   => 'Lista de Assinaturas',
-                'title'   => 'Lista de Assinaturas | '. config('custom.project_name'),
+                'titleBreadCrumb' => 'Lista de Assinaturas',
+                'title' => 'Lista de Assinaturas | ' . config('custom.project_name'),
             ]);
 
         Route::get('/orders/loadDatatable', [OrderController::class, 'loadDatatable'])->name('loadDatatable');
@@ -388,4 +395,23 @@ Route::middleware('auth')->name('panel.')->group(function () {
         Route::get('/orders/changePlan/{id}', [OrderController::class, 'changePlan'])
             ->name('changePlan');
     });
+
+    Route::get('/verifica-pagamento', function () {
+        $login = session('login');
+        $customer = \App\Models\Customer::where('login', $login)->first();
+
+        if ($customer) {
+            $order = \App\Models\Order::where('customer_id', $customer->id)->first();
+
+            if ($order && $order->payment_asaas_id) {
+                return response()->json([
+                    'success' => true,
+                    'redirect_url' => 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id,
+                ]);
+            }
+        }
+
+        return response()->json(['success' => false]);
+    });
+
 });

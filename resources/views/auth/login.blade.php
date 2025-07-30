@@ -19,7 +19,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                                                                                ]
+                                                                                                        ]
                 })
             </script>
         @endif
@@ -118,45 +118,80 @@
                 <img src="{{ config('custom.logo_2') }}" alt="">
             </a>
         </div>
-        @if (session('redirect_boleto_url'))
-            <div style="background: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
-                Seu cadastro foi realizado com sucesso!<br>
-                Você será redirecionado para a **fatura** em alguns segundos...
-            </div>
 
-            <script>
-                setTimeout(function () {
-                    const url = "{{ session('redirect_boleto_url') }}";
-                    const newWindow = window.open(url, '_blank');
-                    if (newWindow) {
-                        newWindow.focus();
+        <!-- @if (session('redirect_boleto_url'))
+                <div style="background: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
+                    Seu cadastro foi realizado com sucesso!<br>
+                    Você será redirecionado para a **fatura** em alguns segundos...
+                </div>
+
+                <script>
+                    setTimeout(function () {
+                        const url = "{{ session('redirect_boleto_url') }}";
+                        const newWindow = window.open(url, '_blank');
+                        if (newWindow) {
+                            newWindow.focus();
+                        }
+                    }, 5000);
+                </script>
+
+            @endif -->
+
+        <!-- @php
+                use App\Models\Customer;
+                use App\Models\Order;
+
+                $login = session('login');
+                $customer = Customer::where('login', $login)->first();
+
+                if ($customer) {
+                    $order = Order::where('customer_id', $customer->id)->first();
+
+                    if ($order && $order->payment_asaas_id) {
+                        // Executa somente quando payment_asaas_id tiver valor
+                        session()->flash('redirect_boleto_url', 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id); // ou $order->boleto_url
+                    } else {
+                        // Opcional: mensagem de aguarde ou debug
+                        echo "Aguardando geração do payment_asaas_id...";
                     }
-                }, 5000);
-            </script>
-
-        @endif
-
-        @php
-            use App\Models\Customer;
-            use App\Models\Order;
-
-            $login = session('login');
-            $customer = Customer::where('login', $login)->first();
-
-            if ($customer) {
-                $order = Order::where('customer_id', $customer->id)->first();
-
-                if ($order && $order->payment_asaas_id) {
-                    // Executa somente quando payment_asaas_id tiver valor
-                    session()->flash('redirect_boleto_url', 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id); // ou $order->boleto_url
                 } else {
-                    // Opcional: mensagem de aguarde ou debug
-                    echo "Aguardando geração do payment_asaas_id...";
+                    echo "Cliente não encontrado.";
                 }
-            } else {
-                echo "Cliente não encontrado.";
-            }
-        @endphp
+            @endphp -->
+
+        <div id="mensagem-pagamento"
+            style="background: #fff3cd; color: #856404; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
+            Estamos gerando seu boleto, isso pode levar alguns segundos...
+        </div>
+
+        <script>
+            let tentativas = 0;
+            const maxTentativas = 3;
+
+            const verificarPagamento = () => {
+                fetch('/verifica-pagamento')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.open(data.redirect_url, '_blank'); // abre em nova aba
+                            document.getElementById('mensagem-pagamento').innerText = "Redirecionando para o pagamento...";
+                        } else {
+                            tentativas++;
+                            if (tentativas < maxTentativas) {
+                                setTimeout(verificarPagamento, 5000); // tenta novamente em 5 segundos
+                            } else {
+                                document.getElementById('mensagem-pagamento').innerText = "Não foi possível gerar o link agora. Acesse sua conta ou verifique seu e-mail para visualizar sua assinatura.";
+                            }
+                        }
+                    })
+                    .catch(() => {
+                        document.getElementById('mensagem-pagamento').innerText = "Erro ao verificar o status do pagamento. Tente novamente mais tarde.";
+                    });
+            };
+
+            setTimeout(verificarPagamento, 5000); // primeira tentativa após 5s
+        </script>
+
 
 
 
