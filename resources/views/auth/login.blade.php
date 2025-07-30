@@ -135,12 +135,12 @@
             } 
         @endphp
 
-        <form method="GET">
+        <!-- <form method="GET">
             <button type="submit" name="ver_fatura" value="1"
                 style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px;">
                 Ver Fatura
             </button>
-        </form>
+        </form> -->
 
 
     </div>
