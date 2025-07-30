@@ -19,7 +19,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                                                                                                ]
+                                                                                                                                ]
                 })
             </script>
         @endif
@@ -145,29 +145,45 @@
             $verFatura = request('ver_fatura');
         @endphp
 
-        @if ($verFatura && $login)
+        @if ($verFatura)
             @php
-                $customer = Customer::where('login', $login)->first();
+                echo "<div style='color: yellow;'>Iniciando verificação de fatura...</div>";
+                if ($login) {
+                    echo "<div style='color: lightblue;'>Login detectado: $login</div>";
 
-                if ($customer) {
-                    $order = Order::where('customer_id', $customer->id)->first();
+                    $customer = \App\Models\Customer::where('login', $login)->first();
 
-                    if ($order && $order->payment_asaas_id) {
-                        $boletoUrl = 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id;
-                        echo "<div style='color: green;'>Pagamento encontrado! Abrindo sua fatura...</div>";
-                        echo "
-                                <script>
-                                    window.open('$boletoUrl', '_blank');
-                                </script>
-                            ";
+                    if ($customer) {
+                        echo "<div style='color: lightblue;'>Cliente encontrado: ID $customer->id</div>";
+
+                        $order = \App\Models\Order::where('customer_id', $customer->id)->first();
+
+                        if ($order) {
+                            echo "<div style='color: lightblue;'>Pedido encontrado: ID $order->id</div>";
+
+                            if ($order->payment_asaas_id) {
+                                $boletoUrl = 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id;
+                                echo "<div style='color: green;'>Pagamento encontrado! Abrindo sua fatura...</div>";
+                                echo "
+                                                    <script>
+                                                        window.open('$boletoUrl', '_blank');
+                                                    </script>
+                                                ";
+                            } else {
+                                echo "<div style='color: orange;'>payment_asaas_id ainda não gerado.</div>";
+                            }
+                        } else {
+                            echo "<div style='color: orange;'>Pedido não encontrado para este cliente.</div>";
+                        }
                     } else {
-                        echo "<div style='color: orange;'>Aguardando geração do payment_asaas_id...</div>";
+                        echo "<div style='color: red;'>Cliente não encontrado.</div>";
                     }
                 } else {
-                    echo "<div style='color: red;'>Cliente não encontrado.</div>";
+                    echo "<div style='color: red;'>Login ausente na sessão.</div>";
                 }
             @endphp
         @endif
+
 
         @if ($login)
             <form method="GET" onsubmit="mostrarSpinner()">
