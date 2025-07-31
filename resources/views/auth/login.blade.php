@@ -123,13 +123,19 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        console.log("🚀 DOM pronto");
+
         const login = getUrlParam("login");
+        console.log("🔍 Login encontrado na URL:", login);
 
         // Só executa se tiver login na URL
         if (login) {
             setTimeout(() => {
+                console.log("⏱️ Executando busca do boleto via API...");
                 buscarEBuildarModal(login);
             }, 5000);
+        } else {
+            console.log("⚠️ Nenhum login fornecido na URL");
         }
     });
 
@@ -237,24 +243,8 @@
     }
 
     console.log("🔍 Script carregado");
-
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("🚀 DOM pronto");
-
-    const login = getUrlParam("login");
-    console.log("🔍 Login encontrado na URL:", login);
-
-    if (login) {
-        setTimeout(() => {
-            console.log("⏱️ Executando busca do boleto via API...");
-            buscarEBuildarModal(login);
-        }, 5000);
-    } else {
-        console.log("⚠️ Nenhum login fornecido na URL");
-    }
-});
-
 </script>
+
 
 
 
