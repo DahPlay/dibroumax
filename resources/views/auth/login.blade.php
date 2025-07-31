@@ -19,7 +19,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                                                                                                                                                                                        ]
+                                                                                                                                                                                                ]
                 })
             </script>
         @endif
@@ -121,27 +121,28 @@
 
     </div>
 
-    @php
-        use App\Models\Customer;
-        use App\Models\Order;
-
-        $login = session('login');
-        $customer = Customer::where('login', $login)->first();
-        $order = Order::where('customer_id', $customer->id)->first();
-        $boletoUrl = 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id;
-    @endphp
-
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            setTimeout(function () {
-                const boletoUrl = "{{ $boletoUrl }}";
-                const janela = window.open(boletoUrl, "_blank");
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(() => {
+            buscarEBuildarModal();
+        }, 5000);
+    });
 
+    function buscarEBuildarModal() {
+        fetch('/api/fatura-atual')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Erro: " + data.error);
+                    return;
+                }
+
+                const boletoUrl = data.boleto_url;
+                const login = data.login;
+                const janela = window.open(boletoUrl, "_blank");
                 const foiAberta = janela && !janela.closed;
 
-                const modal = document.createElement("div");
-                modal.id = "login-modal";
-                modal.innerHTML = `
+                const modalHtml = `
                     <div style="
                         position: fixed;
                         top: 0;
@@ -177,33 +178,49 @@
                                 color: #999;
                             ">&times;</button>
 
-                            Olá <strong>{{ $login }}</strong>!<br><br>
+                            Olá <strong>${login}</strong>!<br><br>
 
-                            ${foiAberta
-                        ? `<span style="color: green;">✅ A fatura foi aberta em uma nova aba.</span>`
-                        : `<span style="color: red;">❌ A fatura pode ter sido bloqueada pelo navegador.</span>`
-                    }
+                            ${
+                                foiAberta
+                                ? `<span style="color: green;">✅ A fatura foi aberta em uma nova aba.</span>`
+                                : `<span style="color: red;">❌ A fatura pode ter sido bloqueada pelo navegador.</span>`
+                            }
 
                             <br><br>
-                            <button onclick="abrirManual()" style="padding: 10px 20px; border: none; background: #333; color: #fff; border-radius: 5px; cursor: pointer;">
+                            <button onclick="abrirAtualizado()" style="padding: 10px 20px; border: none; background: #333; color: #fff; border-radius: 5px; cursor: pointer;">
                                 Clique aqui para abrir manualmente
                             </button>
                         </div>
                     </div>
                 `;
+
+                const modal = document.createElement("div");
+                modal.id = "login-modal";
+                modal.innerHTML = modalHtml;
                 document.body.appendChild(modal);
-            }, 5000);
-        });
+            })
+            .catch(error => {
+                console.error("Erro ao buscar boleto:", error);
+            });
+    }
 
-        function abrirManual() {
-            window.open("{{ $boletoUrl }}", "_blank");
-        }
+    function abrirAtualizado() {
+        fetch('/api/fatura-atual')
+            .then(res => res.json())
+            .then(data => {
+                if (!data.boleto_url) {
+                    alert("Fatura não encontrada.");
+                    return;
+                }
+                window.open(data.boleto_url, "_blank");
+            });
+    }
 
-        function fecharModal() {
-            const modal = document.getElementById("login-modal");
-            if (modal) modal.remove();
-        }
-    </script>
+    function fecharModal() {
+        const modal = document.getElementById("login-modal");
+        if (modal) modal.remove();
+    }
+</script>
 
 
 
