@@ -35,18 +35,18 @@ Route::middleware('auth.api')->get('/clientes-ativos-telemedicina', [CustomerTel
 // 🔒 Endpoint protegido com token (sem Sanctum)
 Route::middleware('auth.api')->get('/clientes-ativos-buscar', [CustomerControllerFind::class, 'activeCustomers']);
 
-Route::get('/api/fatura-atual', function () {
-    $login = session('login');
-    if (!$login) {
-        return response()->json(['error' => 'Login não encontrado'], 401);
-    }
+Route::get('/fatura-atual', function () {
+    $login = session('login'); // <-- isso NÃO FUNCIONA por padrão no api.php
+
+    // Apenas para teste rápido, você pode simular assim:
+    $login = request()->query('login'); // Recebe ?login=algumacoisa
 
     $customer = Customer::where('login', $login)->first();
     if (!$customer) {
         return response()->json(['error' => 'Cliente não encontrado'], 404);
     }
 
-    $order = Order::where('customer_id', $customer->id)->first();
+    $order = Order::where('customer_id', $customer->id)->latest()->first();
     if (!$order || !$order->payment_asaas_id) {
         return response()->json(['error' => 'Pedido ou boleto não encontrado'], 404);
     }
