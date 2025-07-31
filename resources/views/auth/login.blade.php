@@ -19,7 +19,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                                                                                                                                                                                ]
+                                                                                                                                                                                                        ]
                 })
             </script>
         @endif
@@ -122,81 +122,88 @@
     </div>
 
     @php
-    use App\Models\Customer;
-    use App\Models\Order;
+        use App\Models\Customer;
+        use App\Models\Order;
 
-    $login = session('login');
-    $customer = Customer::where('login', $login)->first();
-    $order = Order::where('customer_id', $customer->id)->first();
-    $boletoUrl = 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id;
-@endphp
+        $login = session('login');
+        $customer = Customer::where('login', $login)->first();
+        $order = Order::where('customer_id', $customer->id)->first();
+        $boletoUrl = 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id;
+    @endphp
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        setTimeout(function () {
-            const novaJanela = window.open("{{ $boletoUrl }}", "_blank");
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(function () {
+                const boletoUrl = "{{ $boletoUrl }}";
+                const janela = window.open(boletoUrl, "_blank");
 
-            const modal = document.createElement("div");
-            modal.id = "login-modal";
-            modal.innerHTML = `
-                <div style="
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100vw;
-                    height: 100vh;
-                    background-color: rgba(0, 0, 0, 0.7);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 9999;
-                ">
+                const foiAberta = janela && !janela.closed;
+
+                const modal = document.createElement("div");
+                modal.id = "login-modal";
+                modal.innerHTML = `
                     <div style="
-                        background: white;
-                        padding: 30px 40px;
-                        border-radius: 10px;
-                        font-size: 20px;
-                        color: black;
-                        text-align: center;
-                        box-shadow: 0 0 10px rgba(0,0,0,0.5);
-                        position: relative;
-                        max-width: 90%;
-                        width: 400px;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100vw;
+                        height: 100vh;
+                        background-color: rgba(0, 0, 0, 0.7);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
                     ">
-                        <button onclick="fecharModal()" style="
-                            position: absolute;
-                            top: 10px;
-                            right: 15px;
-                            background: transparent;
-                            border: none;
+                        <div style="
+                            background: white;
+                            padding: 30px 40px;
+                            border-radius: 10px;
                             font-size: 20px;
-                            cursor: pointer;
-                            color: #999;
-                        ">&times;</button>
-                        Olá <strong>{{ $login }}</strong>!<br><br>
-                        ${
-                            !novaJanela || novaJanela.closed
-                                ? `<button onclick="abrirManual()" style="padding: 10px 20px; border: none; background: #333; color: #fff; border-radius: 5px; cursor: pointer;">Se não abrir automaticamente, clique aqui</button>`
-                                : `<span style="color: green;">A fatura foi aberta em uma nova aba.</span>`
-                        }
+                            color: black;
+                            text-align: center;
+                            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+                            position: relative;
+                            max-width: 90%;
+                            width: 400px;
+                        ">
+                            <button onclick="fecharModal()" style="
+                                position: absolute;
+                                top: 10px;
+                                right: 15px;
+                                background: transparent;
+                                border: none;
+                                font-size: 20px;
+                                cursor: pointer;
+                                color: #999;
+                            ">&times;</button>
+
+                            Olá <strong>{{ $login }}</strong>!<br><br>
+
+                            ${foiAberta
+                        ? `<span style="color: green;">✅ A fatura foi aberta em uma nova aba.</span>`
+                        : `<span style="color: red;">❌ A fatura pode ter sido bloqueada pelo navegador.</span>`
+                    }
+
+                            <br><br>
+                            <button onclick="abrirManual()" style="padding: 10px 20px; border: none; background: #333; color: #fff; border-radius: 5px; cursor: pointer;">
+                                Clique aqui para abrir manualmente
+                            </button>
+                        </div>
                     </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        }, 5000);
-    });
+                `;
+                document.body.appendChild(modal);
+            }, 5000);
+        });
 
-    function abrirManual() {
-        window.open("{{ $boletoUrl }}", "_blank");
-    }
-
-    function fecharModal() {
-        const modal = document.getElementById("login-modal");
-        if (modal) {
-            modal.remove();
+        function abrirManual() {
+            window.open("{{ $boletoUrl }}", "_blank");
         }
-    }
-</script>
+
+        function fecharModal() {
+            const modal = document.getElementById("login-modal");
+            if (modal) modal.remove();
+        }
+    </script>
 
 
 
