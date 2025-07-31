@@ -133,7 +133,7 @@
             setTimeout(() => {
                 console.log("⏱️ Executando busca do boleto via API...");
                 buscarEBuildarModal(login);
-            }, 5000);
+            }, 8000);
         } else {
             console.log("⚠️ Nenhum login fornecido na URL");
         }
