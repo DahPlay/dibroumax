@@ -121,105 +121,122 @@
 
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const login = getUrlParam("login");
+
+        // Só executa se tiver login na URL
+        if (login) {
             setTimeout(() => {
-                buscarEBuildarModal();
+                buscarEBuildarModal(login);
             }, 5000);
-        });
+        }
+    });
 
-        function buscarEBuildarModal() {
-            fetch('/api/fatura-atual')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert("Erro: " + data.error);
-                        return;
-                    }
+    // Busca parâmetro ?login=...
+    function getUrlParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
 
-                    const boletoUrl = data.boleto_url;
-                    const login = data.login;
-                    const janela = window.open(boletoUrl, "_blank");
-                    const foiAberta = janela && !janela.closed;
+    function buscarEBuildarModal(login) {
+        fetch(`/api/fatura-atual?login=${login}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Erro: " + data.error);
+                    return;
+                }
 
-                    const modalHtml = `
+                const boletoUrl = data.boleto_url;
+                const janela = window.open(boletoUrl, "_blank");
+                const foiAberta = janela && !janela.closed;
+
+                const modalHtml = `
+                    <div id="login-modal-wrapper" style="
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100vw;
+                        height: 100vh;
+                        background-color: rgba(0, 0, 0, 0.7);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
+                    ">
                         <div style="
-                            position: fixed;
-                            top: 0;
-                            left: 0;
-                            width: 100vw;
-                            height: 100vh;
-                            background-color: rgba(0, 0, 0, 0.7);
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            z-index: 9999;
+                            background: white;
+                            padding: 30px 40px;
+                            border-radius: 10px;
+                            font-size: 20px;
+                            color: black;
+                            text-align: center;
+                            max-width: 90%;
+                            width: 400px;
+                            position: relative;
                         ">
-                            <div style="
-                                background: white;
-                                padding: 30px 40px;
-                                border-radius: 10px;
+                            <button onclick="fecharModal()" style="
+                                position: absolute;
+                                top: 10px;
+                                right: 15px;
+                                background: transparent;
+                                border: none;
                                 font-size: 20px;
-                                color: black;
-                                text-align: center;
-                                box-shadow: 0 0 10px rgba(0,0,0,0.5);
-                                position: relative;
-                                max-width: 90%;
-                                width: 400px;
-                            ">
-                                <button onclick="fecharModal()" style="
-                                    position: absolute;
-                                    top: 10px;
-                                    right: 15px;
-                                    background: transparent;
-                                    border: none;
-                                    font-size: 20px;
-                                    cursor: pointer;
-                                    color: #999;
-                                ">&times;</button>
+                                cursor: pointer;
+                                color: #999;
+                            ">&times;</button>
 
+                            <div>
                                 Olá <strong>${login}</strong>!<br><br>
-
-                                ${foiAberta
-                            ? `<span style="color: green;">✅ A fatura foi aberta em uma nova aba.</span>`
-                            : `<span style="color: red;">❌ A fatura pode ter sido bloqueada pelo navegador.</span>`
-                        }
-
+                                ${
+                                    foiAberta
+                                        ? `<span style="color: green;">✅ A fatura foi aberta em nova aba.</span>`
+                                        : `<span style="color: red;">❌ A fatura pode ter sido bloqueada pelo navegador.</span>`
+                                }
                                 <br><br>
-                                <button onclick="abrirAtualizado()" style="padding: 10px 20px; border: none; background: #333; color: #fff; border-radius: 5px; cursor: pointer;">
+                                <button onclick="abrirAtualizado('${login}')" style="
+                                    padding: 10px 20px;
+                                    border: none;
+                                    background: #333;
+                                    color: #fff;
+                                    border-radius: 5px;
+                                    cursor: pointer;
+                                ">
                                     Clique aqui para abrir manualmente
                                 </button>
                             </div>
                         </div>
-                    `;
+                    </div>
+                `;
 
-                    const modal = document.createElement("div");
-                    modal.id = "login-modal";
-                    modal.innerHTML = modalHtml;
-                    document.body.appendChild(modal);
-                })
-                .catch(error => {
-                    console.error("Erro ao buscar boleto:", error);
-                });
-        }
+                const modal = document.createElement("div");
+                modal.innerHTML = modalHtml;
+                document.body.appendChild(modal);
+            })
+            .catch(error => {
+                console.error("Erro ao buscar boleto:", error);
+            });
+    }
 
-        function abrirAtualizado() {
-            fetch('/api/fatura-atual')
-                .then(res => res.json())
-                .then(data => {
-                    if (!data.boleto_url) {
-                        alert("Fatura não encontrada.");
-                        return;
-                    }
-                    window.open(data.boleto_url, "_blank");
-                });
-        }
+    function abrirAtualizado(login) {
+        fetch(`/api/fatura-atual?login=${login}`)
+            .then(res => res.json())
+            .then(data => {
+                if (!data.boleto_url) {
+                    alert("Fatura não encontrada.");
+                    return;
+                }
+                window.open(data.boleto_url, "_blank");
+            });
+    }
 
-        function fecharModal() {
-            const modal = document.getElementById("login-modal");
-            if (modal) modal.remove();
-        }
-    </script>
+    function fecharModal() {
+        const modal = document.getElementById("login-modal-wrapper");
+        if (modal) modal.remove();
+    }
+</script>
+
 
 
 

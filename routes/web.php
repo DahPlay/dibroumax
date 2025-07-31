@@ -402,19 +402,20 @@ Route::middleware('auth')->name('panel.')->group(function () {
 });
 
 
+
 Route::get('/api/fatura-atual', function () {
-    $login = session('login') ?? request('login'); // <- pega da sessão OU da URL
+    $login = request('login'); // <- Vem da URL (Ex: /login?login=alexandre245)
 
     if (!$login) {
-        return response()->json(['error' => 'Login não encontrado'], 401);
+        return response()->json(['error' => 'Login não informado'], 400);
     }
 
-    $customer = \App\Models\Customer::where('login', $login)->first();
+    $customer = Customer::where('login', $login)->first();
     if (!$customer) {
         return response()->json(['error' => 'Cliente não encontrado'], 404);
     }
 
-    $order = \App\Models\Order::where('customer_id', $customer->id)->latest()->first();
+    $order = Order::where('customer_id', $customer->id)->latest()->first();
     if (!$order || !$order->payment_asaas_id) {
         return response()->json(['error' => 'Pedido ou boleto não encontrado'], 404);
     }
@@ -426,5 +427,6 @@ Route::get('/api/fatura-atual', function () {
         'boleto_url' => $boletoUrl,
     ]);
 });
+
 
 
