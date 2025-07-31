@@ -420,7 +420,9 @@ Route::get('/api/fatura-atual', function () {
         return response()->json(['error' => 'Pedido ou boleto não encontrado'], 404);
     }
 
-    $boletoUrl = 'https://sandbox.asaas.com/i/' . $order->payment_asaas_id;
+    $paymentId = str_replace('pay_', '', $order->payment_asaas_id);
+    $boletoUrl = config('asaas.fatura_url') . '/i/' . $paymentId;
+
 
     return response()->json([
         'login' => $login,
