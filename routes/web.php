@@ -421,7 +421,7 @@ Route::get('/api/fatura-atual', function () {
     }
 
     $paymentId = str_replace('pay_', '', $order->payment_asaas_id);
-    $boletoUrl = config('asaas.fatura_url') . '/i/' . $paymentId;
+    $boletoUrl = config('asaas.production.fatura_url') . '/i/' . $paymentId;
 
 
     return response()->json([
