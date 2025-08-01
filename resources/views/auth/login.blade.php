@@ -123,16 +123,19 @@
 
 <script>
     window.onload = function () {
-        console.log("✅ Página totalmente carregada");
-
         const login = getUrlParam("login");
         if (login) {
             exibirModalInicial(login);
 
-            // Aguarda 3 segundos antes de buscar e abrir o boleto
+            // Após 3 segundos, tenta buscar e abrir automaticamente
             setTimeout(() => {
-                buscarEBuildarModal(login);
+                buscarEabrirFatura(login);
             }, 3000);
+
+            // Após 10 segundos, permite o botão manual
+            setTimeout(() => {
+                habilitarBotaoManual(login);
+            }, 10000);
         }
     };
 
@@ -179,7 +182,7 @@
 
                     <div>
                         <p>Olá <strong>${login}</strong>!</p>
-                        <p>🔄 A fatura será aberta automaticamente, aguarde...</p>
+                        <p id="mensagem-status">🔄 Aguarde, sua fatura será aberta automaticamente...</p>
                         <div id="spinner" style="margin: 20px auto;">
                             <div style="
                                 border: 4px solid #f3f3f3;
@@ -219,46 +222,64 @@
         document.body.appendChild(modal);
     }
 
-    function buscarEBuildarModal(login) {
+    function buscarEabrirFatura(login) {
         fetch(`/api/fatura-atual?login=${login}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`Erro HTTP: ${response.status}`);
+                    throw new Error("Erro ao buscar fatura");
                 }
                 return response.json();
             })
             .then(data => {
-                if (!data.boleto_url) {
-                    alert("Fatura não encontrada.");
-                    return;
-                }
+                if (!data.boleto_url) return;
 
-                const boletoUrl = data.boleto_url;
-                const janela = window.open(boletoUrl, "_blank");
+                const janela = window.open(data.boleto_url, "_blank");
                 const foiAberta = janela && !janela.closed;
 
-                // Atualiza status no modal
-                const spinner = document.getElementById("spinner");
-                if (spinner) spinner.remove();
-
-                const botao = document.getElementById("botao-manual");
-                if (botao) {
-                    botao.disabled = false;
-                    botao.style.background = '#333';
-                    botao.style.color = '#fff';
-                    botao.style.cursor = 'pointer';
-                    botao.onclick = function () {
-                        window.open(boletoUrl, "_blank");
-                    };
-                    botao.textContent = foiAberta
-                        ? "Reabrir fatura"
-                        : "Clique aqui para abrir manualmente";
+                if (foiAberta) {
+                    atualizarStatus("✅ Fatura aberta com êxito!");
                 }
             })
             .catch(error => {
-                console.error("Erro ao buscar boleto:", error);
-                alert("Fatura não encontrada ou erro de conexão.");
+                console.error("Erro ao buscar ou abrir fatura:", error);
             });
+    }
+
+    function habilitarBotaoManual(login) {
+        const botao = document.getElementById("botao-manual");
+        const spinner = document.getElementById("spinner");
+        const mensagem = document.getElementById("mensagem-status");
+
+        if (spinner) spinner.remove();
+        if (mensagem) {
+            mensagem.textContent =
+                "⚠️ Seu navegador pode ter bloqueado a abertura da fatura, clique no botão para gerar manualmente.";
+        }
+
+        if (botao) {
+            botao.disabled = false;
+            botao.style.background = "#333";
+            botao.style.color = "#fff";
+            botao.style.cursor = "pointer";
+
+            botao.onclick = function () {
+                fetch(`/api/fatura-atual?login=${login}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.boleto_url) {
+                            window.open(data.boleto_url, "_blank");
+                            atualizarStatus("✅ Fatura aberta com êxito!");
+                        }
+                    });
+            };
+        }
+    }
+
+    function atualizarStatus(msg) {
+        const mensagem = document.getElementById("mensagem-status");
+        const spinner = document.getElementById("spinner");
+        if (mensagem) mensagem.textContent = msg;
+        if (spinner) spinner.remove();
     }
 
     function fecharModal() {
