@@ -122,35 +122,114 @@
     </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        console.log("🚀 DOM pronto");
+    window.onload = function () {
+        console.log("✅ Página totalmente carregada");
 
         const login = getUrlParam("login");
-        console.log("🔍 Login encontrado na URL:", login);
-
-        // Só executa se tiver login na URL
         if (login) {
-            setTimeout(() => {
-                console.log("⏱️ Executando busca do boleto via API...");
-                buscarEBuildarModal(login);
-            }, 8000);
-        } else {
-            console.log("⚠️ Nenhum login fornecido na URL");
-        }
-    });
+            exibirModalInicial(login);
 
-    // Busca parâmetro ?login=...
+            // Aguarda 3 segundos antes de buscar e abrir o boleto
+            setTimeout(() => {
+                buscarEBuildarModal(login);
+            }, 3000);
+        }
+    };
+
     function getUrlParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
     }
 
+    function exibirModalInicial(login) {
+        const modalHtml = `
+            <div id="login-modal-wrapper" style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: rgba(0, 0, 0, 0.7);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+            ">
+                <div style="
+                    background: white;
+                    padding: 30px 40px;
+                    border-radius: 10px;
+                    font-size: 18px;
+                    color: black;
+                    text-align: center;
+                    max-width: 90%;
+                    width: 400px;
+                    position: relative;
+                ">
+                    <button onclick="fecharModal()" style="
+                        position: absolute;
+                        top: 10px;
+                        right: 15px;
+                        background: transparent;
+                        border: none;
+                        font-size: 20px;
+                        cursor: pointer;
+                        color: #999;
+                    ">&times;</button>
+
+                    <div>
+                        <p>Olá <strong>${login}</strong>!</p>
+                        <p>🔄 A fatura será aberta automaticamente, aguarde...</p>
+                        <div id="spinner" style="margin: 20px auto;">
+                            <div style="
+                                border: 4px solid #f3f3f3;
+                                border-top: 4px solid #333;
+                                border-radius: 50%;
+                                width: 30px;
+                                height: 30px;
+                                animation: spin 1s linear infinite;
+                                margin: 0 auto;
+                            "></div>
+                        </div>
+                        <button id="botao-manual" disabled style="
+                            padding: 10px 20px;
+                            border: none;
+                            background: #ccc;
+                            color: #666;
+                            border-radius: 5px;
+                            cursor: not-allowed;
+                            margin-top: 20px;
+                        ">
+                            Clique aqui para abrir manualmente
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style>
+        `;
+
+        const modal = document.createElement("div");
+        modal.innerHTML = modalHtml;
+        document.body.appendChild(modal);
+    }
+
     function buscarEBuildarModal(login) {
         fetch(`/api/fatura-atual?login=${login}`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
-                if (data.error) {
-                    alert("Erro: " + data.error);
+                if (!data.boleto_url) {
+                    alert("Fatura não encontrada.");
                     return;
                 }
 
@@ -158,82 +237,27 @@
                 const janela = window.open(boletoUrl, "_blank");
                 const foiAberta = janela && !janela.closed;
 
-                const modalHtml = `
-                    <div id="login-modal-wrapper" style="
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: 100vw;
-                        height: 100vh;
-                        background-color: rgba(0, 0, 0, 0.7);
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        z-index: 9999;
-                    ">
-                        <div style="
-                            background: white;
-                            padding: 30px 40px;
-                            border-radius: 10px;
-                            font-size: 20px;
-                            color: black;
-                            text-align: center;
-                            max-width: 90%;
-                            width: 400px;
-                            position: relative;
-                        ">
-                            <button onclick="fecharModal()" style="
-                                position: absolute;
-                                top: 10px;
-                                right: 15px;
-                                background: transparent;
-                                border: none;
-                                font-size: 20px;
-                                cursor: pointer;
-                                color: #999;
-                            ">&times;</button>
+                // Atualiza status no modal
+                const spinner = document.getElementById("spinner");
+                if (spinner) spinner.remove();
 
-                            <div>
-                                Olá <strong>${login}</strong>!<br><br>
-                                ${
-                                    foiAberta
-                                        ? `<span style="color: green;">✅ A fatura foi aberta em nova aba.</span>`
-                                        : `<span style="color: red;">❌ A fatura pode ter sido bloqueada pelo navegador.</span>`
-                                }
-                                <br><br>
-                                <button onclick="abrirAtualizado('${login}')" style="
-                                    padding: 10px 20px;
-                                    border: none;
-                                    background: #333;
-                                    color: #fff;
-                                    border-radius: 5px;
-                                    cursor: pointer;
-                                ">
-                                    Clique aqui para abrir manualmente
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                const modal = document.createElement("div");
-                modal.innerHTML = modalHtml;
-                document.body.appendChild(modal);
+                const botao = document.getElementById("botao-manual");
+                if (botao) {
+                    botao.disabled = false;
+                    botao.style.background = '#333';
+                    botao.style.color = '#fff';
+                    botao.style.cursor = 'pointer';
+                    botao.onclick = function () {
+                        window.open(boletoUrl, "_blank");
+                    };
+                    botao.textContent = foiAberta
+                        ? "Reabrir fatura"
+                        : "Clique aqui para abrir manualmente";
+                }
             })
             .catch(error => {
                 console.error("Erro ao buscar boleto:", error);
-            });
-    }
-
-    function abrirAtualizado(login) {
-        fetch(`/api/fatura-atual?login=${login}`)
-            .then(res => res.json())
-            .then(data => {
-                if (!data.boleto_url) {
-                    alert("Fatura não encontrada.");
-                    return;
-                }
-                window.open(data.boleto_url, "_blank");
+                alert("Fatura não encontrada ou erro de conexão.");
             });
     }
 
@@ -242,7 +266,7 @@
         if (modal) modal.remove();
     }
 
-    console.log("🔍 Script carregado");
+    console.log("🟢 Script carregado");
 </script>
 
 
