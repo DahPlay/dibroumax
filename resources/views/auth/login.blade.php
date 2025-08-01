@@ -19,7 +19,7 @@
                         @foreach ($errors->all() as $error)
                             "<li>{{ $error }}</li>",
                         @endforeach
-                                                                                                                                                                                                        ]
+                                                                                                                                                                                                                ]
                 })
             </script>
         @endif
@@ -121,175 +121,40 @@
 
     </div>
 
-<script>
-    window.onload = function () {
-        const login = getUrlParam("login");
-        if (login) {
-            exibirModalInicial(login);
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const modal = document.getElementById("faturaModal");
+            const mensagem = document.getElementById("mensagemFatura");
+            const botaoAbrir = document.getElementById("botaoAbrirFatura");
+            const spinner = document.getElementById("spinner");
 
-            // Após 3 segundos, tenta buscar e abrir automaticamente
+            // Exibe modal e define estado inicial
+            modal.style.display = "block";
+            mensagem.textContent = "A fatura será aberta automaticamente, aguarde...";
+            botaoAbrir.disabled = true;
+            spinner.style.display = "inline-block";
+
+            let janela = window.open("URL_DA_FATURA", "_blank"); // Troque pela URL real
+
+            // Verifica após 4 segundos
             setTimeout(() => {
-                buscarEabrirFatura(login);
-            }, 3000);
+                spinner.style.display = "none";
+                botaoAbrir.disabled = false;
 
-            // Após 10 segundos, permite o botão manual
-            setTimeout(() => {
-                habilitarBotaoManual(login);
-            }, 10000);
-        }
-    };
-
-    function getUrlParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-    }
-
-    function exibirModalInicial(login) {
-        const modalHtml = `
-            <div id="login-modal-wrapper" style="
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100vw;
-                height: 100vh;
-                background-color: rgba(0, 0, 0, 0.7);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 9999;
-            ">
-                <div style="
-                    background: white;
-                    padding: 30px 40px;
-                    border-radius: 10px;
-                    font-size: 18px;
-                    color: black;
-                    text-align: center;
-                    max-width: 90%;
-                    width: 400px;
-                    position: relative;
-                ">
-                    <button onclick="fecharModal()" style="
-                        position: absolute;
-                        top: 10px;
-                        right: 15px;
-                        background: transparent;
-                        border: none;
-                        font-size: 20px;
-                        cursor: pointer;
-                        color: #999;
-                    ">&times;</button>
-
-                    <div>
-                        <p>Olá <strong>${login}</strong>!</p>
-                        <p id="mensagem-status">🔄 Aguarde, sua fatura será aberta automaticamente...</p>
-                        <div id="spinner" style="margin: 20px auto;">
-                            <div style="
-                                border: 4px solid #f3f3f3;
-                                border-top: 4px solid #333;
-                                border-radius: 50%;
-                                width: 30px;
-                                height: 30px;
-                                animation: spin 1s linear infinite;
-                                margin: 0 auto;
-                            "></div>
-                        </div>
-                        <button id="botao-manual" disabled style="
-                            padding: 10px 20px;
-                            border: none;
-                            background: #ccc;
-                            color: #666;
-                            border-radius: 5px;
-                            cursor: not-allowed;
-                            margin-top: 20px;
-                        ">
-                            Clique aqui para abrir manualmente
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <style>
-                @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
+                if (janela && !janela.closed) {
+                    mensagem.textContent = "Redirecionado para o pagamento com êxito!";
+                } else {
+                    mensagem.innerHTML = "⚠️ Seu navegador pode ter bloqueado o redirecionamento, clique no botão para Continuar para o pagamento.";
                 }
-            </style>
-        `;
+            }, 4000);
 
-        const modal = document.createElement("div");
-        modal.innerHTML = modalHtml;
-        document.body.appendChild(modal);
-    }
-
-    function buscarEabrirFatura(login) {
-        fetch(`/api/fatura-atual?login=${login}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Erro ao buscar fatura");
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (!data.boleto_url) return;
-
-                const janela = window.open(data.boleto_url, "_blank");
-                const foiAberta = janela && !janela.closed;
-
-                if (foiAberta) {
-                    atualizarStatus("✅ Fatura aberta com êxito!");
-                }
-            })
-            .catch(error => {
-                console.error("Erro ao buscar ou abrir fatura:", error);
+            botaoAbrir.addEventListener("click", () => {
+                window.open("URL_DA_FATURA", "_blank"); // Troque pela URL real
             });
-    }
+        });
 
-    function habilitarBotaoManual(login) {
-        const botao = document.getElementById("botao-manual");
-        const spinner = document.getElementById("spinner");
-        const mensagem = document.getElementById("mensagem-status");
 
-        if (spinner) spinner.remove();
-        if (mensagem) {
-            mensagem.textContent =
-                "⚠️ Seu navegador pode ter bloqueado a abertura da fatura, clique no botão para gerar manualmente.";
-        }
-
-        if (botao) {
-            botao.disabled = false;
-            botao.style.background = "#333";
-            botao.style.color = "#fff";
-            botao.style.cursor = "pointer";
-
-            botao.onclick = function () {
-                fetch(`/api/fatura-atual?login=${login}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.boleto_url) {
-                            window.open(data.boleto_url, "_blank");
-                            atualizarStatus("✅ Fatura aberta com êxito!");
-                        }
-                    });
-            };
-        }
-    }
-
-    function atualizarStatus(msg) {
-        const mensagem = document.getElementById("mensagem-status");
-        const spinner = document.getElementById("spinner");
-        if (mensagem) mensagem.textContent = msg;
-        if (spinner) spinner.remove();
-    }
-
-    function fecharModal() {
-        const modal = document.getElementById("login-modal-wrapper");
-        if (modal) modal.remove();
-    }
-
-    console.log("🟢 Script carregado");
-</script>
-
+    </script>
 
 
 
