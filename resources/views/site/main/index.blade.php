@@ -45,7 +45,7 @@
             </div>
 
             <div class="align-items-center container-nav d-flex justify-content-between position-absolute">
-                <img src="{{ config('custom.logo_1') }}">
+                <img src="{{ config('custom.logo_1') }}" style="width: 230px; ">
 
                 <div class="d-flex flex-column d-lg-none menu" onclick="toggleMenu()">
                     <div class="menu-bar" style="background-color: {{ config('custom.icone_menu_mobile') }}"></div>
