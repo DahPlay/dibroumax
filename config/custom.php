@@ -69,6 +69,7 @@ return [
     'background_home_color' => env('BACKGROUND_HOME_COLOR', 'rgb(42, 42, 43)'),
     'background_home_menu_color' => env('BACKGROUND_HOME_MENU_COLOR', 'rgb(0, 0, 3)'),
     'text_home_menu_color' => env('TEXT_HOME_MENU_COLOR', 'rgb(255, 255, 255)'),
+    'logo_home_width' => env('LOGO_HOME_WIDTH', '200'),
 
     'background_button_home_menu_color_cadastre' => env('BACKGROUND_BUTTON_HOME_MENU_COLOR_CADASTRE', 'rgb(48, 101, 207)'),
     'text_button_home_menu_color_cadastre' => env('TEXT_BUTTON_HOME_MENU_COLOR_CADASTRE', 'rgb(253, 253, 253)'),
@@ -89,7 +90,7 @@ return [
     'text_menu_3' => env('TEXT_MENU_3', 'Catálogo'),
     'text_menu_4' => env('TEXT_MENU_4', 'Gerenciar'),
     'text_menu_5' => env('TEXT_MENU_5', 'Cadastre-se'),
-
+    'text_menu_6_logo_home_width' => env('TEXT_MENU_6_LOGO_HOME_WIDTH', '50'),
     /*
     |--------------------------------------------------------------------------
     | Home - Sessão 2: Vídeo
@@ -97,7 +98,8 @@ return [
     */
     'titulo_video' => env('TITULO_VIDEO', 'Assista quando e onde quiser!'),
     'text_video' => env('TEXT_VIDEO', 'Disponível na sua smart TV, celular, tablet ou notebook, sem nenhum custo adicional.'),
-    'link_video' => env('LINK_VIDEO', 'https://youtu.be/gh1sZEvdBJg'),
+    'link_video' => env('LINK_VIDEO', 'https://www.youtube.com/embed/LwKqcM4E3J8'),
+    'aovivo' => env('AOVIVO', 'NAO'),
 
     /*
     |--------------------------------------------------------------------------

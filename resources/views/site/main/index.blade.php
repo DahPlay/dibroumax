@@ -30,14 +30,14 @@
             <!-- Escurece a imagem, mas fica por baixo de tudo -->
 
             <div style="
-                                                background-color: {{ config('custom.background_home_image_blur') }};
-                                                position: absolute;
-                                                top: 0;
-                                                left: 0;
-                                                width: 100%;
-                                                height: 100%;
-                                                z-index: 0;
-                                            "></div>
+                                                        background-color: {{ config('custom.background_home_image_blur') }};
+                                                        position: absolute;
+                                                        top: 0;
+                                                        left: 0;
+                                                        width: 100%;
+                                                        height: 100%;
+                                                        z-index: 0;
+                                                    "></div>
 
             <!-- Tudo que vem depois, com z-index: 1, fica acima -->
             <div style="z-index: 1;">
@@ -45,7 +45,8 @@
             </div>
 
             <div class="align-items-center container-nav d-flex justify-content-between position-absolute">
-                <img src="{{ config('custom.logo_1') }}" style="width: 230px; ">
+                <img style="width: {{ config('custom.logo_home_width') }}px; height: auto;"
+                    src="{{ config('custom.logo_1') }}">
 
                 <div class="d-flex flex-column d-lg-none menu" onclick="toggleMenu()">
                     <div class="menu-bar" style="background-color: {{ config('custom.icone_menu_mobile') }}"></div>
@@ -53,41 +54,77 @@
                     <div class="menu-bar" style="background-color: {{ config('custom.icone_menu_mobile') }}"></div>
                 </div>
 
-                <nav
-                    class="justify-content-end justify-content-lg-center ml-0 mr-0 navbar navbar-expand col nav d-none d-lg-flex">
+                <nav class="navbar navbar-expand col nav d-none d-lg-flex justify-content-center align-items-center"
+                    style="padding: 0;"> <!-- sem altura fixa -->
 
-                    <ul class="d-lg-flex d-none justify-content-lg-center navbar-nav">
-                        <li class="px-4" style="background-color: {{ config('custom.background_home_menu_color') }};"><a
-                                href="#planos"
-                                style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_menu_1') }}</a>
+                    <ul class="navbar-nav d-lg-flex d-none justify-content-center align-items-stretch w-100 m-0 p-0">
+                        <!-- cada <li> irá esticar verticalmente conforme o conteúdo mais alto -->
+
+                        <li class="px-4 d-flex align-items-center" style="
+                      background-color: {{ config('custom.background_home_menu_color') }};
+                      border-top-left-radius: 10px;
+                      border-bottom-left-radius: 10px;
+                    ">
+                            <a href="#planos" style="color: {{ config('custom.text_home_menu_color') }};">
+                                {{ config('custom.text_menu_1') }}
+                            </a>
                         </li>
 
-                        <li class="px-4" style="background-color: {{ config('custom.background_home_menu_color') }};"><a
-                                href="#sobre-a-plataforma"
-                                style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_menu_2') }}</a>
+                        <li class="px-4 d-flex align-items-center"
+                            style="background-color: {{ config('custom.background_home_menu_color') }};">
+                            <a href="#sobre-a-plataforma" style="color: {{ config('custom.text_home_menu_color') }};">
+                                {{ config('custom.text_menu_2') }}
+                            </a>
                         </li>
-                        <li class="px-4" style="background-color: {{ config('custom.background_home_menu_color') }};"><a
-                                href="#catalogo"
-                                style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_menu_3') }}</a>
+
+                        <li class="px-4 d-flex align-items-center"
+                            style="background-color: {{ config('custom.background_home_menu_color') }};">
+                            <a href="#catalogo" style="color: {{ config('custom.text_home_menu_color') }};">
+                                {{ config('custom.text_menu_3') }}
+                            </a>
                         </li>
-                        <li class="px-4" style="background-color: {{ config('custom.background_home_menu_color') }};"><a
-                                href="{{ route('login') }}"
-                                style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_menu_4') }}</a>
+
+                        <li class="px-4 d-flex align-items-center" style="
+                      background-color: {{ config('custom.background_home_menu_color') }};
+                      border-top-right-radius: 10px;
+                      border-bottom-right-radius: 10px;
+                    ">
+                            <a href="{{ route('login') }}" style="color: {{ config('custom.text_home_menu_color') }};">
+                                {{ config('custom.text_menu_4') }}
+                            </a>
                         </li>
-                        <li class="active px-4"
-                            style="background-color: {{ config('custom.background_button_home_menu_color_cadastre') }};"><a
-                                href="#planos">{{ config('custom.text_menu_5') }}</a></li>
+
                         <li class="active px-4 d-flex align-items-center"
-                            style="background-color: {{ config('custom.background_home_menu_color') }}; border-radius: 10px;">
-                            <a href="{{ config('custom.portal_link') }}" target="_blank" class="d-flex align-items-center"
-                                style="color: {{ config('custom.text_home_menu_color') }}; font-weight: bold;">
-                                Acessar <img src="{{ config('custom.logo_1') }}" style="width: 30px; margin-right: 8px;"
-                                    alt="Logo">
+                            style="background-color: {{ config('custom.background_button_home_menu_color_cadastre') }};">
+                            <a href="#planos">{{ config('custom.text_menu_5') }}</a>
+                        </li>
 
+                        <li class="px-4 d-flex align-items-center" style="
+                      background-color: {{ config('custom.background_home_menu_color') }};
+                      border-radius: 10px;
+                    ">
+                            <a href="{{ config('custom.portal_link') }}" target="_blank" style="
+                       color: {{ config('custom.text_home_menu_color') }};
+                       font-weight: bold;
+                       display: flex;
+                       justify-content: center;
+                       align-items: center;
+                       text-align: center;
+                       gap: 4px;
+                     ">
+                                Acessar
+                                <img src="{{ config('custom.logo_2') }}" alt="Logo" style="
+                           width: {{ config('custom.text_menu_6_logo_home_width') }}px;
+                           height: auto;
+                           margin: 0;
+                           vertical-align: middle;
+                         ">
                             </a>
                         </li>
                     </ul>
                 </nav>
+
+
             </div>
 
 
@@ -135,18 +172,82 @@
 
 
 
-        <section id="sobre-a-plataforma" class="d-flex first-section flex-column flex-lg-row section-container text-center">
-            <div>
-                <h3 style="color: {{ config('custom.text_home') }};">{{ config('custom.titulo_video') }}</h3>
-                <p style="color: {{ config('custom.text_home') }};">{{ config('custom.text_video') }}</p>
-            </div>
+        @if (config('custom.aovivo') == "NAO")
+            <section id="sobre-a-plataforma" class="d-flex first-section flex-column flex-lg-row section-container text-center">
+                <div>
+                    <h3 style="color: {{ config('custom.text_home') }};">{{ config('custom.titulo_video') }}</h3>
+                    <p style="color: {{ config('custom.text_home') }};">{{ config('custom.text_video') }}</p>
+                </div>
 
-            <div class="first-section-video">
-                <iframe height="315" src="{{ config('custom.link_video') }}" title="YouTube video player" frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-            </div>
-        </section>
+                <div class="first-section-video">
+                    <iframe height="415" src="{{ config('custom.link_video') }}" title="YouTube video player" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+                
+            </section>
+        @else
+
+            <section id="sobre-a-plataforma" class="d-flex first-section flex-column flex-lg-row section-container text-center">
+                <div>
+                    <h3 style="color: {{ config('custom.text_home') }};">{{ config('custom.titulo_video') }}</h3>
+                    <p style="color: {{ config('custom.text_home') }};">{{ config('custom.text_video') }}</p>
+                </div>
+
+                <div class="first-section-video">
+                    <div class="player-wrapper">
+                        <video id="video" controls autoplay muted></video>
+                    </div>
+                </div>
+
+                <style>
+                    .first-section-video {
+                        display: flex;
+                        justify-content: center;
+                        /* centraliza horizontalmente */
+                        align-items: center;
+                        /* centraliza verticalmente */
+                        padding-left: 40px;
+                        /* distância do texto */
+                        padding-right: 40px;
+                        /* distância da borda direita */
+                    }
+
+                    .player-wrapper {
+                        width: 100%;
+                        max-width: 640px;
+                        /* tamanho reduzido do vídeo */
+                        aspect-ratio: 16 / 9;
+                        background-color: #000;
+                        overflow: hidden;
+                        border-radius: 12px;
+                    }
+
+                    .player-wrapper video {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        background-color: #000;
+                    }
+                </style>
+
+                <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+                <script>
+                    const video = document.getElementById('video');
+                    const videoSrc = 'http://200.4.96.130/live/agroplus/video.m3u8';
+
+                    if (Hls.isSupported()) {
+                        const hls = new Hls();
+                        hls.loadSource(videoSrc);
+                        hls.attachMedia(video);
+                    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                        video.src = videoSrc;
+                    } else {
+                        alert('Seu navegador não suporta HLS.');
+                    }
+                </script>
+            </section>
+        @endif
 
         <section class="align-items-center d-flex flex-column-reverse flex-lg-row second-section section-container">
             <div class="position-relative d-inline-block">
@@ -289,28 +390,15 @@
         <div class="banner-container">
             <img src="https://www.bitmag.com.br/wp-content/uploads/2024/07/tv-paga.jpg" alt="Imagem de fundo"
                 class="banner-background">
-
-            <div class="banner-overlay 
-            {{ config('custom.banner_overlay') === 'CLARO' ? 'banner-overlay-white' : 'banner-overlay-black' }}">
+            <div
+                class="banner-overlay 
+                                          {{ config('custom.banner_overlay') === 'CLARO' ? 'banner-overlay-white' : 'banner-overlay-black' }}">
             </div>
-
-            <!-- Botões no canto superior direito -->
-            <div class="banner-button-top-right">
-                <a href="{{ route('login') }}" target="_blank" rel="noopener noreferrer" class="banner-login-button">
-                    {{ config('custom.text_menu_4') }}
-                </a>
-
-                <a href="{{ config('custom.portal_link') }}" target="_blank" rel="noopener noreferrer"
-                    class="banner-access-link d-flex align-items-center">
-                    <span style="margin-right: 8px;">Acessar</span>
-                    <img src="{{ config('custom.logo_1') }}" style="width: 30px;" alt="Logo">
-                </a>
-            </div>
-
             <div class="banner-logo-center">
                 <img src="{{ config('custom.logo_1') }}" alt="Logo">
             </div>
         </div>
+
 
         <style>
             html,
@@ -322,7 +410,9 @@
             .banner-container {
                 position: relative;
                 width: 100vw;
+                /* 100% da largura da viewport */
                 height: 200px;
+                /* altura do banner */
                 overflow: hidden;
                 border-radius: 0 0 20px 20px;
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
@@ -339,8 +429,12 @@
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
+                /* cobre toda área */
                 border-radius: 0 0 20px 20px;
                 z-index: 0;
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+                image-rendering: auto;
             }
 
             .banner-overlay {
@@ -351,6 +445,7 @@
                 z-index: 1;
             }
 
+            /* Versão clara */
             .banner-overlay-white {
                 background: linear-gradient(to right,
                         rgba(255, 255, 255, 0) 0%,
@@ -360,6 +455,7 @@
                         rgba(255, 255, 255, 0) 100%);
             }
 
+            /* Versão escura */
             .banner-overlay-black {
                 background: linear-gradient(to right,
                         rgba(0, 0, 0, 0) 0%,
@@ -368,6 +464,7 @@
                         rgba(0, 0, 0, 0.4) 60%,
                         rgba(0, 0, 0, 0) 100%);
             }
+
 
             .banner-logo-center {
                 position: relative;
@@ -383,43 +480,13 @@
                 object-fit: contain;
                 border-radius: 24px;
                 display: block;
+                position: relative;
+                z-index: 3;
                 background: transparent;
                 padding: 0;
-                z-index: 3;
             }
 
-            .banner-button-top-right {
-                position: absolute;
-                top: 20px;
-                right: 25px;
-                z-index: 3;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-            }
-
-            .banner-login-button,
-            .banner-access-link {
-                padding: 10px 20px;
-                background-color:
-                    {{ config('custom.background_home_menu_color') }}
-                ;
-                color:
-                    {{ config('custom.text_home_menu_color') }}
-                ;
-                border: none;
-                border-radius: 8px;
-                text-decoration: none;
-                font-weight: bold;
-                font-size: 16px;
-                display: flex;
-                align-items: center;
-            }
-
-            .banner-access-link img {
-                margin-left: 5px;
-            }
-
+            /* Responsivo */
             @media (max-width: 768px) {
                 .banner-container {
                     height: 140px;
@@ -429,23 +496,8 @@
                     width: 120px;
                     height: 120px;
                 }
-
-                .banner-button-top-right {
-                    top: 15px;
-                    right: 15px;
-                    flex-direction: column;
-                    align-items: flex-end;
-                    gap: 8px;
-                }
-
-                .banner-login-button,
-                .banner-access-link {
-                    padding: 8px 14px;
-                    font-size: 14px;
-                }
             }
         </style>
-
 
 
     @endif
