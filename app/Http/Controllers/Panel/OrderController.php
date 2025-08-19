@@ -69,7 +69,7 @@ class OrderController extends Controller
                 return view('panel.orders.local.index.datatable.id', compact('order'));
             })
             ->editColumn('coupon_id', function ($order) {
-                return $order->coupon_name ?? '-';
+                return $order->coupon_name ?? 'N/A';
             })
             ->filterColumn('coupon_id', function ($query, $keyword) {
                 $query->whereRaw("coupons.name like ?", ["%{$keyword}%"]);
