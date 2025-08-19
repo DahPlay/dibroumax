@@ -77,12 +77,12 @@ YOUCAST_SECRET='hwpkr7b9ba5i9tqcpa55ygj5ahkpttflzongfbns'
 #CUSTOM SYSTEM
     #GENERAL
         FAVICON=/Auth-Panel/dist/img/favion32x32.png
-        PROJECT_NAME=DahPlay
+        PROJECT_NAME=Dibroumax
         BACK_DASH=/Auth-Panel/dist/img/background_home.jpeg
     #CUSTOM LOGIN PASSWORD HOME
         LOGO_1=/Auth-Panel/dist/img/logo.png
         LOGO_2=/Auth-Panel/dist/img/logo.png
-        PORTAL_LINK=https://portal.dahplay.com.br/login
+        PORTAL_LINK=https://portal.dibroumax.com/
     #CUSTOM LOGIN
         BACKGROUND_LOGIN_IMAGE=background-login2.jpg
         BACKGROUND_LOGIN_COLOR="rgb(42, 42, 43)"
