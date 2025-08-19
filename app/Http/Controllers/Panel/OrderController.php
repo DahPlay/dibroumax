@@ -43,7 +43,8 @@ class OrderController extends Controller
     {
         $orders = $this->model
             ->with(['customer:id,name', 'plan:id,name'])
-            ->leftJoin('coupons', 'coupons.id', '=', 'orders.coupon_id')
+            ->leftJoin('customers', 'customers.id', '=', 'orders.customer_id')
+            ->leftJoin('coupons', 'coupons.id', '=', 'customers.coupon_id')
             ->select([
                 'orders.id',
                 'orders.customer_id',
@@ -57,7 +58,6 @@ class OrderController extends Controller
                 'orders.payment_status',
                 'orders.created_at',
                 'orders.payment_asaas_id',
-                'orders.coupon_id',
                 'coupons.name as coupon_name', // <- nome do cupom
             ]);
 
@@ -68,12 +68,12 @@ class OrderController extends Controller
             ->editColumn('id', function ($order) {
                 return view('panel.orders.local.index.datatable.id', compact('order'));
             })
-            ->editColumn('coupon_id', function ($order) {
-                return $order->coupon_name ?? 'N/A';
-            })
-            ->filterColumn('coupon_id', function ($query, $keyword) {
-                $query->whereRaw("coupons.name like ?", ["%{$keyword}%"]);
-            })
+            ->editColumn('coupon_name', function ($order) {
+            return $order->coupon_name ?? '-';
+        })
+        ->filterColumn('coupon_name', function ($query, $keyword) {
+            $query->whereRaw("coupons.name like ?", ["%{$keyword}%"]);
+        })
             ->editColumn('customer_id', function ($order) {
                 return $order->customer->name ?? '-';
             })

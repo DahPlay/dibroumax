@@ -124,7 +124,7 @@
                     className: 'name align-middle'
                 },
                 {
-                    data: 'coupon_id',
+                    data: 'coupon_name',
                     orderable: true,
                     searchable: true,
                     className: 'name align-middle'
