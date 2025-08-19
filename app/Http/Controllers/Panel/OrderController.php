@@ -39,108 +39,123 @@ class OrderController extends Controller
         return view($this->request->route()->getName());
     }
 
-    public function loadDatatable(): JsonResponse
-    {
-        $orders = $this->model
-            ->with(['customer:id,name', 'plan:id,name'])
-            ->select([
-                'orders.id',
-                'orders.customer_id',
-                'orders.plan_id',
-                'orders.value',
-                'orders.subscription_asaas_id',
-                'orders.customer_asaas_id',
-                'orders.cycle',
-                'orders.status',
-                'orders.next_due_date',
-                'orders.payment_status',
-                'orders.created_at',
-                'orders.payment_asaas_id',
-            ]);
+public function loadDatatable(): JsonResponse
+{
+    $orders = $this->model
+        ->with(['customer:id,name', 'plan:id,name'])
+        ->select([
+            'orders.id',
+            'orders.customer_id',
+            'orders.plan_id',
+            'orders.value',
+            'orders.subscription_asaas_id',
+            'orders.customer_asaas_id',
+            'orders.cycle',
+            'orders.status',
+            'orders.next_due_date',
+            'orders.payment_status',
+            'orders.created_at',
+            'orders.payment_asaas_id',
+        ]);
 
-        return DataTables::of($orders)
-            ->addColumn('checkbox', function ($order) {
-                return view('panel.orders.local.index.datatable.checkbox', compact('order'));
-            })
-            ->editColumn('id', function ($order) {
-                return view('panel.orders.local.index.datatable.id', compact('order'));
-            })
-            ->filterColumn('status', function ($query, $keyword) {
-                $matchingStatuses = collect(StatusOrderAsaasEnum::cases())
-                    ->filter(fn($enum) => str_contains($enum->getName(), $keyword))
-                    ->pluck('value')
-                    ->toArray();
+    return DataTables::of($orders)
+        ->addColumn('checkbox', function ($order) {
+            return view('panel.orders.local.index.datatable.checkbox', compact('order'));
+        })
+        ->editColumn('id', function ($order) {
+            return view('panel.orders.local.index.datatable.id', compact('order'));
+        })
+        ->editColumn('customer_id', function ($order) {
+            return $order->customer->name ?? '-';
+        })
+        ->filterColumn('customer_id', function ($query, $keyword) {
+            $query->whereHas('customer', function ($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%");
+            });
+        })
+        ->editColumn('plan_id', function ($order) {
+            return $order->plan->name ?? '-';
+        })
+        ->filterColumn('plan_id', function ($query, $keyword) {
+            $query->whereHas('plan', function ($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%");
+            });
+        })
+        ->filterColumn('status', function ($query, $keyword) {
+            $matchingStatuses = collect(StatusOrderAsaasEnum::cases())
+                ->filter(fn($enum) => str_contains($enum->getName(), $keyword))
+                ->pluck('value')
+                ->toArray();
 
-                $query->whereIn('status', $matchingStatuses);
-            })
-            ->editColumn('status', function ($order) {
-                return $order->value == 0
-                    ? 'Free'
-                    : StatusOrderAsaasEnum::tryFrom($order->status)?->getName() ?? $order->status;
-            })
-            ->editColumn('payment_status', function ($order) {
-                if ($order->value == 0) {
-                    return 'Free';
-                }
+            $query->whereIn('status', $matchingStatuses);
+        })
+        ->editColumn('status', function ($order) {
+            return $order->value == 0
+                ? 'Free'
+                : StatusOrderAsaasEnum::tryFrom($order->status)?->getName() ?? $order->status;
+        })
+        ->editColumn('payment_status', function ($order) {
+            if ($order->value == 0) {
+                return 'Free';
+            }
 
-                $currentDate = Carbon::now()->startOfDay();
-                $nextDueDate = Carbon::parse($order->next_due_date)->startOfDay();
+            $currentDate = Carbon::now()->startOfDay();
+            $nextDueDate = Carbon::parse($order->next_due_date)->startOfDay();
 
-                if ($nextDueDate > $currentDate) {
-                    return 'GRÁTIS';
-                }
+            if ($nextDueDate > $currentDate) {
+                return 'GRÁTIS';
+            }
 
-                return PaymentStatusOrderAsaasEnum::tryFrom($order->payment_status)?->getName() ?? $order->payment_status;
-            })
-            ->editColumn('payment_asaas_id', function ($item) {
-                return view('panel.orders.local.index.datatable.payment_asaas_id', compact('item'));
-            })
+            return PaymentStatusOrderAsaasEnum::tryFrom($order->payment_status)?->getName() ?? $order->payment_status;
+        })
+        ->editColumn('payment_asaas_id', function ($item) {
+            return view('panel.orders.local.index.datatable.payment_asaas_id', compact('item'));
+        })
+        ->filterColumn('payment_status', function ($query, $keyword) {
+            $matchingStatuses = collect(PaymentStatusOrderAsaasEnum::cases())
+                ->filter(fn($enum) => str_contains($enum->getName(), $keyword))
+                ->pluck('value')
+                ->toArray();
 
+            $query->whereIn('payment_status', $matchingStatuses);
+        })
+        ->editColumn('cycle', function ($order) {
+            return $order->value == 0
+                ? 'Free'
+                : CycleAsaasEnum::tryFrom($order->cycle)?->getName() ?? $order->cycle;
+        })
+        ->filterColumn('cycle', function ($query, $keyword) {
+            $matchingCycles = collect(CycleAsaasEnum::cases())
+                ->filter(fn($enum) => str_contains($enum->getName(), $keyword))
+                ->pluck('value')
+                ->toArray();
 
-            ->filterColumn('payment_status', function ($query, $keyword) {
-                $matchingStatuses = collect(PaymentStatusOrderAsaasEnum::cases())
-                    ->filter(fn($enum) => str_contains($enum->getName(), $keyword))
-                    ->pluck('value')
-                    ->toArray();
+            $query->whereIn('cycle', $matchingCycles);
+        })
+        ->editColumn('next_due_date', function ($order) {
+            if ($order->value == 0) {
+                return 'Sem data';
+            }
 
-                $query->whereIn('payment_status', $matchingStatuses);
-            })
-            ->editColumn('cycle', function ($order) {
-                return $order->value == 0
-                    ? 'Free'
-                    : CycleAsaasEnum::tryFrom($order->cycle)?->getName() ?? $order->cycle;
-            })
-            ->filterColumn('cycle', function ($query, $keyword) {
-                $matchingCycles = collect(CycleAsaasEnum::cases())
-                    ->filter(fn($enum) => str_contains($enum->getName(), $keyword))
-                    ->pluck('value')
-                    ->toArray();
+            return $order->next_due_date ? date('d/m/Y', strtotime($order->next_due_date)) : 'Sem data';
+        })
+        ->filterColumn('next_due_date', function ($query, $value) {
+            $query->whereRaw("DATE_FORMAT(next_due_date,'%d/%m/%Y') like ?", ["%$value%"]);
+        })
+        ->editColumn('created_at', function ($order) {
+            return $order->created_at ? date('d/m/Y H:i:s', strtotime($order->created_at)) : 'Sem data';
+        })
+        ->filterColumn('created_at', function ($query, $value) {
+            $query->whereRaw("DATE_FORMAT(created_at,'%d/%m/%Y %H:%i:%s') like ?", ["%$value%"]);
+        })
+        ->addColumn('action', function ($order) {
+            $loggedId = auth()->user()->id;
 
-                $query->whereIn('cycle', $matchingCycles);
-            })
-            ->editColumn('next_due_date', function ($order) {
-                if ($order->value == 0) {
-                    return 'Sem data';
-                }
+            return view('panel.orders.local.index.datatable.action', compact('order', 'loggedId'));
+        })
+        ->toJson();
+}
 
-                return $order->next_due_date ? date('d/m/Y', strtotime($order->next_due_date)) : 'Sem data';
-            })
-            ->filterColumn('next_due_date', function ($query, $value) {
-                $query->whereRaw("DATE_FORMAT(next_due_date,'%d/%m/%Y') like ?", ["%$value%"]);
-            })
-            ->editColumn('created_at', function ($order) {
-                return $order->created_at ? date('d/m/Y H:i:s', strtotime($order->created_at)) : 'Sem data';
-            })
-            ->filterColumn('created_at', function ($query, $value) {
-                $query->whereRaw("DATE_FORMAT(created_at,'%d/%m/%Y %H:%i:%s') like ?", ["%$value%"]);
-            })
-            ->addColumn('action', function ($order) {
-                $loggedId = auth()->user()->id;
-
-                return view('panel.orders.local.index.datatable.action', compact('order', 'loggedId'));
-            })
-            ->toJson();
-    }
 
 
     public function create(): View

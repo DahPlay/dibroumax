@@ -124,6 +124,12 @@
                     className: 'name align-middle'
                 },
                 {
+                    data: 'coupon_id',
+                    orderable: true,
+                    searchable: true,
+                    className: 'name align-middle'
+                },
+                {
                     data: 'customer_asaas_id',
                     orderable: true,
                     searchable: true,
