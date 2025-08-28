@@ -5,678 +5,469 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{config('custom.project_name')}}</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ config('custom.favicon') }}" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.cdnfonts.com/css/helvetica-neue-55" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('Auth-Panel/plugins/fontawesome-free/css/all.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('Auth-Panel/dist/css/adminlte.min.css') }}">
-    <link rel="stylesheet"
-        href="{{ asset('Auth-Panel/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
-    <link rel="shortcut icon" href="{{ config('custom.favicon') }}" />
-    <link rel="stylesheet" href="{{ asset('Auth-Panel/dist/css/front/front.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendor/aos/aos.css') }}" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="{{ asset('assets/css/main.css') }}" rel="stylesheet">
 </head>
 
-<body>
+<body class="index-page">
 
-    @if (config('custom.simple_home') == "NAO")
+  <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
-        <header class="d-flex justify-content-center justify-content-lg-end position-relative"
-            style="background-image: url('{{ config('custom.background_home_image') }}'); background-repeat: no-repeat;">
+      <a href="{{ url('/') }}" class="logo d-flex align-items-center me-auto me-xl-0">
+        <img src="{{ asset('assets/img/logo-branco.svg') }}" alt="{{config('custom.project_name')}}">
+      </a>
 
-            <!-- Escurece a imagem, mas fica por baixo de tudo -->
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="#plataforma">A Plataforma</a></li>
+          <li><a href="#planos">Planos</a></li>
+          <li><a href="#catalogo">Catálogo</a></li>
+          <li><a href="#provedores">Provedores</a></li>
+          <li><a href="#faq">FAQ</a></li>
 
-            <div style="
-                                                        background-color: {{ config('custom.background_home_image_blur') }};
-                                                        position: absolute;
-                                                        top: 0;
-                                                        left: 0;
-                                                        width: 100%;
-                                                        height: 100%;
-                                                        z-index: 0;
-                                                    "></div>
+          <li class="mobile mt-5"><a class="btn-login" href="{{ route('login') }}"><img src="{{ asset('assets/img/icones/Profile.svg') }}" alt=""> Acessar</a></li>
+          <li class="mobile"><a class="btn-cadastro" href="{{ route('register') }}">Cadastre-se</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
 
-            <!-- Tudo que vem depois, com z-index: 1, fica acima -->
-            <div style="z-index: 1;">
-                <!-- texto, imagem, menu, etc. -->
+      <div class="desktop">          
+        <a class="btn-login" href="{{ route('login') }}"><img src="{{ asset('assets/img/icones/Profile.svg') }}" alt=""> Acessar</a>
+        <a class="btn-cadastro" href="{{ route('register') }}">Cadastre-se</a>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- BANNER PRINCIPAL -->
+    <section id="hero" class="hero section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-7 content-col" data-aos="fade-up">
+            <div class="content">
+              <div class="main-heading">
+                <h1>A casa do esporte e do entretenimento!</h1>
+              </div>
+
+              <div class="description">
+                <p>Assista aos maiores jogos, eventos esportivos, séries em +110 canais num só lugar, sem cabos, sem antenas e sem complicação.</p>
+              </div>
+
+              <div class="cta-button">
+                <a href="#planos" class="btn">Quero assinar agora</a>
+              </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-            <div class="align-items-center container-nav d-flex justify-content-between position-absolute">
-                <img style="width: {{ config('custom.logo_home_width') }}px; height: auto;"
-                    src="{{ config('custom.logo_1') }}">
+    <!-- VÍDEO -->
+    <section id="plataforma" class="video section">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Sua TV por assinatura em qualquer lugar</h2>
+        <p>Leve a {{config('custom.project_name')}} no bolso, na TV da sala ou no tablet onde estiver. Tudo em qualidade HD e sem pagar nada a mais por isso</p>
+      </div>
 
-                <div class="d-flex flex-column d-lg-none menu" onclick="toggleMenu()">
-                    <div class="menu-bar" style="background-color: {{ config('custom.icone_menu_mobile') }}"></div>
-                    <div class="menu-bar" style="background-color: {{ config('custom.icone_menu_mobile') }}"></div>
-                    <div class="menu-bar" style="background-color: {{ config('custom.icone_menu_mobile') }}"></div>
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col" data-aos="fade-right" data-aos-delay="200">
+            <iframe width="100%" height="515" src="https://www.youtube.com/embed/keE3dUv5E-M?si=0LoIDk8ZQM49x_lU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAMPEONATOS -->
+    <section id="catalogo" class="catalogo section">
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row align-items-center">
+          <div class="col-lg-6 col-md-12 section-title">
+            <h2 class="text-start">Os maiores campeonatos e eventos esportivos estão aqui.</h2>
+            <p class="text-start">Na {{config('custom.project_name')}} você acompanha ao vivo os torneios mais emocionantes do mundo.</p>
+
+            <div class="cta-button">
+              <a href="#planos" class="btn">Quero assinar agora</a>
+            </div>
+          </div>
+
+          <div class="col-lg-6 col-md-12">
+            <div class="row">
+              <div class="col-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="campeonato-card">
+                  <img src="{{ asset('assets/img/campeonatos/ChampionsLeague.svg') }}" alt="Champions League">
                 </div>
+              </div>
 
-                <nav class="navbar navbar-expand col nav d-none d-lg-flex justify-content-center align-items-center"
-                    style="padding: 0;"> <!-- sem altura fixa -->
-
-                    <ul class="navbar-nav d-lg-flex d-none justify-content-center align-items-stretch w-100 m-0 p-0">
-                        <!-- cada <li> irá esticar verticalmente conforme o conteúdo mais alto -->
-
-                        <li class="px-4 d-flex align-items-center" style="
-                      background-color: {{ config('custom.background_home_menu_color') }};
-                      border-top-left-radius: 10px;
-                      border-bottom-left-radius: 10px;
-                    ">
-                            <a href="#planos" style="color: {{ config('custom.text_home_menu_color') }};">
-                                {{ config('custom.text_menu_1') }}
-                            </a>
-                        </li>
-
-                        <li class="px-4 d-flex align-items-center"
-                            style="background-color: {{ config('custom.background_home_menu_color') }};">
-                            <a href="#sobre-a-plataforma" style="color: {{ config('custom.text_home_menu_color') }};">
-                                {{ config('custom.text_menu_2') }}
-                            </a>
-                        </li>
-
-                        <li class="px-4 d-flex align-items-center"
-                            style="background-color: {{ config('custom.background_home_menu_color') }};">
-                            <a href="#catalogo" style="color: {{ config('custom.text_home_menu_color') }};">
-                                {{ config('custom.text_menu_3') }}
-                            </a>
-                        </li>
-
-                        <li class="px-4 d-flex align-items-center" style="
-                      background-color: {{ config('custom.background_home_menu_color') }};
-                      border-top-right-radius: 10px;
-                      border-bottom-right-radius: 10px;
-                    ">
-                            <a href="{{ route('login') }}" style="color: {{ config('custom.text_home_menu_color') }};">
-                                {{ config('custom.text_menu_4') }}
-                            </a>
-                        </li>
-
-                        <li class="active px-4 d-flex align-items-center"
-                            style="background-color: {{ config('custom.background_button_home_menu_color_cadastre') }};">
-                            <a href="#planos">{{ config('custom.text_menu_5') }}</a>
-                        </li>
-
-                        <li class="px-4 d-flex align-items-center" style="
-                      background-color: {{ config('custom.background_home_menu_color') }};
-                      border-radius: 10px;
-                    ">
-                            <a href="{{ config('custom.portal_link') }}" target="_blank" style="
-                       color: {{ config('custom.text_home_menu_color') }};
-                       font-weight: bold;
-                       display: flex;
-                       justify-content: center;
-                       align-items: center;
-                       text-align: center;
-                       gap: 4px;
-                     ">
-                                Acessar
-                                <img src="{{ config('custom.logo_2') }}" alt="Logo" style="
-                           width: {{ config('custom.text_menu_6_logo_home_width') }}px;
-                           height: auto;
-                           margin: 0;
-                           vertical-align: middle;
-                         ">
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-
-
-            </div>
-
-
-            <nav class="mobile-menu" id="mobileMenu"
-                style="background-color: {{ config('custom.background_home_menu_color') }};">
-                <ul>
-                    <li><a href="#planos" onclick="toggleMenu()"
-                            style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_menu_1') }}</a>
-                    </li>
-                    <li><a href="#sobre-a-plataforma" onclick="toggleMenu()"
-                            style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_menu_2') }}</a>
-                    </li>
-                    <li><a href="#catalogo" onclick="toggleMenu()"
-                            style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_menu_3') }}</a>
-                    </li>
-                    <li><a href="{{ route('login') }}"
-                            style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_menu_4') }}</a>
-                    </li>
-                    <li><a href="#planos"
-                            style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_menu_5') }}</a>
-                    </li>
-                    <li class="active px-4" style="background-color: {{ config('custom.background_home_menu_color') }};">
-                        <a href="{{ config('custom.portal_link') }}" target="_blank"
-                            style="color: {{ config('custom.text_button_home_menu_color_cadastre') }};">
-                            <img src="{{ config('custom.logo_1') }}" style="width: 140px; margin: 0px;" alt="">
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-
-
-            <div class="div-header d-flex flex-column justify-content-center px-5 px-lg-0"
-                style="position: relative; z-index: 1;">
-                <span
-                    style="color: {{ config('custom.title_home_color_capa') }};">{{ config('custom.titulo_home_capa') }}</span>
-
-                <p style="color: {{ config('custom.text_home_color_capa') }};">{{ config('custom.text_home_capa') }}</p>
-
-                <a href="#planos"
-                    style="background-color: {{ config('custom.background_button_home_menu_color_cadastre') }}; color: {{ config('custom.text_button_home_menu_color_cadastre') }};">{{ config('custom.text_button_home_menu_experimente') }}</a>
-            </div>
-
-            </div>
-        </header>
-
-
-
-        @if (config('custom.aovivo') == "NAO")
-            <section id="sobre-a-plataforma" class="d-flex first-section flex-column flex-lg-row section-container text-center">
-                <div>
-                    <h3 style="color: {{ config('custom.text_home') }};">{{ config('custom.titulo_video') }}</h3>
-                    <p style="color: {{ config('custom.text_home') }};">{{ config('custom.text_video') }}</p>
+              <div class="col-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="campeonato-card">
+                  <img src="{{ asset('assets/img/campeonatos/PremierLeague.svg') }}" alt="Premier League">
                 </div>
+              </div>
 
-                <div class="first-section-video">
-                    <iframe height="415" src="{{ config('custom.link_video') }}" title="YouTube video player" frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <div class="col-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="campeonato-card">
+                  <img src="{{ asset('assets/img/campeonatos/LaLiga.svg') }}" alt="La Liga">
                 </div>
-                
-            </section>
-        @else
+              </div>
+            </div>
 
-            <section id="sobre-a-plataforma" class="d-flex first-section flex-column flex-lg-row section-container text-center">
-                <div>
-                    <h3 style="color: {{ config('custom.text_home') }};">{{ config('custom.titulo_video') }}</h3>
-                    <p style="color: {{ config('custom.text_home') }};">{{ config('custom.text_video') }}</p>
+            <div class="row">
+              <div class="col-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="campeonato-card">
+                  <img src="{{ asset('assets/img/campeonatos/LaLigaPortugal.svg') }}" alt="Liga Portugal">
                 </div>
+              </div>
 
-                <div class="first-section-video">
-                    <div class="player-wrapper">
-                        <video id="video" controls autoplay muted></video>
-                    </div>
+              <div class="col-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="campeonato-card">
+                  <img src="{{ asset('assets/img/campeonatos/LaLigaPortugal.svg') }}" alt="Liga Portugal">
                 </div>
-
-                <style>
-                    .first-section-video {
-                        display: flex;
-                        justify-content: center;
-                        /* centraliza horizontalmente */
-                        align-items: center;
-                        /* centraliza verticalmente */
-                        padding-left: 40px;
-                        /* distância do texto */
-                        padding-right: 40px;
-                        /* distância da borda direita */
-                    }
-
-                    .player-wrapper {
-                        width: 100%;
-                        max-width: 640px;
-                        /* tamanho reduzido do vídeo */
-                        aspect-ratio: 16 / 9;
-                        background-color: #000;
-                        overflow: hidden;
-                        border-radius: 12px;
-                    }
-
-                    .player-wrapper video {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                        background-color: #000;
-                    }
-                </style>
-
-                <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-                <script>
-                    const video = document.getElementById('video');
-                    const videoSrc = 'http://200.4.96.130/live/agroplus/video.m3u8';
-
-                    if (Hls.isSupported()) {
-                        const hls = new Hls();
-                        hls.loadSource(videoSrc);
-                        hls.attachMedia(video);
-                    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                        video.src = videoSrc;
-                    } else {
-                        alert('Seu navegador não suporta HLS.');
-                    }
-                </script>
-            </section>
-        @endif
-
-        <section class="align-items-center d-flex flex-column-reverse flex-lg-row second-section section-container">
-            <div class="position-relative d-inline-block">
-                <img class="vetor-info" src="{{ config('custom.card_home_image') }}" alt="">
-
-                <div class="about-container position-absolute d-flex flex-column">
-                    <div class="about">
-                        <img src="{{ asset('Auth-Panel/dist/img/about-icon.svg') }}" alt="">
-
-                        <div class="about-item">
-                            <span class="about-title">{{ config('custom.title_card_1') }}</span>
-                            <span class="about-subtitle">{{ config('custom.text_card_1') }}</span>
-                        </div>
-                    </div>
-                    <div class="about">
-                        <img src="{{ asset('Auth-Panel/dist/img/about-icon.svg') }}" alt="">
-
-                        <div class="about-item">
-                            <span class="about-title">{{ config('custom.title_card_2') }}</span>
-                            <span class="about-subtitle">{{ config('custom.text_card_2') }}</span>
-                        </div>
-                    </div>
-
-                    <div class="about">
-                        <img src="{{ asset('Auth-Panel/dist/img/about-icon.svg') }}" alt="">
-
-                        <div class="about-item">
-                            <span class="about-title">{{ config('custom.title_card_3') }}</span>
-                            <span class="about-subtitle">{{ config('custom.text_card_3') }}</span>
-                        </div>
-                    </div>
+              </div>
+              
+              <div class="col-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="campeonato-card">
+                  <img src="{{ asset('assets/img/campeonatos/Brasileirao.svg') }}" alt="Brasileirão">
                 </div>
-
-                <img class="arrow position-absolute" src="{{ config('custom.seta_home_image') }}" alt="">
+              </div>
             </div>
-            <div class="">
-                <h2 class="font-weight-bold" style="color: {{ config('custom.text_home') }};">
-                    {{ config('custom.title_session_card') }}
-                </h2>
-
-                <p style="color: {{ config('custom.text_home') }};">{{ config('custom.text_session_card') }}</p>
-            </div>
-        </section>
-
-        <section id="catalogo" class="third-section section-container pr-0">
-            <h3 class="font-weight-bold" style="color: {{ config('custom.text_home') }};">
-                {{ config('custom.title_channels') }}
-            </h3>
-
-            <div class="swiper mySwiper">
-                <div class="swiper-wrapper channels-agro">
-                    <div class="channel-item swiper-slide d-flex justify-content-center align-items-center">
-                        <span class="channel-number" style="color: {{ config('custom.number_home') }};">1</span>
-                        <img class="channel-photo" style="border-color: {{ config('custom.border_channel') }};"
-                            src="{{ config('custom.image_channel_1') }}" alt="">
-                    </div>
-
-                    <div class="channel-item swiper-slide d-flex justify-content-center align-items-center">
-                        <span class="channel-number" style="color: {{ config('custom.number_home') }};">2</span>
-                        <img class="channel-photo" style="border-color: {{ config('custom.border_channel') }};"
-                            src="{{ config('custom.image_channel_2') }}" alt="">
-                    </div>
-
-
-                    <div class="channel-item swiper-slide d-flex justify-content-center align-items-center">
-                        <span class="channel-number" style="color: {{ config('custom.number_home') }};">3</span>
-                        <img class="channel-photo" style="border-color: {{ config('custom.border_channel') }};"
-                            src="{{ config('custom.image_channel_3') }}" alt="">
-                    </div>
-
-                    <div class="channel-item swiper-slide d-flex justify-content-center align-items-center">
-                        <span class="channel-number" style="color: {{ config('custom.number_home') }};">4</span>
-                        <img class="channel-photo" style="border-color: {{ config('custom.border_channel') }};"
-                            src="{{ config('custom.image_channel_4') }}" alt="">
-                    </div>
-
-                    <div class="channel-item swiper-slide d-flex justify-content-center align-items-center">
-                        <span class="channel-number" style="color: {{ config('custom.number_home') }};">5</span>
-                        <img class="channel-photo" style="border-color: {{ config('custom.border_channel') }};"
-                            src="{{ config('custom.image_channel_5') }}" alt="">
-                    </div>
+            
+            <div class="row">
+              <div class="col-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="campeonato-card">
+                  <img src="{{ asset('assets/img/campeonatos/Bundesliga.svg') }}" alt="Bundesliga">
                 </div>
+              </div>
 
-                <div class="swiper-button-next" style="color: {{ config('custom.text-home') }} !important;"></div>
-                <div class="swiper-button-prev" style="color: {{ config('custom.text-home') }} !important;"></div>
-
-            </div>
-        </section>
-
-        <section class="fourth-section section-container pr-0">
-            <h3 class="font-weight-bold" style="color: {{ config('custom.text_home') }};">
-                {{ config('custom.title_movies') }}
-            </h3>
-
-            <div class="swiper moviesSwiper">
-                <div class="swiper-wrapper movies-area">
-                    <div class="swiper-slide d-flex justify-content-center align-items-center">
-                        <img class="channel-photo" style="height: {{config('custom.height_channel')}};"
-                            src="{{ config('custom.image_movie_1') }}" alt="">
-                    </div>
-
-                    <div class="swiper-slide d-flex justify-content-center align-items-center">
-                        <img class="channel-photo" style="height: {{config('custom.height_channel')}};"
-                            src="{{ config('custom.image_movie_2') }}" alt="">
-                    </div>
-
-                    <div class="swiper-slide d-flex justify-content-center align-items-center">
-                        <img class="channel-photo" style="height: {{config('custom.height_channel')}};"
-                            src="{{ config('custom.image_movie_3') }}" alt="">
-                    </div>
-
-                    <div class="swiper-slide d-flex justify-content-center align-items-center">
-                        <img class="channel-photo" style="height: {{config('custom.height_channel')}};"
-                            src="{{ config('custom.image_movie_4') }}" alt="">
-                    </div>
-
-                    <div class="swiper-slide d-flex justify-content-center align-items-center">
-                        <img class="channel-photo" style="height: {{config('custom.height_channel')}};"
-                            src="{{ config('custom.image_movie_5') }}" alt="">
-                    </div>
+              <div class="col-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="campeonato-card">
+                  <img src="{{ asset('assets/img/campeonatos/NBA.svg') }}" alt="NBA">
                 </div>
+              </div>
+              
+              <div class="col-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="campeonato-card">
+                  <img src="{{ asset('assets/img/campeonatos/Formula1.svg') }}" alt="Fórmula 1">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
 
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-            </div>
-        </section>
+    <!-- TOP 5 -->
+    <section class="section">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>O que o mundo está vendo agora!</h2>
+        <p>Confira os conteúdos mais assistidos da semana e descubra por que a {{config('custom.project_name')}}<br>já conquistou milhares de apaixonados por esporte e entretenimento</p>
+      </div>
 
-        <section class="fifth-section section-container position-relative"
-            style="background-color: {{config('custom.background_people')}};">
-            <div class="container-woman col-6">
-                <img src="{{ config('custom.image_people') }}" alt="">
-            </div>
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col" data-aos="fade-right" data-aos-delay="200">
+              <img src="{{ asset('assets/img/campeonatos/ChampionsLeague.svg') }}" alt="Conteúdo 1">
+          </div>
 
-            <div class="container-infos col-6">
-                <h3 style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.title_people') }}</h3>
-                <p style="color: {{ config('custom.text_home_menu_color') }};">{{ config('custom.text_people') }}</p>
+          <div class="col" data-aos="fade-right" data-aos-delay="300">
+              <img src="{{ asset('assets/img/campeonatos/ChampionsLeague.svg') }}" alt="Conteúdo 2">
+          </div>
+
+          <div class="col" data-aos="fade-right" data-aos-delay="400">
+              <img src="{{ asset('assets/img/campeonatos/ChampionsLeague.svg') }}" alt="Conteúdo 3">
+          </div>
+
+          <div class="col" data-aos="fade-right" data-aos-delay="500">
+              <img src="{{ asset('assets/img/campeonatos/ChampionsLeague.svg') }}" alt="Conteúdo 4">
+          </div>
+
+          <div class="col" data-aos="fade-right" data-aos-delay="600">
+              <img src="{{ asset('assets/img/campeonatos/ChampionsLeague.svg') }}" alt="Conteúdo 5">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROVEDORES -->
+    <section id="provedores" class="provedores section mt-5">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Mais de 110 canais em um só lugar</h2>
+        <p>{{config('custom.project_name')}} é a sua TV por assinatura online, com mais de 110 canais ao vivo e<br>milhares de horas On Demand para você assistir quando e onde quiser</p>
+      </div>
+
+      <div class="container">
+        <div class="row">
+          <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="canais-card">
+              <img src="{{ asset('assets/img/canais/SBT.webp') }}" alt="SBT">
             </div>
-        </section> <!-- OCULTAR -->
-    @else
-        <div class="banner-container">
-            <img src="https://www.bitmag.com.br/wp-content/uploads/2024/07/tv-paga.jpg" alt="Imagem de fundo"
-                class="banner-background">
-            <div
-                class="banner-overlay 
-                                          {{ config('custom.banner_overlay') === 'CLARO' ? 'banner-overlay-white' : 'banner-overlay-black' }}">
+          </div>
+
+          <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="canais-card">
+              <img src="{{ asset('assets/img/canais/band-sports.webp') }}" alt="Band Sports">
             </div>
-            <div class="banner-logo-center">
-                <img src="{{ config('custom.logo_1') }}" alt="Logo">
+          </div>
+
+          <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="canais-card">
+              <img src="{{ asset('assets/img/canais/band.webp') }}" alt="Band">
             </div>
+          </div>
+
+          <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="canais-card">
+              <img src="{{ asset('assets/img/canais/bandnews.webp') }}" alt="BandNews">
+            </div>
+          </div>
+
+          <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="canais-card">
+              <img src="{{ asset('assets/img/canais/record.webp') }}" alt="Record">
+            </div>
+          </div>
+
+          <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="canais-card">
+              <img src="{{ asset('assets/img/canais/xsports.png') }}" alt="XSports">
+            </div>
+          </div>
+
+          <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="canais-card">
+              <img src="{{ asset('assets/img/canais/cnn.png') }}" alt="CNN">
+            </div>
+          </div>
+
+          <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="canais-card">
+              <img src="{{ asset('assets/img/canais/tnt.webp') }}" alt="TNT">
+            </div>
+          </div>
+
+          <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="canais-card">
+              <img src="{{ asset('assets/img/canais/gazeta.webp') }}" alt="Gazeta">
+            </div>
+          </div>
+
+          <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="canais-card">
+              <img src="{{ asset('assets/img/canais/redetv.webp') }}" alt="RedeTV">
+            </div>
+          </div>
+
+          <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="canais-card">
+              <img src="{{ asset('assets/img/canais/turfe.webp') }}" alt="Turfe">
+            </div>
+          </div>
+
+          <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="canais-card">
+              <img src="{{ asset('assets/img/canais/jockey.webp') }}" alt="Jockey">
+            </div>
+          </div>
+
+          <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="canais-card">
+              <img src="{{ asset('assets/img/canais/cancaonova.webp') }}" alt="Canção Nova">
+            </div>
+          </div>
+
+          <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="canais-card">
+              <img src="{{ asset('assets/img/canais/unique.webp') }}" alt="Unique">
+            </div>
+          </div>
+
+          <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="canais-card">
+              <img src="{{ asset('assets/img/canais/discover.png') }}" alt="Discovery">
+            </div>
+          </div>
         </div>
 
+        <div class="row">
+          <div class="col-12">
+            <h3>Tudo isso e muito +</h3>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        <style>
-            html,
-            body {
-                margin: 0;
-                padding: 0;
-            }
+    <!-- CONTEÚDOS -->
+    <section class="section conteudos">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col" data-aos="fade-right" data-aos-delay="1000">
+            <img src="{{ asset('assets/img/icones/Live.svg') }}" alt="Ao Vivo">
+            <h4>+110 canais<br>ao vivo</h4>
+            <p>De esportes, filmes, séries e notícias</p>
+          </div>
 
-            .banner-container {
-                position: relative;
-                width: 100vw;
-                /* 100% da largura da viewport */
-                height: 200px;
-                /* altura do banner */
-                overflow: hidden;
-                border-radius: 0 0 20px 20px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: transparent;
-            }
+          <div class="col" data-aos="fade-right" data-aos-delay="800">
+            <img src="{{ asset('assets/img/icones/Soccer.svg') }}" alt="Futebol">
+            <h4>Grandes ligas<br>de futebol</h4>
+            <p>Champions League, Premier League, Serie A TIM,  e mais.</p>
+          </div>
 
-            .banner-background {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                /* cobre toda área */
-                border-radius: 0 0 20px 20px;
-                z-index: 0;
-                -webkit-backface-visibility: hidden;
-                backface-visibility: hidden;
-                image-rendering: auto;
-            }
+          <div class="col" data-aos="fade-right" data-aos-delay="600">
+            <img src="{{ asset('assets/img/icones/F1.svg') }}" alt="F1">
+            <h4>Do Basquete à<br>velocidade nas pistas</h4>
+            <p>NBA, NBB Caixa, Fórmula 1 e NASCAR</p>
+          </div>
 
-            .banner-overlay {
-                position: absolute;
-                inset: 0;
-                border-radius: 0 0 20px 20px;
-                pointer-events: none;
-                z-index: 1;
-            }
+          <div class="col" data-aos="fade-right" data-aos-delay="400">
+            <img src="{{ asset('assets/img/icones/Movie.svg') }}" alt="Filmes">
+            <h4>Conteúdo<br>On Demand</h4>
+            <p>Filmes e séries pra toda família</p>
+          </div>
 
-            /* Versão clara */
-            .banner-overlay-white {
-                background: linear-gradient(to right,
-                        rgba(255, 255, 255, 0) 0%,
-                        rgba(255, 255, 255, 0.4) 40%,
-                        rgba(255, 255, 255, 0.7) 50%,
-                        rgba(255, 255, 255, 0.4) 60%,
-                        rgba(255, 255, 255, 0) 100%);
-            }
+          <div class="col" data-aos="fade-right" data-aos-delay="200">
+            <img src="{{ asset('assets/img/icones/Diamond.svg') }}" alt="Diamante">
+            <h4>TV por assinatura<br>sem complicação</h4>
+            <p>Mais acessível, moderno e sem fidelidade</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-            /* Versão escura */
-            .banner-overlay-black {
-                background: linear-gradient(to right,
-                        rgba(0, 0, 0, 0) 0%,
-                        rgba(0, 0, 0, 0.4) 40%,
-                        rgba(0, 0, 0, 0.6) 50%,
-                        rgba(0, 0, 0, 0.4) 60%,
-                        rgba(0, 0, 0, 0) 100%);
-            }
-
-
-            .banner-logo-center {
-                position: relative;
-                z-index: 2;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .banner-logo-center img {
-                width: 180px;
-                height: 180px;
-                object-fit: contain;
-                border-radius: 24px;
-                display: block;
-                position: relative;
-                z-index: 3;
-                background: transparent;
-                padding: 0;
-            }
-
-            /* Responsivo */
-            @media (max-width: 768px) {
-                .banner-container {
-                    height: 140px;
-                }
-
-                .banner-logo-center img {
-                    width: 120px;
-                    height: 120px;
-                }
-            }
-        </style>
-
-
-    @endif
-    </br></br></br>
+    <!-- PLANOS -->
     @include('site.partials.plan-section')
 
-    <footer class="section-container d-flex flex-column align-items-center"
-        style="background-color: {{ config('custom.background_baseboard') }};">
-        <p>{{ config('custom.text_baseboard') }}</p>
+    <!-- FAQ -->
+    <section class="faq section" id="faq">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Perguntas Frequentes</h2>
+      </div>
 
-        <div
-            class="d-flex align-items-center justify-content-center w-100 position-relative container-media flex-column flex-sm-row">
-            <div class="social-media d-flex justify-content-center">
-                <div class="container-social-media"
-                    style="background-color: {{ config('custom.background_social_media') }};">
-                    <a href="{{ config('custom.link_social_media_1') }}"><img
-                            src="{{ config('custom.image_social_media_1') }}" alt=""></a>
+      <div class="container">
+        <div class="row">
+          <div class="col" data-aos="fade-up" data-aos-delay="300">
+            <div class="faq-container">
+
+              <div class="faq-item faq-active">
+                <h3>O que é a {{config('custom.project_name')}}?</h3>
+                <div class="faq-content">
+                  <p>{{config('custom.project_name')}} é uma plataforma de TV por assinatura via internet. Com ela, você tem acesso a mais de <b>110 canais ao vivo</b>, filmes, séries e grandes campeonatos esportivos em qualidade HD, sem precisar de cabos ou decodificadores. Basta have conexão com a internet e um dispositivo compatível, como Smart TV, celular, computador ou tablet.</p>
                 </div>
-                <div class="container-social-media"
-                    style="background-color: {{ config('custom.background_social_media') }};">
-                    <a href="{{ config('custom.link_social_media_2') }}"><img
-                            src="{{ config('custom.image_social_media_2') }}" alt=""></a>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <div class="faq-item">
+                <h3>Em quais dispositivos posso assistir à {{config('custom.project_name')}}?</h3>
+                <div class="faq-content">
+                  <p>A {{config('custom.project_name')}} é compatível com uma ampla variedade de dispositivos:</p>
+                  <ul>
+                    <li>Smart TVs (LG, Samsung, Android TV)</li>
+                    <li>Dispositivos de streaming (Apple TV, Roku, Chromecast, Fire TV Stick, Android TV Box)</li>
+                    <li>Celulares e tablets (iOS e Android)</li>
+                    <li>Computadores e notebooks via navegador</li>
+                  </ul>                  
                 </div>
-                <div class="container-social-media"
-                    style="background-color: {{ config('custom.background_social_media') }};">
-                    <a href="{{ config('custom.link_social_media_3') }}"><img
-                            src="{{ config('custom.image_social_media_3') }}" alt=""></a>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <div class="faq-item">
+                <h3>A {{config('custom.project_name')}} é legal e segura?</h3>
+                <div class="faq-content">
+                  <p>Sim. A {{config('custom.project_name')}} é 100% legal e segura. Todos os canais e conteúdos são licenciados oficialmente, diferente de IPTV piratas que distribuem conteúdo ilegal. Além disso, todas as transações são criptografadas e protegidas, garantindo a segurança dos seus dados.</p>
                 </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <div class="faq-item">
+                <h3>Posso cancelar minha assinatura da {{config('custom.project_name')}} quando quiser?</h3>
+                <div class="faq-content">
+                  <p>Sim. Você pode cancelar sua assinatura a qualquer momento diretamente na sua conta, sem burocracia e sem fidelidade.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <div class="faq-item">
+                <h3>Quantos dispositivos posso usar com minha conta {{config('custom.project_name')}}?</h3>
+                <div class="faq-content">
+                  <p>Você pode registrar até <b>5 dispositivos</b> diferentes na sua conta. A reprodução simultânea é limitada a <b>3 dispositivos</b>, podendo ser usados em até 2 redes de internet diferentes.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <div class="faq-item">
+                <h3>O que fazer se minha TV não for compatível com a {{config('custom.project_name')}}?</h3>
+                <div class="faq-content">
+                  <p>Mesmo que sua TV seja mais antiga, você pode transformar qualquer tela em uma TV com {{config('custom.project_name')}} usando dispositivos como Roku, Apple TV, Android TV Box, Chromecast ou Fire TV Stick. Basta ter internet disponível.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <div class="faq-item">
+                <h3>A {{config('custom.project_name')}} oferece teste grátis?</h3>
+                <div class="faq-content">
+                  <p>Atualmente não oferecemos teste grátis. Os planos começam a partir de <b>R$29,90 por mês</b>, e você pode cancelar a qualquer momento, sem fidelidade.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <div class="faq-item">
+                <h3>Quais campeonatos posso assistir na {{config('custom.project_name')}}?</h3>
+                <div class="faq-content">
+                  <p>Na {{config('custom.project_name')}} você acompanha ao vivo alguns dos maiores eventos esportivos do mundo, incluindo: <b>Premier League, La Liga, Serie A TIM, Bundesliga, Liga de Portugal, NBA, NBB Caixa, Fórmula 1 e NASCAR,</b> entre outros.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
             </div>
-            <img class="logo-footer" src="{{ config('custom.logo_baseboard') }}" alt="">
+          </div>
         </div>
-        <p class="copyright-footer">{{ config('custom.text_copy') }}</p>
-    </footer>
+      </div>
+    </section>
+  </main>
 
-    <script src="{{ asset('Auth-Panel/plugins/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('Auth-Panel/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('Auth-Panel/dist/js/adminlte.min.js') }}"></script>
-    <script src="{{ asset('Auth-Panel/dist/js/demo.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-    <!-- Bootstrap CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <footer class="footer">
+    <div class="container">
+      <div class="row d-flex justify-content-between align-items-stretch">
+        <div class="col links align-self-center">
+          <a href="#">Termos e Condições</a>
+          <a href="#">Política e Privacidade</a>
+        </div>
+        <div class="col copyright align-self-center">Copyright © 2025. Todos os direitos reservados.</div>
+      </div>
+    </div>
+  </footer>
 
-    <script src="{{ asset('Auth-Panel/dist/js/front/front.js') }}"></script>
-    <script>
-        $(function () {
-            const swiper = new Swiper('.mySwiper', {
-                slidesPerView: 4,
-                slidesPerGroup: 1,
-                loop: false,
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                },
-                spaceBetween: 10,
-                breakpoints: {
-                    992: {
-                        slidesPerView: 4,
-                    },
-                    768: {
-                        slidesPerView: 2,
-                    },
-                    576: {
-                        slidesPerView: 1,
-                    },
-                    300: {
-                        slidesPerView: 1,
-                    }
-                }
-            });
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-            const moviesSwiper = new Swiper('.moviesSwiper', {
-                slidesPerView: 4,
-                slidesPerGroup: 1,
-                loop: false,
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                },
-                spaceBetween: 10,
-                breakpoints: {
-                    992: {
-                        slidesPerView: 4,
-                    },
-                    768: {
-                        slidesPerView: 2,
-                    },
-                    576: {
-                        slidesPerView: 1,
-                    },
-                    300: {
-                        slidesPerView: 1,
-                    }
-                }
-            });
+  <!-- Preloader -->
+  <div id="preloader"></div>
 
+  <!-- Vendor JS Files -->
+  <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ asset('assets/vendor/aos/aos.js') }}"></script>
 
-            $('a[href^="#"]').on('click', function (event) {
-                event.preventDefault();
+  <!-- Main JS File -->
+  <script src="{{ asset('assets/js/main.js') }}"></script>
 
-                const target = $(this.getAttribute('href'));
-
-                if (target.length) {
-                    $('html, body').animate({
-                        scrollTop: target.offset().top
-                    }, 1000);
-                }
-            });
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            @foreach($cycles as $cycleKey => $cycleName)
-                new Swiper('.mySwiper-{{ $cycleKey }}', {
-                    slidesPerView: 1,
-                    spaceBetween: 20,
-                    loop: true,
-                    pagination: {
-                        el: '.swiper-pagination-{{ $cycleKey }}',
-                        clickable: true,
-                    },
-                    navigation: {
-                        nextEl: '.swiper-next-{{ $cycleKey }}',
-                        prevEl: '.swiper-prev-{{ $cycleKey }}',
-                    },
-                    breakpoints: {
-                        576: {
-                            slidesPerView: 1,
-                        },
-                        768: {
-                            slidesPerView: 2,
-                        },
-                        992: {
-                            slidesPerView: 3,
-                        }
-                    }
-                });
-            @endforeach
-    });
-
-        $(document).ready(function () {
-            // Espera um pequeno tempo para garantir que todos os elementos estejam no DOM (ajuste se necessário)
-            setTimeout(function () {
-                let maxHeight = 0;
-
-                // Seleciona todos os cards
-                $('.swiper-slide').each(function () {
-                    let cardHeight = $(this).height();
-                    if (cardHeight > maxHeight) {
-                        maxHeight = cardHeight;
-                    }
-                });
-
-                // Aplica a maior altura a todos os cards
-                $('.swiper-slide').height(maxHeight);
-            }, 300); // você pode aumentar esse delay se os elementos demorarem mais a aparecer
-        });
-    </script>
-
-    <!-- inicio Flut -->
-    <script src={{ config('custom.flut') }}></script>
-    <!-- fim Flut -->
 </body>
-
-<style>
-    /* For Swiper buttons if they use ::after (commonly the case) */
-    .swiper-button-next::after,
-    .swiper-button-prev::after {
-        color: {{ config('custom.text_home') }}
-
-        !important;
-        font-size: 40px;
-        /* ajuste opcional */
-    }
-
-    /* Para garantir visibilidade */
-    .swiper-button-next,
-    .swiper-button-prev {
-        z-index: 10;
-    }
-</style>
-
 
 </html>
