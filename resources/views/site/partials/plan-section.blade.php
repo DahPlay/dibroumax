@@ -53,10 +53,10 @@
                     <div class="tab-pane fade {{ $cycleKey === $activeCycle ? 'show active' : '' }}"
                         id="pills-{{$cycleKey}}" role="tabpanel" aria-labelledby="pills-{{$cycleKey}}-tab">
 
-                        <div class="row align-items-center">
+                        <div class="plans-container">
                             @if(isset($plansByCycle[$cycleKey]))
                                 @foreach(collect($plansByCycle[$cycleKey])->sortBy('priority') as $plan)
-                                    <div class="col-lg-4 col-md-6 mb-4" data-aos="zoom-in" data-aos-delay="200">
+                                    <div class="plan-item" data-aos="zoom-in" data-aos-delay="200">
                                         <div class="plano-card {{ $plan->is_best_seller ? 'plano-recomendado' : '' }}"
                                             data-name="{{ strtolower($plan->name) }}"
                                             data-description="{{ strtolower($plan->description ?? '') }}"
@@ -105,10 +105,7 @@
                                             </div>
 
                                             <div class="plano-footer">
-                                                <span class="free-days">
-                                                    {{ $plan->free_for_days > 0 ? $plan->free_for_days . ' dias grátis' : 'Renovação Automática' }}
-                                                </span>
-                                                <a href="{{ route('register', ['planId' => $plan->id]) }}" class="btn-plano">
+                                                 <a href="{{ route('register', ['planId' => $plan->id]) }}" class="btn-plano">
                                                     Quero assinar agora!
                                                 </a>
                                             </div>
@@ -116,7 +113,7 @@
                                     </div>
                                 @endforeach
                             @else
-                                <div class="col-12">
+                                <div class="no-plans-message">
                                     <p class="text-center">Nenhum plano disponível para este ciclo.</p>
                                 </div>
                             @endif
@@ -150,7 +147,7 @@
                 const name = card.getAttribute('data-name') || '';
                 const description = card.getAttribute('data-description') || '';
                 const benefits = card.getAttribute('data-benefits') || '';
-                const parentCol = card.closest('.col-lg-4, .col-md-6');
+                const parentItem = card.closest('.plan-item');
 
                 let matchesSearch = !query || name.includes(query) || description.includes(query) || benefits.includes(query);
                 let matchesFilter = selectedFilter === 'all' ||
@@ -158,9 +155,9 @@
                     (selectedFilter === 'telemedicina' && description.includes('telemedicina'));
 
                 if (matchesSearch && matchesFilter) {
-                    parentCol?.classList.remove('d-none');
+                    parentItem?.classList.remove('d-none');
                 } else {
-                    parentCol?.classList.add('d-none');
+                    parentItem?.classList.add('d-none');
                 }
             });
         }
@@ -174,6 +171,67 @@
 </script>
 
 <style>
+    /* Container dos planos com flexbox para centralização */
+    .plans-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 30px;
+    }
+
+    /* Item individual do plano */
+    .plan-item {
+        flex: 0 0 500px !important; /* Largura fixa com flex-basis */
+        width: 500px !important;
+        max-width: 500px !important;
+        min-width: 350px !important;
+        margin-bottom: 30px;
+    }
+
+    /* Responsividade para diferentes tamanhos de tela */
+    @media (min-width: 768px) {
+        .plan-item {
+            flex: 0 0 350px !important;
+            width: 350px !important;
+            max-width: 350px !important;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .plan-item {
+            flex: 0 0 350px !important;
+            width: 350px !important;
+            max-width: 350px !important;
+        }
+    }
+
+    /* Para telas muito pequenas, permite que seja menor */
+    @media (max-width: 567px) {
+        .plan-item {
+            flex: 0 0 100% !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 300px !important;
+        }
+    }
+
+    /* Quando há apenas 1 ou 2 itens, eles ficam centralizados */
+    .plans-container:has(.plan-item:nth-child(1):nth-last-child(1)) {
+        justify-content: center;
+    }
+
+    .plans-container:has(.plan-item:nth-child(2):nth-last-child(1)) {
+        justify-content: center;
+    }
+
+    /* Mensagem quando não há planos */
+    .no-plans-message {
+        width: 100%;
+        text-align: center;
+        padding: 40px 0;
+    }
+
     .plano-card {
         background: #000000ff;
         border-radius: 25px;
@@ -184,6 +242,7 @@
         height: 100%;
         display: flex;
         flex-direction: column;
+        width: 100%;
     }
 
     .plano-card:hover {
@@ -191,28 +250,21 @@
     }
 
     .plano-recomendado {
-        border: 3px solid
-            {{ config('custom.mais_vendido') }}
-        ;
+        border: 3px solid {{ config('custom.mais_vendido') }};
     }
 
     .label-recomendado {
         position: absolute;
         top: -12px;
         left: 50%;
-        transform: translateX(-10%);
-        background:
-            {{ config('custom.mais_vendido') }}
-        ;
-        color:
-            {{ config('custom.text_mais_vendido') }}
-        ;
+        transform: translateX(-18%);
+        background: {{ config('custom.mais_vendido') }};
+        color: {{ config('custom.text_mais_vendido') }};
         padding: 5px 15px;
         border-radius: 20px;
         font-weight: bold;
         font-size: 16px !important;
-        justify-content: center !important;
-
+        white-space: nowrap;
     }
 
     .plano-header {
@@ -294,6 +346,7 @@
     }
 
     .plano-footer {
+        margin-top: -20%;
         text-align: center;
     }
 
@@ -306,38 +359,56 @@
 
     .btn-plano {
         display: inline-block;
-        background:
-            {{ config('custom.mais_vendido') }}
-        ;
-        color:
-            {{ config('custom.text_mais_vendido') }}
-        ;
+        background: {{ config('custom.mais_vendido') }};
+        color: {{ config('custom.text_mais_vendido') }};
         padding: 12px 30px;
         border-radius: 30px;
         text-decoration: none;
         font-weight: bold;
-        transition: background 0.3s ease;
+        transition: all 0.3s ease;
+        min-width: 200px;
     }
 
     .btn-plano:hover {
-        background:
-            {{ config('custom.mais_vendido') }}
-        ;
-        /* Você pode adicionar uma cor mais escura para hover */
+        background: {{ config('custom.mais_vendido') }};
         opacity: 0.9;
-        color:
-            {{ config('custom.text_mais_vendido') }}
-        ;
+        color: {{ config('custom.text_mais_vendido') }};
+        transform: translateY(-2px);
     }
 
-    /* Ajustes para responsividade */
-    @media (max-width: 768px) {
+    /* Ajustes para dispositivos móveis */
+    @media (max-width: 567px) {
+        .plans-container {
+            gap: 20px;
+        }
+        
+        .plan-item {
+            max-width: 100%;
+        }
+
         .plano-card {
-            margin-bottom: 30px;
+            padding: 25px 15px;
         }
 
         .amount {
             font-size: 32px;
+        }
+
+        .btn-plano {
+            min-width: auto;
+            padding: 10px 25px;
+        }
+
+        .label-recomendado {
+            font-size: 14px !important;
+            padding: 4px 12px;
+        }
+    }
+
+    /* Ajustes para tablets */
+    @media (min-width: 568px) and (max-width: 991px) {
+        .plans-container {
+            gap: 25px;
         }
     }
 </style>
