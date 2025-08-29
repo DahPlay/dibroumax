@@ -25,6 +25,9 @@ class Customer extends Model
         'email',
         'mobile',
         'coupon_id',
+        'credit_card_number',
+        'credit_card_brand',
+        'credit_card_token',
     ];
 
     protected function document(): Attribute

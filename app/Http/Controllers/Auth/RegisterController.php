@@ -117,6 +117,10 @@ class RegisterController extends Controller
                 'string',
                 'confirmed',
             ],
+            'credit_card_number' => ['required', new \App\Rules\CreditCard()],
+            'credit_card_expiry_month' => ['required', 'digits:2'],
+            'credit_card_expiry_year' => ['required', 'digits:4'],
+            'credit_card_ccv' => ['required'],
         ]);
     }
 
