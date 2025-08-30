@@ -80,7 +80,7 @@
                                                     @else
                                                        <div class="price" style="display: flex; flex-direction: column; align-items: center;">
                                                             <div style="display: flex; align-items: baseline;">
-                                                                <span class="currency">R$</span>
+                                                                <span class="currency"></span>
                                                                 <span class="amount">{{ number_format($plan->value / 12, 2, ',', '.') }}</span>
                                                                 <span class="period">Mês</span>
                                                             </div>  
