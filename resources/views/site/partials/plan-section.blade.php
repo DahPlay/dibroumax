@@ -124,7 +124,7 @@
         </div>
     </div>
 
-    <div class="container mt-4" data-aos="fade-up">
+    <div class="container mt-4 text-white" data-aos="fade-up" >
         <p class="text-center">{{ config('custom.text_plan_2') }}</p>
     </div>
 </section>
