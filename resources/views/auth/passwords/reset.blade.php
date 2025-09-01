@@ -2,8 +2,8 @@
 
 @section('content')
 <div class="background-login col-6 d-none d-md-flex"
-    style="background-image: url('/Auth-Panel/dist/img/background-login.svg')"></div>
-<div class="login-box login-page col-12 col-md-6 p-0">
+    style="background-image: url('/Auth-Panel/dist/img/{{ config('custom.background_password_image') }}')"></div>
+<div class="login-box login-page col-12 col-md-6 p-0" style="background-color: {{ config('custom.background_password_color') }};">
     <div class="card col p-0">
         @if (session('status'))
             <div class="alert alert-success">
@@ -48,7 +48,7 @@
                 </div>
             </div>
 
-            <h3 class="login-box-msg">Definir nova senha</h3>
+            <h3 class="login-box-msg" style="color: {{ config('custom.text_color_gerenciar') }};">Definir nova senha</h3>
 
             <form action="{{ route('password.update') }}" method="post">
                 @csrf
