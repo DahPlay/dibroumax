@@ -81,7 +81,7 @@
                 </div>
 
                 <div class="col-12 d-flex align-items-center justify-content-center">
-                    <button type="submit" class="acess-button">Redefinir senha</button>
+                    <button type="submit" class="acess-button" style="background-color: {{ config('custom.button_color_entrar') }}; color: {{ config('custom.button_text_color_entrar') }};">Redefinir senha</button>
                 </div>
             </form>
         </div>
