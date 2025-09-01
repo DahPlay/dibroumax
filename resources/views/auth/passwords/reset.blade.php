@@ -38,8 +38,8 @@
                         </p>
                     </div>
                     <div class="d-flex justify-content-center">
-                        <p>Redefinir Senha</p>
-                        <i class="fa fa-arrow-down ml-2 animate__animated animate__bounce"></i>
+                        <p style="color: {{ config('custom.text_color_recuperar') }};">Redefinir Senha</p>
+                        <i class="fa fa-arrow-down ml-2 animate__animated animate__bounce" style="color: {{ config('custom.text_color_recuperar') }};"></i>
                     </div>
                     <a href="{{ config('custom.portal_link') }}" target="_blank">
                         <img src="{{ config('custom.logo_1') }}" style="width: 140px;"
