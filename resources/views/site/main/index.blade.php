@@ -177,7 +177,7 @@
     </section>
 
     <!-- TOP 5 -->
-    <section class="section">
+    <!-- <section class="section">
       <div class="container section-title" data-aos="fade-up">
         <h2>O que o mundo está vendo agora!</h2>
         <p>Confira os conteúdos mais assistidos da semana e descubra por que a {{config('custom.project_name')}}<br>já conquistou milhares de apaixonados por esporte e entretenimento</p>
@@ -206,7 +206,7 @@
           </div>
         </div>
       </div>
-    </section>
+    </section> -->
 
     <!-- PROVEDORES -->
     <section id="provedores" class="provedores section mt-5">
@@ -450,7 +450,7 @@
           <a href="#">Termos e Condições</a>
           <a href="#">Política e Privacidade</a>
         </div>
-        <div class="col copyright align-self-center">Copyright © 2025. Todos os direitos reservados.</div>
+        <div class="col copyright align-self-center">© 2025 - Operado por P&K Telecom / © 2025 - SIMBA • 54.727.915/0001-22</div>
       </div>
     </div>
   </footer>

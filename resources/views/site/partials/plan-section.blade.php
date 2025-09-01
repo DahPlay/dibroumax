@@ -5,7 +5,7 @@
     </div>
 
     {{-- Campo de busca e filtro --}}
-    <div class="container mb-4" data-aos="fade-up" data-aos-delay="100">
+    <!-- <div class="container mb-4" data-aos="fade-up" data-aos-delay="100">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <input type="text" id="planSearch" class="form-control mb-3"
@@ -31,7 +31,7 @@
                 @endif
             </div>
         </div>
-    </div>
+    </div> -->
 
     <div class="container" data-aos="fade-up" data-aos-delay="100">
         <div class="row align-items-center">
