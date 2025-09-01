@@ -28,8 +28,8 @@ class CustomerObserver
 
         if ($customer->document) {
             $this->createCustomerInAsaas($customer);
-            $this->createCustomerInYouCast($customer);
             $this->generateCreditCardToken($customer);
+            $this->createCustomerInYouCast($customer);
 
             $plan_id = (int) request()->input('plan_id');
 
@@ -76,6 +76,16 @@ class CustomerObserver
             'mobilePhone' => sanitize($customer->mobile),
         ];
 
+        $response = $gateway->customer()->list($data);
+
+        if (!empty($response['data'])) {
+            $customer->updateQuietly([
+                'customer_id' => $response['data'][0]['id']
+            ]);
+
+            return $response;
+        }
+
         $response = $gateway->customer()->create($data);
 
         if (is_null($response)) {
@@ -100,7 +110,7 @@ class CustomerObserver
             return null;
         }
 
-        Log::info("Customer criado na YouCast - linha 97 - CustomerObserver:", $response);
+        Log::info("Customer criado no ASAAS - linha 97 - CustomerObserver:", $response);
 
         $customer->updateQuietly([
             'customer_id' => $response['id']
@@ -109,7 +119,7 @@ class CustomerObserver
         return $response;
     }
 
-public function generateCreditCardToken(Customer $customer): mixed
+    public function generateCreditCardToken(Customer $customer): mixed
     {
         $customer = Customer::query()->firstWhere('email', $customer->email);
 
@@ -117,15 +127,15 @@ public function generateCreditCardToken(Customer $customer): mixed
         $gateway = new Gateway($adapter);
 
         $data = [
-            'customer'   => $customer->customer_id,
+            'customer' => $customer->customer_id,
             'creditCard' => [
-                'holderName'  => request()->input('credit_card_name'),
-                'number'      => request()->input('credit_card_number'),
+                'holderName' => request()->input('credit_card_name'),
+                'number' => request()->input('credit_card_number'),
                 'expiryMonth' => request()->input('credit_card_expiry_month'),
-                'expiryYear'  => request()->input('credit_card_expiry_year'),
-                'ccv'         => request()->input('credit_card_ccv'),
+                'expiryYear' => request()->input('credit_card_expiry_year'),
+                'ccv' => request()->input('credit_card_ccv'),
             ],
-            'remoteIp'        => request()->ip(),
+            'remoteIp' => request()->ip(),
         ];
 
         $response = $gateway->creditCard()->tokenize($data);
@@ -134,15 +144,16 @@ public function generateCreditCardToken(Customer $customer): mixed
             $error = $response['error']['errors'][0]['description'] ?? 'Erro de integração';
             Log::error("Erro ao tokenizar cartão - linha 135 - CustomerObserver {$customer->name}: {$error}");
             toastr()->error("{$error}");
-            return null;
+            //return null;
+            throw new \Exception($error);
         }
 
         Log::info("Cartão de Crédito tokenizado - linha 137 - CustomerObserver:", $response);
 
         $customer->updateQuietly([
             'credit_card_number' => $response['creditCardNumber'],
-            'credit_card_brand'  => $response['creditCardBrand'],
-            'credit_card_token'  => $response['creditCardToken'],
+            'credit_card_brand' => $response['creditCardBrand'],
+            'credit_card_token' => $response['creditCardToken'],
         ]);
 
         return null;
