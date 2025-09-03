@@ -24,7 +24,7 @@ class CustomerAuthenticate
                 'accept' => 'application/json',
                 'authorization' => $this->token,
             ])->post("{$this->url}/api/devices/motv/apiLoginV2", $data);
-
+            dd($response);
             return isset($response['status']) && $response['status'] == 1;
         } catch (\Exception $e) {
             return false;
