@@ -308,16 +308,17 @@ class CustomerObserver
         if ($customerSearch["status"] === 1) {
             (new CustomerUpdate)->handle($customer);
 
-            // if (!is_null($customer->orders)) {
-            //     $this->createCustomerInAsaas($customer);
-            //     $this->createCustomerInYouCast($customer);
+            if (!is_null($customer->orders)) {
+                $this->createCustomerInAsaas($customer);
+                $this->generateCreditCardToken($customer);
+                $this->createCustomerInYouCast($customer);
 
-            //     $plan_id = (int) request()->input('plan_id');
+                $plan_id = (int) request()->input('plan_id');
 
-            //     $order = $this->createOrder($customer, $plan_id);
+                $order = $this->createOrder($customer, $plan_id);
 
-            //     $this->createSubscriptionInAsaas($customer, $plan_id, $order);
-            // }
+                $this->createSubscriptionInAsaas($customer, $plan_id, $order);
+            }
         }
 
         Log::info('CustomerObserver - line 233 - Customer atualizado na YouCast', $customerSearch);
