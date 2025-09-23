@@ -209,7 +209,7 @@
     </section> -->
 
     <!-- PROVEDORES -->
-    <section id="provedores" class="provedores section mt-5">
+    <!-- <section id="provedores" class="provedores section mt-5">
       <div class="container section-title" data-aos="fade-up">
         <h2>Mais de 110 canais em um só lugar</h2>
         <p>{{config('custom.project_name')}} é a sua TV por assinatura online, com mais de 110 canais ao vivo e<br>milhares de horas On Demand para você assistir quando e onde quiser</p>
@@ -314,7 +314,7 @@
           </div>
         </div>
       </div>
-    </section>
+    </section> -->
 
     <!-- CONTEÚDOS -->
     <section class="section conteudos">
